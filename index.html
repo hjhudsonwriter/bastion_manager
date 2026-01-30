@@ -1,1 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Ironbow Bastion Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand__title">THE IRONBOW: BASTION MANAGER</div>
+      <div class="brand__sub">Scarlett Isles • Bastion Turn Tools</div>
+    </div>
 
+    <div class="topbar__controls">
+      <label class="field">
+        <span>Treasury (gp)</span>
+        <input id="treasuryInput" type="number" min="0" step="1" />
+      </label>
+
+      <label class="field">
+        <span>Party Level</span>
+        <select id="levelSelect"></select>
+      </label>
+
+      <button id="rollEventBtn" class="btn">Roll Bastion Event</button>
+      <button id="advanceTurnBtn" class="btn btn--primary">Advance Bastion Turn (+7 days)</button>
+      <button id="resetBtn" class="btn btn--ghost" title="This only resets the app state (not your GitHub repo).">Reset</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="mapCard">
+      <div class="cardHeader">
+        <h2>Bastion Map</h2>
+        <div class="pill" id="turnPill">Turn 1</div>
+      </div>
+      <img class="mapImg" src="assets/bastion_artwork.png" alt="Bastion artwork" />
+      <div class="mapHint">Tip: This tool saves automatically in your browser (local storage). Each player can have their own copy.</div>
+    </section>
+
+    <section class="rightCol">
+      <div class="grid2">
+        <section class="card">
+          <div class="cardHeader">
+            <h2>Management</h2>
+          </div>
+
+          <div class="stack">
+            <div class="row">
+              <div>
+                <div class="label">Bastion Defenders</div>
+                <div class="value" id="defendersValue">0</div>
+                <div class="small muted" id="defendersMeta">Unarmed</div>
+              </div>
+              <div class="actions">
+                <button id="addDefBtn" class="btn btn--small">+1 Defender</button>
+                <button id="subDefBtn" class="btn btn--small">-1</button>
+              </div>
+            </div>
+
+            <div class="row">
+              <div>
+                <div class="label">Military</div>
+                <div class="small muted">Units recruited from the War Room.</div>
+              </div>
+              <div class="actions">
+                <button id="clearMilitaryBtn" class="btn btn--small">Clear</button>
+              </div>
+            </div>
+            <div id="militaryList" class="list"></div>
+
+            <div class="row">
+              <div>
+                <div class="label">Warehouse</div>
+                <div class="small muted">Crafting, harvests, trade goods, ships, etc.</div>
+              </div>
+              <div class="actions">
+                <button id="clearWarehouseBtn" class="btn btn--small">Clear</button>
+              </div>
+            </div>
+            <div id="warehouseList" class="list"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <h2>Bastion Event</h2>
+          </div>
+          <div id="eventBox" class="eventBox muted">
+            Click <b>Roll Bastion Event</b> to generate a 1d100 event.
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Facilities</h2>
+          <div class="small muted">Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.</div>
+        </div>
+        <div id="facilitiesGrid" class="facilities"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Turn Log</h2>
+          <button id="clearLogBtn" class="btn btn--small">Clear log</button>
+        </div>
+        <div id="logList" class="log"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="small muted">Built for D&D Beyond campaigns. Data comes from your spreadsheet and is editable.</div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
