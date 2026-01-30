@@ -92,9 +92,33 @@
     <!-- Green: Warehouse (separate panel, same width as map) -->
     <section class="card">
       <div class="cardHeader">
-        <h2>Warehouse</h2>
-        <div class="small muted">DM editable. Function outputs append here automatically when completed.</div>
-      </div>
+  <h2>Warehouse</h2>
+</div>
+
+<div class="warehouseSub">
+  <div class="small muted">DM editable. Function outputs append here automatically when completed.</div>
+</div>
+
+<div class="warehouseWrap">
+  <div class="warehouseHead">
+    <div class="whCol">Item</div>
+    <div class="whCol whCol--qty">Qty</div>
+    <div class="whCol whCol--gp">GP</div>
+    <div class="whCol">Notes</div>
+    <div class="whCol whCol--act">Action</div>
+  </div>
+
+  <div class="warehouseBody" id="whTableBody">
+    <!-- rows injected by JS -->
+  </div>
+
+  <div class="warehouseActions">
+    <button class="btn btn--primary" id="addWarehouseRowBtn">Add Item</button>
+    <button class="btn" id="saveWarehouseBtn">Save Warehouse</button>
+    <button class="btn btn--small" id="clearWarehouseBtn">Clear</button>
+  </div>
+</div>
+
 
       <!-- This is still the simple list for now (we’ll convert to the full table UI next) -->
       <div class="stack">
