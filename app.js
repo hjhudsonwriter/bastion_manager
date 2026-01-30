@@ -53,9 +53,10 @@
   let DATA = { facilities: [], tools: {}, events: null };
 
   init().catch(err => {
-    console.error(err);
-    alert("Failed to load data files. Check that /data/*.json exist in your repo.");
-  });
+  console.error(err);
+  alert("App error during init. Open DevTools Console (F12) and check the error details.");
+});
+
 
   async function init(){
     // Populate level selector 1-20
@@ -107,12 +108,15 @@
       render();
     });
 
-    ui.clearWarehouseBtn.addEventListener("click", () => {
-      state.warehouse = [];
-      saveState();
-      log("Warehouse", "Cleared warehouse.");
-      render();
-    });
+    if(clearWarehouseBtn){
+  clearWarehouseBtn.addEventListener("click", () => {
+    state.warehouse = [];
+    saveState();
+    log("Warehouse", "Cleared warehouse.");
+    renderWarehouse();
+    renderLog();
+  });
+}
 
     ui.clearLogBtn.addEventListener("click", () => {
       state.log = [];
