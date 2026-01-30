@@ -31,86 +31,110 @@
   </header>
 
   <main class="layout">
+
+  <!-- LEFT (Pink): Turn Log -->
+  <section class="leftCol">
+    <section class="card card--tall">
+      <div class="cardHeader">
+        <h2>Turn Log</h2>
+        <button class="btn btn--small" id="clearLogBtn">Clear log</button>
+      </div>
+      <div class="log log--tall" id="logList"></div>
+    </section>
+  </section>
+
+  <!-- CENTER: Map + Management + Warehouse + Facilities -->
+  <section class="mainCol">
+
+    <!-- Red: Map -->
     <section class="mapCard">
       <div class="cardHeader">
         <h2>Bastion Map</h2>
         <div class="pill" id="turnPill">Turn 1</div>
       </div>
       <img class="mapImg" src="assets/bastion_artwork.png" alt="Bastion artwork" />
-      <div class="mapHint">Tip: This tool saves automatically in your browser (local storage). Each player can have their own copy.</div>
+      <div class="mapHint">
+        Tip: This tool saves automatically in your browser (local storage). Each player can have their own copy.
+      </div>
     </section>
 
-    <section class="rightCol">
-      <div class="grid2">
-        <section class="card">
-          <div class="cardHeader">
-            <h2>Management</h2>
+    <!-- Yellow: Management (ONLY management now) -->
+    <section class="card">
+      <div class="cardHeader">
+        <h2>Management</h2>
+      </div>
+      <div class="stack">
+        <div class="row">
+          <div>
+            <div class="label">Bastion Defenders</div>
+            <div class="value" id="defendersValue">0</div>
+            <div class="small muted" id="defendersMeta">Unarmed</div>
           </div>
-
-          <div class="stack">
-            <div class="row">
-              <div>
-                <div class="label">Bastion Defenders</div>
-                <div class="value" id="defendersValue">0</div>
-                <div class="small muted" id="defendersMeta">Unarmed</div>
-              </div>
-              <div class="actions">
-                <button id="addDefBtn" class="btn btn--small">+1 Defender</button>
-                <button id="subDefBtn" class="btn btn--small">-1</button>
-              </div>
-            </div>
-
-            <div class="row">
-              <div>
-                <div class="label">Military</div>
-                <div class="small muted">Units recruited from the War Room.</div>
-              </div>
-              <div class="actions">
-                <button id="clearMilitaryBtn" class="btn btn--small">Clear</button>
-              </div>
-            </div>
-            <div id="militaryList" class="list"></div>
-
-            <div class="row">
-              <div>
-                <div class="label">Warehouse</div>
-                <div class="small muted">Crafting, harvests, trade goods, ships, etc.</div>
-              </div>
-              <div class="actions">
-                <button id="clearWarehouseBtn" class="btn btn--small">Clear</button>
-              </div>
-            </div>
-            <div id="warehouseList" class="list"></div>
+          <div class="actions">
+            <button class="btn btn--small" id="addDefBtn">+1 Defender</button>
+            <button class="btn btn--small" id="subDefBtn">-1</button>
           </div>
-        </section>
+        </div>
 
-        <section class="card">
-          <div class="cardHeader">
-            <h2>Bastion Event</h2>
+        <div class="row">
+          <div>
+            <div class="label">Military</div>
+            <div class="small muted">Units recruited from the War Room.</div>
           </div>
-          <div id="eventBox" class="eventBox muted">
-            Click <b>Roll Bastion Event</b> to generate a 1d100 event.
+          <div class="actions">
+            <button class="btn btn--small" id="clearMilitaryBtn">Clear</button>
           </div>
-        </section>
+        </div>
+        <div class="list" id="militaryList"></div>
+      </div>
+    </section>
+
+    <!-- Green: Warehouse (separate panel, same width as map) -->
+    <section class="card">
+      <div class="cardHeader">
+        <h2>Warehouse</h2>
+        <div class="small muted">DM editable. Function outputs append here automatically when completed.</div>
       </div>
 
-      <section class="card">
-        <div class="cardHeader">
-          <h2>Facilities</h2>
-          <div class="small muted">Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.</div>
+      <!-- This is still the simple list for now (we’ll convert to the full table UI next) -->
+      <div class="stack">
+        <div class="row">
+          <div class="small muted">Crafting, harvests, trade goods, ships, etc.</div>
+          <div class="actions">
+            <button class="btn btn--small" id="clearWarehouseBtn">Clear</button>
+          </div>
         </div>
-        <div id="facilitiesGrid" class="facilities"></div>
-      </section>
-
-      <section class="card">
-        <div class="cardHeader">
-          <h2>Turn Log</h2>
-          <button id="clearLogBtn" class="btn btn--small">Clear log</button>
-        </div>
-        <div id="logList" class="log"></div>
-      </section>
+        <div class="list" id="warehouseList"></div>
+      </div>
     </section>
-  </main>
+
+    <!-- Facilities (below Warehouse, same width) -->
+    <section class="card">
+      <div class="cardHeader">
+        <h2>Facilities</h2>
+        <div class="small muted">
+          Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
+        </div>
+      </div>
+      <div class="facilities" id="facilitiesGrid"></div>
+    </section>
+
+  </section>
+
+  <!-- RIGHT (Purple): Bastion Events -->
+  <section class="rightCol">
+    <section class="card card--tall">
+      <div class="cardHeader">
+        <h2>Bastion Event</h2>
+      </div>
+      <div class="eventBox muted" id="eventBox">
+        Click <b>Roll Bastion Event</b> to generate a 1d100 event.
+      </div>
+    </section>
+  </section>
+
+</main>
+
 
   <footer class="footer">
     <div class="small muted">Built for D&D Beyond campaigns. Data comes from your spreadsheet and is editable.</div>
