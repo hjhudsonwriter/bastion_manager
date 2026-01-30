@@ -140,7 +140,28 @@
           Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
         </div>
       </div>
-      <div class="facilities" id="facilitiesGrid"></div>
+      <div class="facBuild">
+  <div class="facBuildTop">
+    <div>
+      <div class="label">Construction Slots</div>
+      <div class="small muted" id="slotMeta">—</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn--small" id="clearBuildBtn">Clear extra builds</button>
+    </div>
+  </div>
+
+  <div id="slotList" class="slotList"></div>
+</div>
+
+<div class="pendingWrap">
+  <div class="label">Pending Orders</div>
+  <div class="small muted">Orders complete when you click <b>Take Bastion Turn</b>.</div>
+  <div class="list" id="pendingList"></div>
+</div>
+
+<div class="facilities" id="facilitiesGrid"></div>
+
     </section>
 
   </section>
