@@ -414,3 +414,82 @@ select option{
     max-height: 260px;
   }
 }
+
+/* ---------------- Warehouse Table UI ---------------- */
+
+.warehouseSub{
+  padding: 0 16px 6px;
+}
+
+.warehouseWrap{
+  padding: 12px 16px 16px;
+}
+
+.warehouseHead{
+  display: grid;
+  grid-template-columns: 2.2fr .6fr .7fr 2fr .8fr;
+  gap: 12px;
+  padding: 10px 8px;
+  color: rgba(214,178,94,.95);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 800;
+  border-bottom: 1px solid rgba(214,178,94,.35);
+}
+
+.warehouseBody{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.whRow{
+  display: grid;
+  grid-template-columns: 2.2fr .6fr .7fr 2fr .8fr;
+  gap: 12px;
+  align-items: center;
+
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 18px;
+  padding: 10px 10px;
+
+  background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.06));
+}
+
+.whRow input{
+  width: 100%;
+  border: 1px solid rgba(214,178,94,.40);
+  background: rgba(0,0,0,.45);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 14px;
+  outline: none;
+  font-family: var(--ui);
+}
+
+.whRow input:focus{
+  border-color: rgba(214,178,94,.95);
+  box-shadow: 0 0 0 3px rgba(214,178,94,.18);
+}
+
+.whBtn{
+  justify-self: start;
+}
+
+.warehouseActions{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-top: 12px;
+}
+
+/* Responsive: stack warehouse columns on narrow screens */
+@media (max-width: 900px){
+  .warehouseHead{
+    display:none;
+  }
+  .whRow{
+    grid-template-columns: 1fr;
+  }
+}
