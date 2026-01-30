@@ -48,6 +48,12 @@
 
     logList: $("logList"),
     clearLogBtn: $("clearLogBtn"),
+
+    slotMeta: $("slotMeta"),
+    slotList: $("slotList"),
+    clearBuildBtn: $("clearBuildBtn"),
+    pendingList: $("pendingList"),
+ 
   };
 
   let DATA = { facilities: [], tools: {}, events: null };
@@ -85,6 +91,14 @@
       saveState();
       render();
     });
+
+     ui.clearBuildBtn?.addEventListener("click", () => {
+  if(!confirm("Clear all extra built facilities (slots) only? Your 5 starting facilities remain.")) return;
+  state.builtExtras = [];
+  saveState();
+  log("Facilities", "Cleared extra built facilities.");
+  render();
+});
 
     ui.addDefBtn.addEventListener("click", () => {
       state.defenders.count += 1;
@@ -135,13 +149,23 @@
     });
 
     ui.advanceTurnBtn.addEventListener("click", () => {
-      state.turn += 1;
-      // One-turn buffs expire here
-      state.defenders.patrolAdvantage = false;
-      saveState();
-      log("Turn Advanced", `Bastion Turn is now ${state.turn}.`);
-      render();
-    });
+  state.turn += 1;
+
+  // One-turn buffs expire here
+  state.defenders.patrolAdvantage = false;
+
+  // Complete any orders due this turn
+  const due = state.pendingOrders.filter(o => o.completeTurn === state.turn);
+  state.pendingOrders = state.pendingOrders.filter(o => o.completeTurn !== state.turn);
+
+  for(const o of due){
+    completeOrder(o);
+  }
+
+  saveState();
+  log("Turn Advanced", `Bastion Turn is now ${state.turn}.`);
+  render();
+});
 
     ui.resetBtn.addEventListener("click", () => {
       if(!confirm("Reset app state? This clears your local saved data on THIS browser only.")) return;
@@ -151,6 +175,84 @@
 
     render();
   }
+
+   function completeOrder(o){
+  const fac = DATA.facilities.find(f => f.id === o.facId);
+  if(!fac) return;
+  const fn = (fac.functions || []).find(x => x.id === o.fnId);
+  if(!fn) return;
+
+  const label = o.label || `${fac.name}: ${fn.label}`;
+  const optionLabel = o.optionLabel || null;
+  const chosen = o.chosen || null;
+
+  // Barracks recruit defenders
+  if(fac.id==="barracks" && fn.id==="recruit_defenders"){
+    const r = d(4);
+    state.defenders.count += r;
+    log("Order Completed", `${label} → Recruited ${r} defenders.`);
+    return;
+  }
+
+  // Watchtower patrol buff (applies for the new turn)
+  if(fac.id==="watchtower" && fn.id==="patrol"){
+    state.defenders.patrolAdvantage = true;
+    log("Order Completed", `${label} → Patrol active this turn.`);
+    return;
+  }
+
+  // Armoury arm defenders
+  if(fac.id==="armoury" && fn.id==="arm_defenders"){
+    state.defenders.armed = (state.defenders.count > 0);
+    log("Order Completed", `${label} → Defenders armed.`);
+    return;
+  }
+
+  // War Room recruit → military
+  if(fac.id==="war_room" && fn.id==="recruit"){
+    const unit = optionLabel || "Unit";
+    addToList(state.military, unit, { source: "War Room" });
+    log("Order Completed", `${label} → Recruited: ${unit}.`);
+    return;
+  }
+
+  // Menagerie recruit beast → military (or defenders later)
+  if(fac.id==="menagerie" && fn.id==="recruit_beast"){
+    const beast = optionLabel || "Beast";
+    addToList(state.military, beast, { source: "Menagerie" });
+    log("Order Completed", `${label} → Recruited beast: ${beast}.`);
+    return;
+  }
+
+  // Dock charter → warehouse
+  if(fac.id==="dock" && fn.id==="charter_berth"){
+    appendToWarehouse(optionLabel || "Chartered vessel", 1, "", "Dock");
+    log("Order Completed", `${label} → Added to Warehouse.`);
+    return;
+  }
+
+  // Workshop craft (tool table random)
+  if(fac.id==="workshop" && fn.id==="craft" && chosen && chosen.toolTable){
+    const list = DATA.tools[chosen.toolTable] || [];
+    if(list.length){
+      const item = list[Math.floor(Math.random()*list.length)];
+      appendToWarehouse(item, 1, "", chosen.toolTable);
+      log("Order Completed", `${label} → Crafted: ${item}.`);
+    } else {
+      log("Order Completed", `${label} → No items found for table.`);
+    }
+    return;
+  }
+
+  // Generic craft/harvest/trade → warehouse (if option chosen)
+  if(optionLabel){
+    appendToWarehouse(optionLabel, 1, "", fac.name);
+    log("Order Completed", `${label} → Added to Warehouse.`);
+    return;
+  }
+
+  log("Order Completed", `${label} → Completed.`);
+}
 
   // ---------- Render ----------
   function render(){
@@ -367,41 +469,217 @@ if(whTableBody){
   });
 }
 
-   function renderFacilities(){
-    const lvl = state.partyLevel;
-    ui.facilitiesGrid.innerHTML = DATA.facilities.map(fac => {
-      const locked = (lvl < (fac.requiredLevel || 0));
-      const tag = locked
-        ? `<span class="tag tag--locked">Locked (Lvl ${fac.requiredLevel})</span>`
-        : `<span class="tag tag--ok">Unlocked</span>`;
+   function constructionSlotsForLevel(level){
+  const lvl = clampInt(level, 1, 20);
+  if(lvl >= 17) return 6;
+  if(lvl >= 13) return 5;
+  if(lvl >= 9)  return 4;
+  if(lvl >= 5)  return 2;
+  return 0;
+}
 
-      const fns = (fac.functions || []).map(fn => renderFunction(fac, fn, locked)).join("");
+function allBuiltFacilityIds(){
+  const base = Array.isArray(state.builtFacilities) ? state.builtFacilities : [];
+  const extra = Array.isArray(state.builtExtras) ? state.builtExtras : [];
+  // unique
+  return Array.from(new Set([...base, ...extra]));
+}
 
-      return `
-        <div class="fac">
-          <div class="facTop">
-            <div>
-              <div class="facName">${escapeHtml(fac.name)}</div>
-              <div class="small muted">Required Level: ${escapeHtml(String(fac.requiredLevel || "?"))}</div>
-            </div>
-            <div class="facMeta">${tag}</div>
-          </div>
-
-          <div class="facFns">${fns || `<div class="small muted">No functions listed.</div>`}</div>
-        </div>
-      `;
-    }).join("");
-
-    // attach events to function buttons
-    ui.facilitiesGrid.querySelectorAll("[data-action='runFn']").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const facId = btn.getAttribute("data-fac");
-        const fnId = btn.getAttribute("data-fn");
-        const optId = btn.getAttribute("data-opt") || "";
-        runFacilityFunction(facId, fnId, optId);
-      });
-    });
+   function renderPendingOrders(){
+  const p = Array.isArray(state.pendingOrders) ? state.pendingOrders : [];
+  if(!p.length){
+    ui.pendingList.innerHTML = `<div class="small muted">No pending orders.</div>`;
+    return;
   }
+  ui.pendingList.innerHTML = p.map(o => `
+    <div class="item">
+      <div>
+        <div class="item__name">${escapeHtml(o.label)}</div>
+        <div class="item__meta">Completes on Turn ${escapeHtml(String(o.completeTurn))}</div>
+      </div>
+      <button class="item__btn" data-cancel="${escapeHtml(String(o.id))}">Cancel</button>
+    </div>
+  `).join("");
+
+  ui.pendingList.querySelectorAll("[data-cancel]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.getAttribute("data-cancel");
+      state.pendingOrders = state.pendingOrders.filter(x => String(x.id) !== String(id));
+      saveState();
+      log("Orders", "Cancelled an order.");
+      render();
+    });
+  });
+}
+
+   function issueOrder(facId, fnId){
+  const fac = DATA.facilities.find(f => f.id === facId);
+  if(!fac) return;
+  const fn = (fac.functions || []).find(x => x.id === fnId);
+  if(!fn) return;
+
+  // Prevent duplicate pending same facility+function
+  if(state.pendingOrders.some(o => o.facId === facId && o.fnId === fnId)){
+    alert("That order is already pending.");
+    return;
+  }
+
+  // Resolve chosen option (same logic you already had)
+  let chosen = null;
+  let optionLabel = null;
+
+  if(fn.options && fn.options.length){
+    const sel = document.getElementById(`sel_${fac.id}__${fn.id}`);
+    const idx = clampInt(sel ? sel.value : 0, 0);
+    chosen = fn.options[idx] || null;
+    optionLabel = chosen && chosen.label ? chosen.label : String(chosen || "");
+  } else if(fac.id==="workshop" && fn.id==="craft"){
+    const sel = document.getElementById(`sel_${fac.id}__${fn.id}`);
+    const idx = clampInt(sel ? sel.value : 0, 0);
+    const toolTables = Object.keys(DATA.tools || {}).filter(k => k.endsWith("Tools") || k.endsWith("Supplies"));
+    const tableName = toolTables[idx];
+    chosen = { label: tableName, toolTable: tableName };
+    optionLabel = tableName;
+  }
+
+  const { costGP } = computeFnCost(fac, fn, chosen);
+
+  if(costGP > state.treasuryGP){
+    alert(`Not enough gp. Need ${costGP}gp, you have ${state.treasuryGP}gp.`);
+    return;
+  }
+
+  // Pay cost up front when order is issued
+  state.treasuryGP -= costGP;
+
+  const id = uid();
+  const label = `${fac.name}: ${fn.label}${optionLabel ? ` (${optionLabel})` : ""}`;
+
+  state.pendingOrders.push({
+    id,
+    facId,
+    fnId,
+    chosen,
+    optionLabel,
+    label,
+    costGP,
+    issuedTurn: state.turn,
+    completeTurn: state.turn + 1
+  });
+
+  saveState();
+  log("Order Issued", label);
+  render();
+}
+   
+   function renderFacilities(){
+  const lvl = state.partyLevel;
+
+  // --- Slots UI ---
+  const slots = constructionSlotsForLevel(lvl);
+  // clamp extras if level drops
+  if(state.builtExtras.length > slots){
+    state.builtExtras = state.builtExtras.slice(0, slots);
+    saveState();
+  }
+
+  ui.slotMeta.textContent = `Level ${lvl} → ${slots} slot(s). Used: ${state.builtExtras.length}/${slots}`;
+  ui.slotList.innerHTML = "";
+
+  // Available facilities (not already built)
+  const built = allBuiltFacilityIds();
+  const remaining = DATA.facilities
+    .map(f => f.id)
+    .filter(id => !built.includes(id));
+
+  // Build slot rows
+  for(let i=0;i<slots;i++){
+    const current = state.builtExtras[i] || "";
+    const options = ["", ...remaining.filter(id => !state.builtExtras.includes(id))];
+
+    const row = document.createElement("div");
+    row.className = "slotRow";
+    row.innerHTML = `
+      <select id="slot_${i}">
+        ${options.map(id=>{
+          if(id==="") return `<option value="">(Empty slot)</option>`;
+          const fac = DATA.facilities.find(f=>f.id===id);
+          return `<option value="${escapeHtml(id)}">${escapeHtml(fac ? fac.name : id)}</option>`;
+        }).join("")}
+      </select>
+      <button class="btn btn--small" data-slot="${i}">Build</button>
+    `;
+
+    ui.slotList.appendChild(row);
+
+    // preselect if already built in that slot
+    if(current){
+      const sel = row.querySelector(`#slot_${i}`);
+      if(sel) sel.value = current;
+    }
+  }
+
+  // Slot Build buttons
+  ui.slotList.querySelectorAll("button[data-slot]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = clampInt(btn.getAttribute("data-slot"), 0);
+      const sel = document.getElementById(`slot_${i}`);
+      const val = sel ? sel.value : "";
+      if(!val){
+        // clearing this slot
+        state.builtExtras[i] = "";
+        state.builtExtras = state.builtExtras.filter(Boolean);
+        saveState();
+        render();
+        return;
+      }
+      // Assign into extras (keep unique)
+      if(allBuiltFacilityIds().includes(val)){
+        alert("That facility is already built.");
+        return;
+      }
+      state.builtExtras[i] = val;
+      state.builtExtras = state.builtExtras.filter(Boolean);
+      saveState();
+      log("Construction", `Built facility in slot: ${val}`);
+      render();
+    });
+  });
+
+  // --- Pending Orders list ---
+  renderPendingOrders();
+
+  // --- Facilities grid: ONLY built facilities ---
+  const builtIds = allBuiltFacilityIds();
+  const builtFacilities = DATA.facilities.filter(f => builtIds.includes(f.id));
+
+  ui.facilitiesGrid.innerHTML = builtFacilities.map(fac => {
+    const fns = (fac.functions || []).map(fn => renderFunction(fac, fn, false)).join("");
+
+    return `
+      <div class="fac">
+        <div class="facTop">
+          <div>
+            <div class="facName">${escapeHtml(fac.name)}</div>
+            <div class="small muted">Built • Functions take 1 Bastion Turn</div>
+          </div>
+          <div class="facMeta"><span class="tag tag--ok">Active</span></div>
+        </div>
+
+        <div class="facFns">${fns || `<div class="small muted">No functions listed.</div>`}</div>
+      </div>
+    `;
+  }).join("");
+
+  // attach events to function buttons
+  ui.facilitiesGrid.querySelectorAll("[data-action='runFn']").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const facId = btn.getAttribute("data-fac");
+      const fnId = btn.getAttribute("data-fn");
+      issueOrder(facId, fnId);
+    });
+  });
+}
 
   function renderFunction(fac, fn, locked){
     const key = `${fac.id}__${fn.id}`;
@@ -437,7 +715,7 @@ if(whTableBody){
         </div>
         ${selectHtml}
         <button class="btn btn--small" data-action="runFn" data-fac="${escapeHtml(fac.id)}" data-fn="${escapeHtml(fn.id)}" ${locked ? "disabled" : ""}>
-          Run
+          Issue Order
         </button>
         ${notes}
       </div>
@@ -607,9 +885,12 @@ if(whTableBody){
       try{
         const s = JSON.parse(raw);
         return {
-          treasuryGP: clampInt(s.treasuryGP ?? 0, 0),
-          partyLevel: clampInt(s.partyLevel ?? 7, 1, 20),
-          defenders: {
+           treasuryGP: clampInt(s.treasuryGP ?? 0, 0),
+           partyLevel: clampInt(s.partyLevel ?? 7, 1, 20),
+           builtFacilities: Array.isArray(s.builtFacilities) ? s.builtFacilities : ["barracks","armoury","watchtower","workshop","dock"],
+           builtExtras: Array.isArray(s.builtExtras) ? s.builtExtras : [],
+           pendingOrders: Array.isArray(s.pendingOrders) ? s.pendingOrders : [],
+           defenders: {
             count: clampInt(s.defenders?.count ?? 0, 0),
             armed: !!s.defenders?.armed,
             patrolAdvantage: !!s.defenders?.patrolAdvantage,
@@ -624,16 +905,26 @@ if(whTableBody){
         console.warn("Bad state JSON, resetting.", e);
       }
     }
-    return {
-      treasuryGP: 0,
-      partyLevel: 7,
-      defenders: { count:0, armed:false, patrolAdvantage:false },
-      military: [],
-      warehouse: [],
-      turn: 1,
-      lastEvent: null,
-      log: [],
-    };
+   return {
+  treasuryGP: 0,
+  partyLevel: 7,
+
+  // BUILT facilities on first ever load (your requested 5)
+  builtFacilities: ["barracks","armoury","watchtower","workshop","dock"],
+
+  // Extra “built via slots” facilities live here
+  builtExtras: [],
+
+  // Pending orders queue (1 turn duration)
+  pendingOrders: [],
+
+  defenders: { count:0, armed:false, patrolAdvantage:false },
+  military: [],
+  warehouse: [],
+  turn: 1,
+  lastEvent: null,
+  log: [],
+};
   }
 
   function saveState(){
