@@ -14,6 +14,12 @@
   const withBase = (url) => url.startsWith("http") ? url : (BASE + url.replace(/^\//,""));
 
   const $ = (id) => document.getElementById(id);
+  const whTableBody = document.getElementById("whTableBody");
+  const addWarehouseRowBtn = document.getElementById("addWarehouseRowBtn");
+  const saveWarehouseBtn = document.getElementById("saveWarehouseBtn");
+  const clearWarehouseBtn = document.getElementById("clearWarehouseBtn");
+ 
+
 
   const STORAGE_KEY = "ironbow_bastion_state_v1";
 
@@ -35,8 +41,7 @@
     militaryList: $("militaryList"),
     clearMilitaryBtn: $("clearMilitaryBtn"),
 
-    warehouseList: $("warehouseList"),
-    clearWarehouseBtn: $("clearWarehouseBtn"),
+    
 
     eventBox: $("eventBox"),
     facilitiesGrid: $("facilitiesGrid"),
@@ -153,7 +158,7 @@
       : "Unarmed";
 
     renderList(ui.militaryList, state.military, "No military recruited yet.");
-    renderList(ui.warehouseList, state.warehouse, "Warehouse is empty.");
+    renderWarehouse();
 
     renderEventBox();
     renderFacilities();
@@ -211,7 +216,154 @@
     `;
   }
 
-  function renderFacilities(){
+  // ---------------- Warehouse (table) ----------------
+// State shape: [{ id, item, qty, gp, notes }]
+
+function ensureWarehouseShape(){
+  if(!Array.isArray(state.warehouse)) state.warehouse = [];
+
+  // If old warehouse items exist ({name, qty, source}) convert them once
+  const looksOld = state.warehouse.some(x => x && typeof x === "object" && ("name" in x) && !("item" in x));
+  if(looksOld){
+    state.warehouse = state.warehouse.map(x => ({
+      id: uid(),
+      item: String(x.name ?? "New Item"),
+      qty: clampInt(x.qty ?? 1, 0),
+      gp: "",
+      notes: x.source ? String(x.source) : ""
+    }));
+    saveState();
+  }
+}
+
+function uid(){
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+function renderWarehouse(){
+  ensureWarehouseShape();
+  if(!whTableBody) return;
+
+  whTableBody.innerHTML = "";
+
+  if(state.warehouse.length === 0){
+    state.warehouse.push({ id: uid(), item: "New Item", qty: 1, gp: "", notes: "" });
+  }
+
+  for(const row of state.warehouse){
+    const el = document.createElement("div");
+    el.className = "whRow";
+    el.dataset.id = row.id;
+
+    el.innerHTML = `
+      <input class="whItem" type="text" value="${escapeHtml(String(row.item ?? ""))}" />
+      <input class="whQty" type="number" min="0" step="1" value="${clampInt(row.qty ?? 0, 0)}" />
+      <input class="whGp" type="text" value="${escapeHtml(String(row.gp ?? ""))}" placeholder="-" />
+      <input class="whNotes" type="text" value="${escapeHtml(String(row.notes ?? ""))}" placeholder="notes..." />
+      <button class="btn whBtn" data-act="remove">Remove</button>
+    `;
+    whTableBody.appendChild(el);
+  }
+}
+
+function readWarehouseFromUI(){
+  ensureWarehouseShape();
+  if(!whTableBody) return;
+
+  const rows = Array.from(whTableBody.querySelectorAll(".whRow"));
+  const next = [];
+
+  for(const r of rows){
+    const id = r.dataset.id || uid();
+    const item = r.querySelector(".whItem")?.value?.trim() || "New Item";
+    const qty = clampInt(r.querySelector(".whQty")?.value ?? 0, 0);
+    const gp = r.querySelector(".whGp")?.value?.trim() || "";
+    const notes = r.querySelector(".whNotes")?.value?.trim() || "";
+
+    // keep meaningful rows
+    if(item || qty || gp || notes){
+      next.push({ id, item, qty, gp, notes });
+    }
+  }
+
+  state.warehouse = next;
+}
+
+function addWarehouseRow(prefill){
+  readWarehouseFromUI();
+  state.warehouse.push({
+    id: uid(),
+    item: prefill?.item ?? "New Item",
+    qty: prefill?.qty ?? 1,
+    gp: prefill?.gp ?? "",
+    notes: prefill?.notes ?? ""
+  });
+  renderWarehouse();
+}
+
+function removeWarehouseRow(id){
+  readWarehouseFromUI();
+  state.warehouse = state.warehouse.filter(x => x.id !== id);
+  renderWarehouse();
+}
+
+function saveWarehouse(){
+  readWarehouseFromUI();
+  saveState();
+  log("Warehouse", "Saved warehouse.");
+  renderLog();
+}
+
+// Append/merge outputs into warehouse
+function appendToWarehouse(itemName, qty=1, gp="", notes=""){
+  readWarehouseFromUI();
+
+  const name = String(itemName || "").trim();
+  if(!name) return;
+
+  const q = clampInt(qty, 1);
+
+  const found = state.warehouse.find(x => String(x.item||"").toLowerCase() === name.toLowerCase());
+  if(found){
+    found.qty = clampInt((found.qty ?? 0) + q, 0);
+    if(notes && !String(found.notes||"").includes(notes)){
+      found.notes = (found.notes ? (found.notes + " | ") : "") + notes;
+    }
+  } else {
+    state.warehouse.push({ id: uid(), item: name, qty: q, gp: gp ?? "", notes: notes ?? "" });
+  }
+
+  saveState();
+  renderWarehouse();
+}
+
+// Warehouse UI wiring
+if(addWarehouseRowBtn){
+  addWarehouseRowBtn.addEventListener("click", () => addWarehouseRow());
+}
+if(saveWarehouseBtn){
+  saveWarehouseBtn.addEventListener("click", () => saveWarehouse());
+}
+if(clearWarehouseBtn){
+  clearWarehouseBtn.addEventListener("click", () => {
+    state.warehouse = [];
+    saveState();
+    log("Warehouse", "Cleared warehouse.");
+    renderWarehouse();
+    renderLog();
+  });
+}
+if(whTableBody){
+  whTableBody.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-act='remove']");
+    if(!btn) return;
+    const row = e.target.closest(".whRow");
+    if(!row) return;
+    removeWarehouseRow(row.dataset.id);
+  });
+}
+
+   function renderFacilities(){
     const lvl = state.partyLevel;
     ui.facilitiesGrid.innerHTML = DATA.facilities.map(fac => {
       const locked = (lvl < (fac.requiredLevel || 0));
@@ -363,7 +515,7 @@
 
     // Dock charter -> warehouse
     if(fac.id==="dock" && fn.id==="charter_berth"){
-      addToList(state.warehouse, optionLabel || "Chartered vessel", { source: "Dock" });
+      appendToWarehouse(optionLabel || "Chartered vessel", 1, "", "Dock");
       log(label, optionLabel ? `Chartered: ${optionLabel}.` : "Chartered a vessel.");
       saveState(); render(); return;
     }
@@ -375,7 +527,7 @@
         const list = DATA.tools[chosen.toolTable] || [];
         if(list.length){
           const item = list[Math.floor(Math.random()*list.length)];
-          addToList(state.warehouse, item, { source: chosen.toolTable });
+          appendToWarehouse(item, 1, "", chosen.toolTable);
           log(label, `Crafted: ${item} (from ${chosen.toolTable}).`);
         }else{
           log(label, `No items found for table: ${chosen.toolTable}.`);
@@ -384,7 +536,7 @@
       }
 
       if(optionLabel){
-        addToList(state.warehouse, optionLabel, { source: fac.name });
+        appendToWarehouse(optionLabel, 1, "", fac.name);
         log(label, `Added to warehouse: ${optionLabel}.`);
       }else{
         log(label, "Completed.");
