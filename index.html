@@ -60,45 +60,62 @@
       <div class="cardHeader">
         <h2>Management</h2>
       </div>
-      <div class="stack">
-        <div class="row">
-          <div>
-            <div class="row">
-  <div>
-    <div class="label">Treasury (gp)</div>
-    <div class="small muted">Shared Bastion funds</div>
-  </div>
-  <div class="actions">
-    <label class="field" style="margin:0">
-      <input id="treasuryInput" type="number" min="0" step="1" />
-    </label>
-  </div>
-</div>
-            <div class="label">Bastion Defenders</div>
-            <div class="value" id="defendersValue">0</div>
-            <div class="small muted" id="defendersMeta">Unarmed</div>
-            <div class="list" id="defenderRoster"></div>
-          </div>
-          <div class="actions">
-            <button class="btn btn--small" id="addDefBtn">+1 Defender</button>
-            <button class="btn btn--small" id="subDefBtn">-1</button>
-          </div>
+      <div class="mgmtGrid">
+
+  <!-- LEFT (Yellow): Defenders -->
+  <div class="mgmtCol">
+    <div class="mgmtBox">
+      <div class="rowTop">
+        <div>
+          <div class="label">Bastion Defenders</div>
+          <div class="small muted" id="defendersMeta">Unarmed</div>
         </div>
+        <div class="actions">
+          <button class="btn btn--small" id="addDefBtn">+1 Defender</button>
+          <button class="btn btn--small" id="subDefBtn">-1</button>
+        </div>
+      </div>
 
-        <div class="row row--stack">
-  <div class="rowTop">
-    <div>
-      <div class="label">Military</div>
-      <div class="small muted">Units recruited from the War Room.</div>
-    </div>
-    <div class="actions">
-      <button class="btn btn--small" id="clearMilitaryBtn">Clear</button>
+      <div class="value" id="defendersValue">0</div>
+
+      <div class="label" style="margin-top:10px">Menagerie Beasts</div>
+      <div class="list" id="defenderRoster"></div>
     </div>
   </div>
 
-  <div class="list" id="militaryList"></div>
-</div>
+  <!-- MIDDLE (Green): Treasury -->
+  <div class="mgmtCol">
+    <div class="mgmtBox">
+      <div class="label">Treasury (gp)</div>
+      <div class="small muted">Shared Bastion funds</div>
+
+      <div style="margin-top:10px">
+        <label class="field" style="margin:0">
+          <input id="treasuryInput" type="number" min="0" step="1" />
+        </label>
       </div>
+    </div>
+  </div>
+
+  <!-- RIGHT (Blue): Military -->
+  <div class="mgmtCol">
+    <div class="mgmtBox">
+      <div class="rowTop">
+        <div>
+          <div class="label">Military</div>
+          <div class="small muted">Units recruited from the War Room.</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn--small" id="clearMilitaryBtn">Clear</button>
+        </div>
+      </div>
+
+      <div class="list" id="militaryList"></div>
+    </div>
+  </div>
+
+</div>
+
     </section>
 
     <!-- Green: Warehouse (separate panel, same width as map) -->
