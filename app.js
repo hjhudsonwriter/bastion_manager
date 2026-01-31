@@ -132,18 +132,26 @@ function tickConstruction(){
 }
 
    const FACILITY_IMG = {
+  // Starting facilities
   barracks: "barracks.png",
   armoury: "armoury.png",
   watchtower: "watchtower.png",
   workshop: "workshop.png",
   dock: "docks.png",
 
+  // Buildable facilities
   arcane_study: "arcane_study.png",
   library: "library.png",
   smithy: "smithy.png",
   garden: "garden.png",
-  menagerie: "menageri.png",
+  menagerie: "menagerie.png",
   scriptorium: "scriptorium.png",
+
+  // Your two missing ones (THIS is the fix)
+  laboratory: "laboratory.png",
+  war_room: "war_room.png",
+
+  // The rest
   gaming_hall: "gambling_hall.png",
   storehouse: "storehouse.png",
   greenhouse: "greenhouse.png",
