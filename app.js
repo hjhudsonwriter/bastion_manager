@@ -41,7 +41,7 @@
     militaryList: $("militaryList"),
     clearMilitaryBtn: $("clearMilitaryBtn"),
 
-    
+    defenderRoster: $("defenderRoster"),
 
     eventBox: $("eventBox"),
     facilitiesGrid: $("facilitiesGrid"),
@@ -57,6 +57,25 @@
   };
 
   let DATA = { facilities: [], tools: {}, events: null };
+
+   const FACILITY_IMG = {
+  barracks: "barracks.png",
+  armoury: "armoury.png",
+  watchtower: "watchtower.png",
+  workshop: "workshop.png",
+  dock: "docks.png",
+
+  arcane_study: "arcane_study.png",
+  library: "library.png",
+  smithy: "smithy.png",
+  garden: "garden.png",
+  menagerie: "menageri.png",
+  scriptorium: "scriptorium.png",
+  gaming_hall: "gambling_hall.png",
+  storehouse: "storehouse.png",
+  greenhouse: "greenhouse.png",
+  guildhall: "guildhall.png",
+};
 
   init().catch(err => {
   console.error(err);
@@ -138,7 +157,7 @@
       render();
     });
 
-    ui.rollEventBtn.addEventListener("click", () => {
+    ui.rollEventBtn?.addEventListener("click", () => {
       const roll = d(100);
       const ev = resolveEvent(roll, DATA.events.eventTable);
       const descLines = (DATA.events.descriptions && DATA.events.descriptions[ev.name]) ? DATA.events.descriptions[ev.name] : [];
@@ -150,6 +169,8 @@
 
     ui.advanceTurnBtn.addEventListener("click", () => {
   state.turn += 1;
+       // Bastion Event disappears when you move to the next turn
+state.lastEvent = null;
 
   // One-turn buffs expire here
   state.defenders.patrolAdvantage = false;
@@ -162,7 +183,16 @@
     completeOrder(o);
   }
 
-  saveState();
+  // Auto Bastion Event every 4 turns
+if(state.turn % 4 === 0){
+  const roll = d(100);
+  const ev = resolveEvent(roll, DATA.events.eventTable);
+  const descLines = (DATA.events.descriptions && DATA.events.descriptions[ev.name]) ? DATA.events.descriptions[ev.name] : [];
+  state.lastEvent = { roll, name: ev.name, lines: descLines, at: Date.now() };
+  log("Bastion Event", `Auto event (Turn ${state.turn}) → Rolled ${roll} → ${ev.name}`);
+}
+
+       saveState();
   log("Turn Advanced", `Bastion Turn is now ${state.turn}.`);
   render();
 });
@@ -218,11 +248,11 @@
 
   // Menagerie recruit beast → military (or defenders later)
   if(fac.id==="menagerie" && fn.id==="recruit_beast"){
-    const beast = optionLabel || "Beast";
-    addToList(state.military, beast, { source: "Menagerie" });
-    log("Order Completed", `${label} → Recruited beast: ${beast}.`);
-    return;
-  }
+  const beast = optionLabel || "Beast";
+  addToList(state.defenderBeasts, beast, { source: "Menagerie" });
+  log("Order Completed", `${label} → Recruited beast: ${beast}. Added to Bastion Defenders.`);
+  return;
+}
 
   // Dock charter → warehouse
   if(fac.id==="dock" && fn.id==="charter_berth"){
@@ -264,6 +294,7 @@
       : "Unarmed";
 
     renderList(ui.militaryList, state.military, "No military recruited yet.");
+     renderList(ui.defenderRoster, state.defenderBeasts, "No beasts recruited yet.");
     renderWarehouse();
 
     renderEventBox();
@@ -656,9 +687,15 @@ function allBuiltFacilityIds(){
   ui.facilitiesGrid.innerHTML = builtFacilities.map(fac => {
     const fns = (fac.functions || []).map(fn => renderFunction(fac, fn, false)).join("");
 
-    return `
-      <div class="fac">
-        <div class="facTop">
+    const imgFile = FACILITY_IMG[fac.id];
+const imgHtml = imgFile
+  ? `<div class="facImgWrap"><img class="facImg" src="${withBase(`assets/facilities/${imgFile}`)}" alt="${escapeHtml(fac.name)}" /></div>`
+  : "";
+
+return `
+  <div class="fac">
+    ${imgHtml}
+    <div class="facTop">
           <div>
             <div class="facName">${escapeHtml(fac.name)}</div>
             <div class="small muted">Built • Functions take 1 Bastion Turn</div>
@@ -890,6 +927,7 @@ function allBuiltFacilityIds(){
            builtFacilities: Array.isArray(s.builtFacilities) ? s.builtFacilities : ["barracks","armoury","watchtower","workshop","dock"],
            builtExtras: Array.isArray(s.builtExtras) ? s.builtExtras : [],
            pendingOrders: Array.isArray(s.pendingOrders) ? s.pendingOrders : [],
+           defenderBeasts: Array.isArray(s.defenderBeasts) ? s.defenderBeasts : [],
            defenders: {
             count: clampInt(s.defenders?.count ?? 0, 0),
             armed: !!s.defenders?.armed,
@@ -902,6 +940,7 @@ function allBuiltFacilityIds(){
           log: Array.isArray(s.log) ? s.log : [],
         };
       }catch(e){
+         defenderBeasts: [],
         console.warn("Bad state JSON, resetting.", e);
       }
     }
