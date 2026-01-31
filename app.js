@@ -999,56 +999,77 @@ return `
 
   // ---------- State ----------
   function loadState(){
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      try{
-        const s = JSON.parse(raw);
-        return {
-           treasuryGP: clampInt(s.treasuryGP ?? 0, 0),
-           partyLevel: clampInt(s.partyLevel ?? 7, 1, 20),
-           builtFacilities: Array.isArray(s.builtFacilities) ? s.builtFacilities : ["barracks","armoury","watchtower","workshop","dock"],
-           builtExtras: Array.isArray(s.builtExtras) ? s.builtExtras : [],
-           pendingOrders: Array.isArray(s.pendingOrders) ? s.pendingOrders : [],
-           defenderBeasts: Array.isArray(s.defenderBeasts) ? s.defenderBeasts : [],
-           defenders: {
-            count: clampInt(s.defenders?.count ?? 0, 0),
-            armed: !!s.defenders?.armed,
-            patrolAdvantage: !!s.defenders?.patrolAdvantage,
-              artisanTools: Array.isArray(s.artisanTools) ? s.artisanTools : ["","","","","",""],
-          },
-          military: Array.isArray(s.military) ? s.military : [],
-          warehouse: Array.isArray(s.warehouse) ? s.warehouse : [],
-          turn: clampInt(s.turn ?? 1, 1),
-          lastEvent: s.lastEvent || null,
-          log: Array.isArray(s.log) ? s.log : [],
-        };
-      }catch(e){
-         defenderBeasts: [],
-            artisanTools: ["","","","","",""],
-        console.warn("Bad state JSON, resetting.", e);
-      }
-    }
-   return {
-  treasuryGP: 0,
-  partyLevel: 7,
+  const raw = localStorage.getItem(STORAGE_KEY);
 
-  // BUILT facilities on first ever load (your requested 5)
-  builtFacilities: ["barracks","armoury","watchtower","workshop","dock"],
+  // Defaults (first ever load)
+  const DEFAULT_STATE = {
+    treasuryGP: 0,
+    partyLevel: 7,
 
-  // Extra “built via slots” facilities live here
-  builtExtras: [],
+    // starting built facilities (your requested 5)
+    builtFacilities: ["barracks","armoury","watchtower","workshop","dock"],
+    builtExtras: [],
 
-  // Pending orders queue (1 turn duration)
-  pendingOrders: [],
+    // 1-turn pending orders
+    pendingOrders: [],
 
-  defenders: { count:0, armed:false, patrolAdvantage:false },
-  military: [],
-  warehouse: [],
-  turn: 1,
-  lastEvent: null,
-  log: [],
-};
+    // defenders core + menagerie beasts
+    defenders: { count:0, armed:false, patrolAdvantage:false },
+    defenderBeasts: [],
+
+    // lists
+    military: [],
+    warehouse: [],
+
+    // artisan tool selections (6 dropdowns)
+    artisanTools: ["","","","","",""],
+
+    // turns + events + log
+    turn: 1,
+    lastEvent: null,
+    log: [],
+  };
+
+  if(!raw) return DEFAULT_STATE;
+
+  try{
+    const s = JSON.parse(raw);
+
+    // Merge saved state into defaults safely
+    const merged = {
+      ...DEFAULT_STATE,
+      treasuryGP: clampInt(s.treasuryGP ?? DEFAULT_STATE.treasuryGP, 0),
+      partyLevel: clampInt(s.partyLevel ?? DEFAULT_STATE.partyLevel, 1, 20),
+
+      builtFacilities: Array.isArray(s.builtFacilities) ? s.builtFacilities : DEFAULT_STATE.builtFacilities,
+      builtExtras: Array.isArray(s.builtExtras) ? s.builtExtras : DEFAULT_STATE.builtExtras,
+
+      pendingOrders: Array.isArray(s.pendingOrders) ? s.pendingOrders : DEFAULT_STATE.pendingOrders,
+
+      defenders: {
+        count: clampInt(s.defenders?.count ?? DEFAULT_STATE.defenders.count, 0),
+        armed: !!s.defenders?.armed,
+        patrolAdvantage: !!s.defenders?.patrolAdvantage,
+      },
+
+      defenderBeasts: Array.isArray(s.defenderBeasts) ? s.defenderBeasts : DEFAULT_STATE.defenderBeasts,
+
+      military: Array.isArray(s.military) ? s.military : DEFAULT_STATE.military,
+      warehouse: Array.isArray(s.warehouse) ? s.warehouse : DEFAULT_STATE.warehouse,
+
+      artisanTools: Array.isArray(s.artisanTools) ? s.artisanTools : DEFAULT_STATE.artisanTools,
+
+      turn: clampInt(s.turn ?? DEFAULT_STATE.turn, 1),
+      lastEvent: s.lastEvent || null,
+      log: Array.isArray(s.log) ? s.log : DEFAULT_STATE.log,
+    };
+
+    return merged;
+  }catch(e){
+    console.warn("Bad state JSON, resetting.", e);
+    return DEFAULT_STATE;
   }
+}
 
   function saveState(){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
