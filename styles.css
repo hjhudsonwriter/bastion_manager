@@ -636,3 +636,61 @@ select option{
 .fullRow > .card{
   width: 100%;
 }
+
+/* ================================
+   Panel background images (faint)
+   ================================ */
+
+/* Ensure mgmt panels can host a background layer */
+.mgmtBox,
+.whRow2 > .card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* The faint image layer */
+.mgmtBox::before,
+.whRow2 > .card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.14; /* adjust 0.10–0.18 if you want */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Keep real content above the image layer */
+.mgmtBox > *,
+.whRow2 > .card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Specific images per panel ---- */
+
+/* Defenders panel = first mgmt column */
+.mgmtGrid .mgmtCol:nth-child(1) .mgmtBox::before {
+  background-image: url("assets/bastion_defenders.png");
+}
+
+/* Treasury panel = second mgmt column */
+.mgmtGrid .mgmtCol:nth-child(2) .mgmtBox::before {
+  background-image: url("assets/treasury.png");
+}
+
+/* Military panel = third mgmt column */
+.mgmtGrid .mgmtCol:nth-child(3) .mgmtBox::before {
+  background-image: url("assets/military.png");
+}
+
+/* Warehouse + Artisan Tools cards are inside .whRow2:
+   1st = Warehouse, 2nd = Artisan Tools
+   Apply ONLY to Artisan Tools (2nd card) */
+.whRow2 > .card:nth-child(2)::before {
+  background-image: url("assets/artisan_tools.png");
+}
+
+/* Do NOT set a bg image for warehouse unless you want one.
+   If you DO want warehouse too, tell me and I’ll give you the one-line rule. */
