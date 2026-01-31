@@ -14,10 +14,7 @@
     </div>
 
     <div class="topbar__controls">
-      <label class="field">
-        <span>Treasury (gp)</span>
-        <input id="treasuryInput" type="number" min="0" step="1" />
-      </label>
+    
 
       <label class="field">
         <span>Party Level</span>
@@ -66,6 +63,17 @@
       <div class="stack">
         <div class="row">
           <div>
+            <div class="row">
+  <div>
+    <div class="label">Treasury (gp)</div>
+    <div class="small muted">Shared Bastion funds</div>
+  </div>
+  <div class="actions">
+    <label class="field" style="margin:0">
+      <input id="treasuryInput" type="number" min="0" step="1" />
+    </label>
+  </div>
+</div>
             <div class="label">Bastion Defenders</div>
             <div class="value" id="defendersValue">0</div>
             <div class="small muted" id="defendersMeta">Unarmed</div>
@@ -123,17 +131,6 @@
   </div>
 </div>
 
-
-      <!-- This is still the simple list for now (we’ll convert to the full table UI next) -->
-      <div class="stack">
-        <div class="row">
-          <div class="small muted">Crafting, harvests, trade goods, ships, etc.</div>
-          <div class="actions">
-            <button class="btn btn--small" id="clearWarehouseBtn">Clear</button>
-          </div>
-        </div>
-        <div class="list" id="warehouseList"></div>
-      </div>
     </section>
 
     <!-- Facilities (below Warehouse, same width) -->
