@@ -686,11 +686,10 @@ select option{
 }
 
 /* Warehouse + Artisan Tools cards are inside .whRow2:
-   1st = Warehouse, 2nd = Artisan Tools
-   Apply ONLY to Artisan Tools (2nd card) */
+   1st = Warehouse, 2nd = Artisan Tools */
+.whRow2 > .card:nth-child(1)::before {
+  background-image: url("assets/warehouse.png");
+}
 .whRow2 > .card:nth-child(2)::before {
   background-image: url("assets/artisan_tools.png");
 }
-
-/* Do NOT set a bg image for warehouse unless you want one.
-   If you DO want warehouse too, tell me and I’ll give you the one-line rule. */
