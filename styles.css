@@ -326,6 +326,23 @@ select option{
   overflow: hidden; /* stops spill */
 }
 
+.facImgWrap{
+  width: 100%;
+  height: 110px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(214,178,94,.35);
+  margin-bottom: 10px;
+  background: rgba(0,0,0,.25);
+}
+.facImg{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.05) contrast(1.05);
+}
+
 .facTop{
   display: flex;
   align-items: flex-start;
@@ -454,7 +471,21 @@ select option{
   flex-direction: column;
   gap: 10px;
   padding-top: 12px;
+
+  /* Fixed height: roughly first 5 entries visible, then scroll */
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
 }
+
+/* Make the scroll bar visible and on-brand (optional but nice) */
+.warehouseBody::-webkit-scrollbar{ width: 10px; }
+.warehouseBody::-webkit-scrollbar-thumb{
+  background: rgba(214,178,94,.35);
+  border-radius: 999px;
+  border: 2px solid rgba(0,0,0,.35);
+}
+.warehouseBody::-webkit-scrollbar-track{ background: rgba(0,0,0,.25); border-radius: 999px; }
 
 .whRow{
   display: grid;
