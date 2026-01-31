@@ -14,8 +14,6 @@
     </div>
 
     <div class="topbar__controls">
-    
-
       <label class="field">
         <span>Party Level</span>
         <select id="levelSelect"></select>
@@ -29,209 +27,200 @@
 
   <main class="layout">
 
-  <!-- LEFT (Pink): Turn Log -->
-  <section class="leftCol">
-    <section class="card card--tall">
-      <div class="cardHeader">
-        <h2>Turn Log</h2>
-        <button class="btn btn--small" id="clearLogBtn">Clear log</button>
-      </div>
-      <div class="log log--tall" id="logList"></div>
-    </section>
-  </section>
-
-  <!-- CENTER: Map + Management + Warehouse + Facilities -->
-  <section class="mainCol">
-
-    <!-- Red: Map -->
-    <section class="mapCard">
-      <div class="cardHeader">
-        <h2>Bastion Map</h2>
-        <div class="pill" id="turnPill">Turn 1</div>
-      </div>
-      <img class="mapImg" src="assets/bastion_artwork.png" alt="Bastion artwork" />
-      <div class="mapHint">
-        Tip: This tool saves automatically in your browser (local storage). Each player can have their own copy.
-      </div>
-    </section>
-
-<!-- FULL-WIDTH: Management -->
-<section class="fullRow">
-  <section class="card">
- <section class="card">
-      <div class="cardHeader">
-        <h2>Management</h2>
-      </div>
-      <div class="mgmtGrid">
-
-  <!-- LEFT (Yellow): Defenders -->
-  <div class="mgmtCol">
-    <div class="mgmtBox">
-      <div class="rowTop">
-        <div>
-          <div class="label">Bastion Defenders</div>
-          <div class="small muted" id="defendersMeta">Unarmed</div>
+    <!-- LEFT (Pink): Turn Log -->
+    <section class="leftCol">
+      <section class="card card--tall">
+        <div class="cardHeader">
+          <h2>Turn Log</h2>
+          <button class="btn btn--small" id="clearLogBtn">Clear log</button>
         </div>
-        <div class="actions">
-          <button class="btn btn--small" id="addDefBtn">+1 Defender</button>
-          <button class="btn btn--small" id="subDefBtn">-1</button>
-        </div>
-      </div>
-
-      <div class="value" id="defendersValue">0</div>
-
-      <div class="label" style="margin-top:10px">Menagerie Beasts</div>
-      <div class="list" id="defenderRoster"></div>
-    </div>
-  </div>
-
-  <!-- MIDDLE (Green): Treasury -->
-  <div class="mgmtCol">
-    <div class="mgmtBox">
-      <div class="label">Treasury (gp)</div>
-      <div class="small muted">Shared Bastion funds</div>
-
-      <div style="margin-top:10px">
-        <label class="field" style="margin:0">
-          <input id="treasuryInput" type="number" min="0" step="1" />
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <!-- RIGHT (Blue): Military -->
-  <div class="mgmtCol">
-    <div class="mgmtBox">
-      <div class="rowTop">
-        <div>
-          <div class="label">Military</div>
-          <div class="small muted">Units recruited from the War Room.</div>
-        </div>
-        <div class="actions">
-          <button class="btn btn--small" id="clearMilitaryBtn">Clear</button>
-        </div>
-      </div>
-
-      <div class="list" id="militaryList"></div>
-    </div>
-  </div>
-
-</div>
-
+        <div class="log log--tall" id="logList"></div>
       </section>
-  </section>
-</section>
-   
+    </section>
 
-      <!-- FULL-WIDTH: Facilities -->
-<section class="fullRow">
-  <section class="card">
-<section class="card">
-      <div class="cardHeader">
-        <h2>Facilities</h2>
-        <div class="small muted">
-          Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
+    <!-- CENTER: Map ONLY -->
+    <section class="mainCol">
+      <!-- Red: Map -->
+      <section class="mapCard">
+        <div class="cardHeader">
+          <h2>Bastion Map</h2>
+          <div class="pill" id="turnPill">Turn 1</div>
         </div>
-      </div>
-      <div class="facBuild">
-  <div class="facBuildTop">
-    <div>
-      <div class="label">Construction Slots</div>
-      <div class="small muted" id="slotMeta">—</div>
-    </div>
-    <div class="actions">
-      <button class="btn btn--small" id="clearBuildBtn">Clear extra builds</button>
-    </div>
-  </div>
-
-  <div id="slotList" class="slotList"></div>
-</div>
-
-<div class="pendingWrap">
-  <div class="label">Pending Orders</div>
-  <div class="small muted">Orders complete when you click <b>Take Bastion Turn</b>.</div>
-  <div class="list" id="pendingList"></div>
-</div>
-
-<div class="facilities" id="facilitiesGrid"></div>
-
-    </section>
-  </section>
-</section>
-
-
-    <!-- Warehouse + Artisan Tools row -->
-<div class="whRow2">
-
-  <!-- Green: Warehouse -->
-  <section class="card">
-
-      <div class="cardHeader">
-  <h2>Warehouse</h2>
-</div>
-
-<div class="warehouseSub">
-  <div class="small muted">DM editable. Function outputs append here automatically when completed.</div>
-</div>
-
-<div class="warehouseWrap">
-  <div class="warehouseHead">
-    <div class="whCol">Item</div>
-    <div class="whCol whCol--qty">Qty</div>
-    <div class="whCol whCol--gp">GP</div>
-    <div class="whCol">Notes</div>
-    <div class="whCol whCol--act">Action</div>
-  </div>
-
-  <div class="warehouseBody" id="whTableBody">
-    <!-- rows injected by JS -->
-  </div>
-
-  <div class="warehouseActions">
-    <button class="btn btn--primary" id="addWarehouseRowBtn">Add Item</button>
-    <button class="btn" id="saveWarehouseBtn">Save Warehouse</button>
-    <button class="btn btn--small" id="clearWarehouseBtn">Clear</button>
-  </div>
-</div>
-
+        <img class="mapImg" src="assets/bastion_artwork.png" alt="Bastion artwork" />
+        <div class="mapHint">
+          Tip: This tool saves automatically in your browser (local storage). Each player can have their own copy.
+        </div>
+      </section>
     </section>
 
-    <!-- Red: Artisan Tools -->
-  <section class="card">
-    <div class="cardHeader">
-      <h2>Artisan Tools</h2>
-    </div>
+    <!-- RIGHT (Purple): Bastion Events -->
+    <section class="rightCol">
+      <section class="card card--tall">
+        <div class="cardHeader">
+          <h2>Bastion Event</h2>
+        </div>
+        <div class="eventBox muted" id="eventBox">
+          Click <b>Roll Bastion Event</b> to generate a 1d100 event.
+        </div>
+      </section>
+    </section>
 
-    <div class="stack" style="padding-top:12px">
-      <div class="small muted">Select up to 6 tool/supply sets. Workshop Craft will use these.</div>
+    <!-- FULL-WIDTH: Management (now spans ALL columns) -->
+    <section class="fullRow">
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Management</h2>
+        </div>
 
-      <div class="toolGrid" id="artisanToolGrid"></div>
+        <div class="mgmtGrid">
 
-      <div class="actions" style="justify-content:flex-start">
-        <button class="btn" id="saveArtisanToolsBtn">Save</button>
-        <button class="btn btn--small" id="clearArtisanToolsBtn">Clear</button>
-      </div>
-    </div>
-  </section>
+          <!-- LEFT (Yellow): Defenders -->
+          <div class="mgmtCol">
+            <div class="mgmtBox">
+              <div class="rowTop">
+                <div>
+                  <div class="label">Bastion Defenders</div>
+                  <div class="small muted" id="defendersMeta">Unarmed</div>
+                </div>
+                <div class="actions">
+                  <button class="btn btn--small" id="addDefBtn">+1 Defender</button>
+                  <button class="btn btn--small" id="subDefBtn">-1</button>
+                </div>
+              </div>
 
-</div> 
+              <div class="value" id="defendersValue">0</div>
 
-  </section>
+              <div class="label" style="margin-top:10px">Menagerie Beasts</div>
+              <div class="list" id="defenderRoster"></div>
+            </div>
+          </div>
 
-  <!-- RIGHT (Purple): Bastion Events -->
-  <section class="rightCol">
-    <section class="card card--tall">
-      <div class="cardHeader">
-        <h2>Bastion Event</h2>
-      </div>
-      <div class="eventBox muted" id="eventBox">
-        Click <b>Roll Bastion Event</b> to generate a 1d100 event.
+          <!-- MIDDLE (Green): Treasury -->
+          <div class="mgmtCol">
+            <div class="mgmtBox">
+              <div class="label">Treasury (gp)</div>
+              <div class="small muted">Shared Bastion funds</div>
+
+              <div style="margin-top:10px">
+                <label class="field" style="margin:0">
+                  <input id="treasuryInput" type="number" min="0" step="1" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT (Blue): Military -->
+          <div class="mgmtCol">
+            <div class="mgmtBox">
+              <div class="rowTop">
+                <div>
+                  <div class="label">Military</div>
+                  <div class="small muted">Units recruited from the War Room.</div>
+                </div>
+                <div class="actions">
+                  <button class="btn btn--small" id="clearMilitaryBtn">Clear</button>
+                </div>
+              </div>
+
+              <div class="list" id="militaryList"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </section>
+
+    <!-- FULL-WIDTH: Warehouse + Artisan Tools row (moved ABOVE Facilities) -->
+    <section class="fullRow">
+      <div class="whRow2">
+
+        <!-- Green: Warehouse -->
+        <section class="card">
+          <div class="cardHeader">
+            <h2>Warehouse</h2>
+          </div>
+
+          <div class="warehouseSub">
+            <div class="small muted">DM editable. Function outputs append here automatically when completed.</div>
+          </div>
+
+          <div class="warehouseWrap">
+            <div class="warehouseHead">
+              <div class="whCol">Item</div>
+              <div class="whCol whCol--qty">Qty</div>
+              <div class="whCol whCol--gp">GP</div>
+              <div class="whCol">Notes</div>
+              <div class="whCol whCol--act">Action</div>
+            </div>
+
+            <div class="warehouseBody" id="whTableBody">
+              <!-- rows injected by JS -->
+            </div>
+
+            <div class="warehouseActions">
+              <button class="btn btn--primary" id="addWarehouseRowBtn">Add Item</button>
+              <button class="btn" id="saveWarehouseBtn">Save Warehouse</button>
+              <button class="btn btn--small" id="clearWarehouseBtn">Clear</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Red: Artisan Tools -->
+        <section class="card">
+          <div class="cardHeader">
+            <h2>Artisan Tools</h2>
+          </div>
+
+          <div class="stack" style="padding-top:12px">
+            <div class="small muted">Select up to 6 tool/supply sets. Workshop Craft will use these.</div>
+
+            <div class="toolGrid" id="artisanToolGrid"></div>
+
+            <div class="actions" style="justify-content:flex-start">
+              <button class="btn" id="saveArtisanToolsBtn">Save</button>
+              <button class="btn btn--small" id="clearArtisanToolsBtn">Clear</button>
+            </div>
+          </div>
+        </section>
+
       </div>
     </section>
-  </section>
 
-</main>
+    <!-- FULL-WIDTH: Facilities (now spans ALL columns) -->
+    <section class="fullRow">
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Facilities</h2>
+          <div class="small muted">
+            Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
+          </div>
+        </div>
 
+        <div class="facBuild">
+          <div class="facBuildTop">
+            <div>
+              <div class="label">Construction Slots</div>
+              <div class="small muted" id="slotMeta">—</div>
+            </div>
+            <div class="actions">
+              <button class="btn btn--small" id="clearBuildBtn">Clear extra builds</button>
+            </div>
+          </div>
+
+          <div id="slotList" class="slotList"></div>
+        </div>
+
+        <div class="pendingWrap">
+          <div class="label">Pending Orders</div>
+          <div class="small muted">Orders complete when you click <b>Take Bastion Turn</b>.</div>
+          <div class="list" id="pendingList"></div>
+        </div>
+
+        <div class="facilities" id="facilitiesGrid"></div>
+      </section>
+    </section>
+
+  </main>
 
   <footer class="footer">
     <div class="small muted">Built for D&D Beyond campaigns. Data comes from your spreadsheet and is editable.</div>
