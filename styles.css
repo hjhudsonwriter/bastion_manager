@@ -603,3 +603,26 @@ select option{
   text-transform: uppercase;
   color: rgba(214,178,94,.95);
 }
+
+/* Warehouse + Artisan Tools row layout */
+.whRow2{
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+}
+
+.toolGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.toolGrid .field select{
+  width: 100%;
+}
+
+@media (max-width: 1100px){
+  .whRow2{ grid-template-columns: 1fr; }
+  .toolGrid{ grid-template-columns: 1fr; }
+}
