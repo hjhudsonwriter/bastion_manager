@@ -55,8 +55,10 @@
       </div>
     </section>
 
-    <!-- Yellow: Management (ONLY management now) -->
-    <section class="card">
+<!-- FULL-WIDTH: Management -->
+<section class="fullRow">
+  <section class="card">
+ <section class="card">
       <div class="cardHeader">
         <h2>Management</h2>
       </div>
@@ -116,7 +118,47 @@
 
 </div>
 
+      </section>
+  </section>
+</section>
+   
+
+      <!-- FULL-WIDTH: Facilities -->
+<section class="fullRow">
+  <section class="card">
+<section class="card">
+      <div class="cardHeader">
+        <h2>Facilities</h2>
+        <div class="small muted">
+          Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
+        </div>
+      </div>
+      <div class="facBuild">
+  <div class="facBuildTop">
+    <div>
+      <div class="label">Construction Slots</div>
+      <div class="small muted" id="slotMeta">—</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn--small" id="clearBuildBtn">Clear extra builds</button>
+    </div>
+  </div>
+
+  <div id="slotList" class="slotList"></div>
+</div>
+
+<div class="pendingWrap">
+  <div class="label">Pending Orders</div>
+  <div class="small muted">Orders complete when you click <b>Take Bastion Turn</b>.</div>
+  <div class="list" id="pendingList"></div>
+</div>
+
+<div class="facilities" id="facilitiesGrid"></div>
+
     </section>
+  </section>
+</section>
+
 
     <!-- Warehouse + Artisan Tools row -->
 <div class="whRow2">
@@ -172,39 +214,7 @@
     </div>
   </section>
 
-</div>
-  
-  <!-- Facilities (below Warehouse, same width) -->
-    <section class="card">
-      <div class="cardHeader">
-        <h2>Facilities</h2>
-        <div class="small muted">
-          Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
-        </div>
-      </div>
-      <div class="facBuild">
-  <div class="facBuildTop">
-    <div>
-      <div class="label">Construction Slots</div>
-      <div class="small muted" id="slotMeta">—</div>
-    </div>
-    <div class="actions">
-      <button class="btn btn--small" id="clearBuildBtn">Clear extra builds</button>
-    </div>
-  </div>
-
-  <div id="slotList" class="slotList"></div>
-</div>
-
-<div class="pendingWrap">
-  <div class="label">Pending Orders</div>
-  <div class="small muted">Orders complete when you click <b>Take Bastion Turn</b>.</div>
-  <div class="list" id="pendingList"></div>
-</div>
-
-<div class="facilities" id="facilitiesGrid"></div>
-
-    </section>
+</div> 
 
   </section>
 
