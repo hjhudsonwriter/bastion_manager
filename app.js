@@ -53,6 +53,10 @@
     slotList: $("slotList"),
     clearBuildBtn: $("clearBuildBtn"),
     pendingList: $("pendingList"),
+
+    artisanToolGrid: $("artisanToolGrid"),
+    saveArtisanToolsBtn: $("saveArtisanToolsBtn"),
+    clearArtisanToolsBtn: $("clearArtisanToolsBtn"),
  
   };
 
@@ -119,7 +123,20 @@
   render();
 });
 
-    ui.addDefBtn.addEventListener("click", () => {
+   ui.saveArtisanToolsBtn?.addEventListener("click", ()=>{
+  readArtisanToolsFromUI();
+  log("Artisan Tools", "Saved artisan tool selections.");
+  render();
+});
+
+ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
+  state.artisanTools = ["","","","","",""];
+  saveState();
+  log("Artisan Tools", "Cleared artisan tool selections.");
+  render();
+});
+
+     ui.addDefBtn.addEventListener("click", () => {
       state.defenders.count += 1;
       saveState();
       log("Defenders", "Added 1 Bastion Defender.");
@@ -262,17 +279,11 @@ if(state.turn % 4 === 0){
   }
 
   // Workshop craft (tool table random)
-  if(fac.id==="workshop" && fn.id==="craft" && chosen && chosen.toolTable){
-    const list = DATA.tools[chosen.toolTable] || [];
-    if(list.length){
-      const item = list[Math.floor(Math.random()*list.length)];
-      appendToWarehouse(item, 1, "", chosen.toolTable);
-      log("Order Completed", `${label} → Crafted: ${item}.`);
-    } else {
-      log("Order Completed", `${label} → No items found for table.`);
-    }
-    return;
-  }
+  if(fac.id==="workshop" && fn.id==="craft" && chosen && chosen.craftItem){
+  appendToWarehouse(chosen.craftItem, 1, "", "Workshop");
+  log("Order Completed", `${label} → Crafted: ${chosen.craftItem}.`);
+  return;
+}
 
   // Generic craft/harvest/trade → warehouse (if option chosen)
   if(optionLabel){
@@ -296,6 +307,7 @@ if(state.turn % 4 === 0){
     renderList(ui.militaryList, state.military, "No military recruited yet.");
      renderList(ui.defenderRoster, state.defenderBeasts, "No beasts recruited yet.");
     renderWarehouse();
+     renderArtisanTools();
 
     renderEventBox();
     renderFacilities();
@@ -565,13 +577,20 @@ function allBuiltFacilityIds(){
     chosen = fn.options[idx] || null;
     optionLabel = chosen && chosen.label ? chosen.label : String(chosen || "");
   } else if(fac.id==="workshop" && fn.id==="craft"){
-    const sel = document.getElementById(`sel_${fac.id}__${fn.id}`);
-    const idx = clampInt(sel ? sel.value : 0, 0);
-    const toolTables = Object.keys(DATA.tools || {}).filter(k => k.endsWith("Tools") || k.endsWith("Supplies"));
-    const tableName = toolTables[idx];
-    chosen = { label: tableName, toolTable: tableName };
-    optionLabel = tableName;
+  const sel = document.getElementById(`sel_${fac.id}__${fn.id}`);
+  const idx = clampInt(sel ? sel.value : 0, 0);
+
+  const chosenTables = (state.artisanTools || []).filter(Boolean);
+  const set = new Set();
+  for(const t of chosenTables){
+    for(const item of (DATA.tools[t] || [])) set.add(String(item));
   }
+  const items = Array.from(set).sort((a,b)=>a.localeCompare(b));
+  const picked = items[idx] || "";
+
+  chosen = { label: picked, craftItem: picked };
+  optionLabel = picked;
+}
 
   const { costGP } = computeFnCost(fac, fn, chosen);
 
@@ -602,7 +621,47 @@ function allBuiltFacilityIds(){
   log("Order Issued", label);
   render();
 }
-   
+
+   function toolTableNames(){
+  return Object.keys(DATA.tools || {}).filter(k => k.endsWith("Tools") || k.endsWith("Supplies"));
+}
+
+function renderArtisanTools(){
+  if(!ui.artisanToolGrid) return;
+
+  const tables = toolTableNames();
+  // ensure shape
+  if(!Array.isArray(state.artisanTools)) state.artisanTools = ["","","","","",""];
+  while(state.artisanTools.length < 6) state.artisanTools.push("");
+
+  ui.artisanToolGrid.innerHTML = Array.from({length:6}, (_,i)=>{
+    const current = state.artisanTools[i] || "";
+    return `
+      <label class="field">
+        <span>Set ${i+1}</span>
+        <select id="artisanSel_${i}">
+          <option value="">(None)</option>
+          ${tables.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
+        </select>
+      </label>
+    `;
+  }).join("");
+
+  for(let i=0;i<6;i++){
+    const sel = document.getElementById(`artisanSel_${i}`);
+    if(sel) sel.value = state.artisanTools[i] || "";
+  }
+}
+
+function readArtisanToolsFromUI(){
+  if(!Array.isArray(state.artisanTools)) state.artisanTools = ["","","","","",""];
+  for(let i=0;i<6;i++){
+    const sel = document.getElementById(`artisanSel_${i}`);
+    state.artisanTools[i] = sel ? (sel.value || "") : "";
+  }
+  saveState();
+}
+
    function renderFacilities(){
   const lvl = state.partyLevel;
 
@@ -738,9 +797,20 @@ return `
     // For MVP we let the DM pick ANY tool list from the spreadsheet tables.
     let options = fn.options || [];
     if(fac.id === "workshop" && fn.id === "craft"){
-      const toolTables = Object.keys(DATA.tools || {}).filter(k => k.endsWith("Tools") || k.endsWith("Supplies"));
-      options = toolTables.map(t => ({ label: t, toolTable: t }));
+  // Build craftable items from the saved Artisan Tools selections
+  const chosenTables = (state.artisanTools || []).filter(Boolean);
+  const set = new Set();
+
+  for(const t of chosenTables){
+    const list = DATA.tools[t] || [];
+    for(const item of list){
+      set.add(String(item));
     }
+  }
+
+  const items = Array.from(set).sort((a,b)=>a.localeCompare(b));
+  options = items.map(name => ({ label: name, craftItem: name }));
+}
 
     const selectHtml = needsOption || (fac.id==="workshop" && fn.id==="craft")
       ? `<select id="sel_${escapeHtml(key)}">
@@ -754,7 +824,7 @@ return `
 
     const costText = computeFnCostText(fac, fn, null);
 
-    const notes = fn.notes ? `<div class="fnNotes">${escapeHtml(fn.notes)}</div>` : "";
+    const notes = (fac.id==="workshop" && fn.id==="craft") ? "" : (fn.notes ? `<div class="fnNotes">${escapeHtml(fn.notes)}</div>` : "");
 
     return `
       <div class="fnRow">
@@ -944,6 +1014,7 @@ return `
             count: clampInt(s.defenders?.count ?? 0, 0),
             armed: !!s.defenders?.armed,
             patrolAdvantage: !!s.defenders?.patrolAdvantage,
+              artisanTools: Array.isArray(s.artisanTools) ? s.artisanTools : ["","","","","",""],
           },
           military: Array.isArray(s.military) ? s.military : [],
           warehouse: Array.isArray(s.warehouse) ? s.warehouse : [],
@@ -953,6 +1024,7 @@ return `
         };
       }catch(e){
          defenderBeasts: [],
+            artisanTools: ["","","","","",""],
         console.warn("Bad state JSON, resetting.", e);
       }
     }
