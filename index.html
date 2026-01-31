@@ -69,6 +69,7 @@
             <div class="label">Bastion Defenders</div>
             <div class="value" id="defendersValue">0</div>
             <div class="small muted" id="defendersMeta">Unarmed</div>
+            <div class="list" id="defenderRoster"></div>
           </div>
           <div class="actions">
             <button class="btn btn--small" id="addDefBtn">+1 Defender</button>
@@ -76,16 +77,19 @@
           </div>
         </div>
 
-        <div class="row">
-          <div>
-            <div class="label">Military</div>
-            <div class="small muted">Units recruited from the War Room.</div>
-          </div>
-          <div class="actions">
-            <button class="btn btn--small" id="clearMilitaryBtn">Clear</button>
-          </div>
-        </div>
-        <div class="list" id="militaryList"></div>
+        <div class="row row--stack">
+  <div class="rowTop">
+    <div>
+      <div class="label">Military</div>
+      <div class="small muted">Units recruited from the War Room.</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn--small" id="clearMilitaryBtn">Clear</button>
+    </div>
+  </div>
+
+  <div class="list" id="militaryList"></div>
+</div>
       </div>
     </section>
 
