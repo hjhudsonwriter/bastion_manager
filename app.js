@@ -624,58 +624,70 @@ function allBuiltFacilityIds(){
     .filter(id => !built.includes(id));
 
   // Build slot rows
-  for(let i=0;i<slots;i++){
-    const current = state.builtExtras[i] || "";
-    const options = ["", ...remaining.filter(id => !state.builtExtras.includes(id))];
+for(let i=0;i<slots;i++){
+  const current = state.builtExtras[i] || "";
 
-    const row = document.createElement("div");
-    row.className = "slotRow";
+  const row = document.createElement("div");
+  row.className = "slotRow";
+
+  // If already built, show LOCKED display (no dropdown)
+  if(current){
+    const fac = DATA.facilities.find(f=>f.id===current);
     row.innerHTML = `
-      <select id="slot_${i}">
-        ${options.map(id=>{
-          if(id==="") return `<option value="">(Empty slot)</option>`;
-          const fac = DATA.facilities.find(f=>f.id===id);
-          return `<option value="${escapeHtml(id)}">${escapeHtml(fac ? fac.name : id)}</option>`;
-        }).join("")}
-      </select>
-      <button class="btn btn--small" data-slot="${i}">Build</button>
+      <div class="slotLocked">
+        <div class="slotLocked__name">${escapeHtml(fac ? fac.name : current)}</div>
+        <div class="small muted">Built (slot locked)</div>
+      </div>
     `;
-
     ui.slotList.appendChild(row);
-
-    // preselect if already built in that slot
-    if(current){
-      const sel = row.querySelector(`#slot_${i}`);
-      if(sel) sel.value = current;
-    }
+    continue;
   }
 
+  // Otherwise: empty slot shows dropdown + Build button
+  const built = allBuiltFacilityIds();
+  const remaining = DATA.facilities
+    .map(f => f.id)
+    .filter(id => !built.includes(id));
+
+  row.innerHTML = `
+    <select id="slot_${i}">
+      <option value="">(Empty slot)</option>
+      ${remaining.map(id=>{
+        const f = DATA.facilities.find(x=>x.id===id);
+        return `<option value="${escapeHtml(id)}">${escapeHtml(f ? f.name : id)}</option>`;
+      }).join("")}
+    </select>
+    <button class="btn btn--small" data-slot="${i}">Build</button>
+  `;
+
+  ui.slotList.appendChild(row);
+}
+
+
   // Slot Build buttons
-  ui.slotList.querySelectorAll("button[data-slot]").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const i = clampInt(btn.getAttribute("data-slot"), 0);
-      const sel = document.getElementById(`slot_${i}`);
-      const val = sel ? sel.value : "";
-      if(!val){
-        // clearing this slot
-        state.builtExtras[i] = "";
-        state.builtExtras = state.builtExtras.filter(Boolean);
-        saveState();
-        render();
-        return;
-      }
-      // Assign into extras (keep unique)
-      if(allBuiltFacilityIds().includes(val)){
-        alert("That facility is already built.");
-        return;
-      }
-      state.builtExtras[i] = val;
-      state.builtExtras = state.builtExtras.filter(Boolean);
-      saveState();
-      log("Construction", `Built facility in slot: ${val}`);
-      render();
-    });
+ui.slotList.querySelectorAll("button[data-slot]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const i = clampInt(btn.getAttribute("data-slot"), 0);
+    const sel = document.getElementById(`slot_${i}`);
+    const val = sel ? sel.value : "";
+
+    if(!val){
+      alert("Pick a facility first.");
+      return;
+    }
+
+    if(allBuiltFacilityIds().includes(val)){
+      alert("That facility is already built.");
+      return;
+    }
+
+    state.builtExtras[i] = val; // LOCK it into that slot index
+    saveState();
+    log("Construction", `Built facility: ${val}`);
+    render();
   });
+});
+
 
   // --- Pending Orders list ---
   renderPendingOrders();
