@@ -118,8 +118,12 @@
 
     </section>
 
-    <!-- Green: Warehouse (separate panel, same width as map) -->
-    <section class="card">
+    <!-- Warehouse + Artisan Tools row -->
+<div class="whRow2">
+
+  <!-- Green: Warehouse -->
+  <section class="card">
+
       <div class="cardHeader">
   <h2>Warehouse</h2>
 </div>
@@ -150,7 +154,27 @@
 
     </section>
 
-    <!-- Facilities (below Warehouse, same width) -->
+    <!-- Red: Artisan Tools -->
+  <section class="card">
+    <div class="cardHeader">
+      <h2>Artisan Tools</h2>
+    </div>
+
+    <div class="stack" style="padding-top:12px">
+      <div class="small muted">Select up to 6 tool/supply sets. Workshop Craft will use these.</div>
+
+      <div class="toolGrid" id="artisanToolGrid"></div>
+
+      <div class="actions" style="justify-content:flex-start">
+        <button class="btn" id="saveArtisanToolsBtn">Save</button>
+        <button class="btn btn--small" id="clearArtisanToolsBtn">Clear</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+  
+  <!-- Facilities (below Warehouse, same width) -->
     <section class="card">
       <div class="cardHeader">
         <h2>Facilities</h2>
