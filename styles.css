@@ -246,6 +246,7 @@ select option{
 
   background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.05));
 }
+
 /* Row variant that contains its own list content */
 .row--stack{
   flex-direction: column;
