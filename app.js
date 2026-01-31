@@ -62,6 +62,75 @@
 
   let DATA = { facilities: [], tools: {}, events: null };
 
+   // --- Construction timing rules ---
+function buildTurnsForRequiredLevel(requiredLevel){
+  const rl = Number(requiredLevel || 0);
+  if(rl >= 17) return 5;
+  if(rl >= 13) return 5;
+  if(rl >= 9)  return 4;
+  if(rl >= 5)  return 3;
+  return 0; // starter / no-threshold
+}
+
+// Your 5 always-built facilities
+const STARTING_BUILT = ["barracks","armoury","watchtower","workshop","dock"];
+
+// Normalize old saves: strings -> {status:"built"}
+function normalizeBuiltExtras(){
+  if(!Array.isArray(state.builtExtras)) state.builtExtras = [];
+  state.builtExtras = state.builtExtras.map(x=>{
+    if(!x) return "";
+    if(typeof x === "string") return { facId: x, status: "built" };
+    if(typeof x === "object" && x.facId) return x;
+    return "";
+  });
+}
+
+// Facilities "reserved" (built OR building) so you can't pick duplicates
+function reservedFacilityIds(){
+  normalizeBuiltExtras();
+  const extra = state.builtExtras
+    .filter(x => x && typeof x === "object" && x.facId)
+    .map(x => x.facId);
+  return Array.from(new Set([...STARTING_BUILT, ...extra]));
+}
+
+// Facilities that are actually ACTIVE (built only)
+function builtFacilityIds(){
+  normalizeBuiltExtras();
+  const extraBuilt = state.builtExtras
+    .filter(x => x && typeof x === "object" && x.status === "built" && x.facId)
+    .map(x => x.facId);
+  return Array.from(new Set([...STARTING_BUILT, ...extraBuilt]));
+}
+
+// Advance construction by 1 turn
+function tickConstruction(){
+  normalizeBuiltExtras();
+  let completed = [];
+
+  state.builtExtras = state.builtExtras.map(entry=>{
+    if(!entry || entry === "") return "";
+
+    if(entry.status === "building"){
+      const next = Math.max(0, Number(entry.remaining || 0) - 1);
+      if(next === 0){
+        completed.push(entry.facId);
+        return { facId: entry.facId, status: "built" };
+      }
+      return { ...entry, remaining: next };
+    }
+
+    return entry; // built
+  });
+
+  // Log completions
+  for(const id of completed){
+    const fac = DATA.facilities.find(f=>f.id===id);
+    log("Construction Complete", `${fac ? fac.name : id} is now built and active.`);
+  }
+}
+
    const FACILITY_IMG = {
   barracks: "barracks.png",
   armoury: "armoury.png",
@@ -186,6 +255,7 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
 
     ui.advanceTurnBtn.addEventListener("click", () => {
   state.turn += 1;
+       tickConstruction();
        // Bastion Event disappears when you move to the next turn
 state.lastEvent = null;
 
@@ -686,73 +756,119 @@ function readArtisanToolsFromUI(){
 for(let i=0;i<slots;i++){
   const current = state.builtExtras[i] || "";
 
-  const row = document.createElement("div");
-  row.className = "slotRow";
+    // --- Construction Slots UI ---
+  normalizeBuiltExtras();
 
-  // If already built, show LOCKED display (no dropdown)
-  if(current){
-    const fac = DATA.facilities.find(f=>f.id===current);
+  const maxSlots = constructionSlotsForLevel(state.partyLevel); // keep your existing working slot-count function
+  while(state.builtExtras.length < maxSlots) state.builtExtras.push("");
+  if(state.builtExtras.length > maxSlots) state.builtExtras = state.builtExtras.slice(0, maxSlots);
+
+  ui.slotList.innerHTML = "";
+
+  // All facilities that are NOT the 5 starters
+  const buildable = DATA.facilities
+    .filter(f => !STARTING_BUILT.includes(f.id));
+
+  const reserved = reservedFacilityIds();
+
+  for(let i=0; i<maxSlots; i++){
+    const current = state.builtExtras[i];
+
+    const row = document.createElement("div");
+    row.className = "slotRow";
+
+    // If slot occupied (building or built), show locked label
+    if(current && typeof current === "object" && current.facId){
+      const fac = DATA.facilities.find(f=>f.id===current.facId);
+      const name = fac ? fac.name : current.facId;
+
+      const statusText = (current.status === "building")
+        ? `Under construction • ${Number(current.remaining||0)} turn(s) remaining`
+        : `Built • Active`;
+
+      row.innerHTML = `
+        <div class="slotLocked">
+          <div class="slotLocked__name">${escapeHtml(name)}</div>
+          <div class="small muted">${escapeHtml(statusText)}</div>
+        </div>
+      `;
+      ui.slotList.appendChild(row);
+      continue;
+    }
+
+    // Empty slot: dropdown + build button
+    const optionsHtml = buildable.map(f=>{
+      // disallow duplicates (but allow selecting the same if it's the current slot, which is empty anyway)
+      const isTaken = reserved.includes(f.id);
+      const isLockedByLevel = state.partyLevel < (Number(f.requiredLevel||0));
+
+      // If it's taken by another slot, disable it
+      const disabled = isTaken || isLockedByLevel;
+
+      const lockLabel = isLockedByLevel ? ` (Locked: Lvl ${f.requiredLevel})` : "";
+      const takenLabel = isTaken ? " (Already chosen)" : "";
+
+      return `<option value="${escapeHtml(f.id)}" ${disabled ? "disabled" : ""}>
+        ${escapeHtml(f.name)}${escapeHtml(lockLabel)}${escapeHtml(takenLabel)}
+      </option>`;
+    }).join("");
+
     row.innerHTML = `
-      <div class="slotLocked">
-        <div class="slotLocked__name">${escapeHtml(fac ? fac.name : current)}</div>
-        <div class="small muted">Built (slot locked)</div>
-      </div>
+      <select id="slot_${i}">
+        <option value="">(Empty slot)</option>
+        ${optionsHtml}
+      </select>
+      <button class="btn btn--small" data-slot="${i}">Build</button>
     `;
+
     ui.slotList.appendChild(row);
-    continue;
   }
 
-  // Otherwise: empty slot shows dropdown + Build button
-  const built = allBuiltFacilityIds();
-  const remaining = DATA.facilities
-    .map(f => f.id)
-    .filter(id => !built.includes(id));
-
-  row.innerHTML = `
-    <select id="slot_${i}">
-      <option value="">(Empty slot)</option>
-      ${remaining.map(id=>{
-        const f = DATA.facilities.find(x=>x.id===id);
-        return `<option value="${escapeHtml(id)}">${escapeHtml(f ? f.name : id)}</option>`;
-      }).join("")}
-    </select>
-    <button class="btn btn--small" data-slot="${i}">Build</button>
-  `;
-
-  ui.slotList.appendChild(row);
-}
-
-
   // Slot Build buttons
-ui.slotList.querySelectorAll("button[data-slot]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const i = clampInt(btn.getAttribute("data-slot"), 0);
-    const sel = document.getElementById(`slot_${i}`);
-    const val = sel ? sel.value : "";
+  ui.slotList.querySelectorAll("button[data-slot]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = clampInt(btn.getAttribute("data-slot"), 0);
+      const sel = document.getElementById(`slot_${i}`);
+      const val = sel ? sel.value : "";
 
-    if(!val){
-      alert("Pick a facility first.");
-      return;
-    }
+      if(!val){
+        return; // do nothing if empty
+      }
 
-    if(allBuiltFacilityIds().includes(val)){
-      alert("That facility is already built.");
-      return;
-    }
+      // level gate (belt + braces)
+      const fac = DATA.facilities.find(f=>f.id===val);
+      const req = Number(fac?.requiredLevel || 0);
+      if(state.partyLevel < req){
+        alert(`Locked. ${fac?.name || val} requires party level ${req}.`);
+        return;
+      }
 
-    state.builtExtras[i] = val; // LOCK it into that slot index
-    saveState();
-    log("Construction", `Built facility: ${val}`);
-    render();
+      // duplicate prevention
+      if(reservedFacilityIds().includes(val)){
+        alert("That facility is already built or under construction.");
+        return;
+      }
+
+      const turns = buildTurnsForRequiredLevel(req);
+
+      if(turns <= 0){
+        state.builtExtras[i] = { facId: val, status: "built" };
+        log("Construction", `${fac?.name || val} built instantly.`);
+      }else{
+        state.builtExtras[i] = { facId: val, status: "building", remaining: turns };
+        log("Construction Started", `${fac?.name || val} is under construction (${turns} turns).`);
+      }
+
+      saveState();
+      render();
+    });
   });
-});
-
 
   // --- Pending Orders list ---
   renderPendingOrders();
 
   // --- Facilities grid: ONLY built facilities ---
-  const builtIds = allBuiltFacilityIds();
+  const builtIds = builtFacilityIds();
   const builtFacilities = DATA.facilities.filter(f => builtIds.includes(f.id));
 
   ui.facilitiesGrid.innerHTML = builtFacilities.map(fac => {
