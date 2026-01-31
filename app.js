@@ -735,44 +735,30 @@ function readArtisanToolsFromUI(){
    function renderFacilities(){
   const lvl = state.partyLevel;
 
-  // --- Slots UI ---
-  const slots = constructionSlotsForLevel(lvl);
-  // clamp extras if level drops
-  if(state.builtExtras.length > slots){
-    state.builtExtras = state.builtExtras.slice(0, slots);
-    saveState();
-  }
-
-  ui.slotMeta.textContent = `Level ${lvl} → ${slots} slot(s). Used: ${state.builtExtras.length}/${slots}`;
-  ui.slotList.innerHTML = "";
-
-  // Available facilities (not already built)
-  const built = allBuiltFacilityIds();
-  const remaining = DATA.facilities
-    .map(f => f.id)
-    .filter(id => !built.includes(id));
-
-  // Build slot rows
-for(let i=0;i<slots;i++){
-  const current = state.builtExtras[i] || "";
-
-    // --- Construction Slots UI ---
+  // --- Slots UI (construction) ---
   normalizeBuiltExtras();
 
-  const maxSlots = constructionSlotsForLevel(state.partyLevel); // keep your existing working slot-count function
+  const maxSlots = constructionSlotsForLevel(lvl);
+
+  // Ensure builtExtras has exactly maxSlots entries
   while(state.builtExtras.length < maxSlots) state.builtExtras.push("");
   if(state.builtExtras.length > maxSlots) state.builtExtras = state.builtExtras.slice(0, maxSlots);
 
+  // Meta text
+  const used = state.builtExtras.filter(x => x && typeof x === "object" && x.facId).length;
+  ui.slotMeta.textContent = `Level ${lvl} → ${maxSlots} slot(s). Used: ${used}/${maxSlots}`;
+
   ui.slotList.innerHTML = "";
 
-  // All facilities that are NOT the 5 starters
-  const buildable = DATA.facilities
-    .filter(f => !STARTING_BUILT.includes(f.id));
+  // Buildable facilities = everything except starters
+  const buildable = DATA.facilities.filter(f => !STARTING_BUILT.includes(f.id));
 
+  // Reserved = already built OR currently building in any slot + starters
   const reserved = reservedFacilityIds();
 
-  for(let i=0; i<maxSlots; i++){
-    const current = state.builtExtras[i];
+  // Build each slot row
+  for(let slotIndex = 0; slotIndex < maxSlots; slotIndex++){
+    const current = state.builtExtras[slotIndex];
 
     const row = document.createElement("div");
     row.className = "slotRow";
@@ -798,14 +784,12 @@ for(let i=0;i<slots;i++){
 
     // Empty slot: dropdown + build button
     const optionsHtml = buildable.map(f=>{
-      // disallow duplicates (but allow selecting the same if it's the current slot, which is empty anyway)
       const isTaken = reserved.includes(f.id);
-      const isLockedByLevel = state.partyLevel < (Number(f.requiredLevel||0));
-
-      // If it's taken by another slot, disable it
+      const req = Number(f.requiredLevel || 0);
+      const isLockedByLevel = lvl < req;
       const disabled = isTaken || isLockedByLevel;
 
-      const lockLabel = isLockedByLevel ? ` (Locked: Lvl ${f.requiredLevel})` : "";
+      const lockLabel = isLockedByLevel ? ` (Locked: Lvl ${req})` : "";
       const takenLabel = isTaken ? " (Already chosen)" : "";
 
       return `<option value="${escapeHtml(f.id)}" ${disabled ? "disabled" : ""}>
@@ -814,36 +798,35 @@ for(let i=0;i<slots;i++){
     }).join("");
 
     row.innerHTML = `
-      <select id="slot_${i}">
+      <select id="slot_${slotIndex}">
         <option value="">(Empty slot)</option>
         ${optionsHtml}
       </select>
-      <button class="btn btn--small" data-slot="${i}">Build</button>
+      <button class="btn btn--small" data-slot="${slotIndex}">Build</button>
     `;
 
     ui.slotList.appendChild(row);
   }
 
-  // Slot Build buttons
+  // Slot Build button wiring
   ui.slotList.querySelectorAll("button[data-slot]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
-      const i = clampInt(btn.getAttribute("data-slot"), 0);
-      const sel = document.getElementById(`slot_${i}`);
+      const slotIndex = clampInt(btn.getAttribute("data-slot"), 0);
+      const sel = document.getElementById(`slot_${slotIndex}`);
       const val = sel ? sel.value : "";
 
-      if(!val){
-        return; // do nothing if empty
-      }
+      if(!val) return;
 
-      // level gate (belt + braces)
       const fac = DATA.facilities.find(f=>f.id===val);
       const req = Number(fac?.requiredLevel || 0);
-      if(state.partyLevel < req){
+
+      // Level gate (hard enforcement)
+      if(lvl < req){
         alert(`Locked. ${fac?.name || val} requires party level ${req}.`);
         return;
       }
 
-      // duplicate prevention
+      // Duplicate prevention (built OR building)
       if(reservedFacilityIds().includes(val)){
         alert("That facility is already built or under construction.");
         return;
@@ -852,10 +835,10 @@ for(let i=0;i<slots;i++){
       const turns = buildTurnsForRequiredLevel(req);
 
       if(turns <= 0){
-        state.builtExtras[i] = { facId: val, status: "built" };
+        state.builtExtras[slotIndex] = { facId: val, status: "built" };
         log("Construction", `${fac?.name || val} built instantly.`);
       }else{
-        state.builtExtras[i] = { facId: val, status: "building", remaining: turns };
+        state.builtExtras[slotIndex] = { facId: val, status: "building", remaining: turns };
         log("Construction Started", `${fac?.name || val} is under construction (${turns} turns).`);
       }
 
@@ -875,21 +858,20 @@ for(let i=0;i<slots;i++){
     const fns = (fac.functions || []).map(fn => renderFunction(fac, fn, false)).join("");
 
     const imgFile = FACILITY_IMG[fac.id];
-const imgHtml = imgFile
-  ? `<div class="facImgWrap"><img class="facImg" src="${withBase(`assets/facilities/${imgFile}`)}" alt="${escapeHtml(fac.name)}" /></div>`
-  : "";
+    const imgHtml = imgFile
+      ? `<div class="facImgWrap"><img class="facImg" src="${withBase(`assets/facilities/${imgFile}`)}" alt="${escapeHtml(fac.name)}" /></div>`
+      : "";
 
-return `
-  <div class="fac">
-    ${imgHtml}
-    <div class="facTop">
+    return `
+      <div class="fac">
+        ${imgHtml}
+        <div class="facTop">
           <div>
             <div class="facName">${escapeHtml(fac.name)}</div>
             <div class="small muted">Built • Functions take 1 Bastion Turn</div>
           </div>
           <div class="facMeta"><span class="tag tag--ok">Active</span></div>
         </div>
-
         <div class="facFns">${fns || `<div class="small muted">No functions listed.</div>`}</div>
       </div>
     `;
@@ -904,6 +886,7 @@ return `
     });
   });
 }
+
 
   function renderFunction(fac, fn, locked){
     const key = `${fac.id}__${fn.id}`;
