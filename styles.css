@@ -626,3 +626,13 @@ select option{
   .whRow2{ grid-template-columns: 1fr; }
   .toolGrid{ grid-template-columns: 1fr; }
 }
+
+/* Full-width rows inside the 3-column layout */
+.fullRow{
+  grid-column: 1 / -1;
+}
+
+/* Make sure the card inside fills that row */
+.fullRow > .card{
+  width: 100%;
+}
