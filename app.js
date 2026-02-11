@@ -360,6 +360,8 @@ ui.importFileInput?.addEventListener("change", async () => {
     });
 
     render();
+    bindFavourButtonsOnce();
+    renderFavour();
   }
 
    function completeOrder(o){
@@ -371,6 +373,32 @@ ui.importFileInput?.addEventListener("change", async () => {
   const label = o.label || `${fac.name}: ${fn.label}`;
   const optionLabel = o.optionLabel || null;
   const chosen = o.chosen || null;
+    // --- Shrines: special prayer effects (on completion) ---
+  const special = chosen && chosen.special ? chosen.special : null;
+  if(special && special.type){
+    const god = String(special.god || "").toLowerCase();
+
+    if(special.type === "favour_blessing"){
+      const roll = d(20); // 1d20
+      addFavourPercent(god, roll);
+      log("Order Completed", `${label} → Rolled 1d20 = ${roll}. Added +${roll}% to ${god.toUpperCase()} favour.`);
+      return;
+    }
+
+    if(special.type === "oracle_hint"){
+      const roll = d(10); // 1d10
+      const hit = (roll >= 4 && roll <= 7);
+      log("Order Completed", `${label} → Rolled 1d10 = ${roll}. ${hit ? "A hint is granted (DM decides the hint)." : "No hint this time."}`);
+      return;
+    }
+
+    if(special.type === "blessing_rest"){
+      const roll = d(6); // 1d6
+      const hit = (roll >= 5);
+      log("Order Completed", `${label} → Rolled 1d6 = ${roll}. ${hit ? "Long Rest effects granted." : "No rest granted."}`);
+      return;
+    }
+  }    
 
   // Barracks recruit defenders
   if(fac.id==="barracks" && fn.id==="recruit_defenders"){
@@ -451,6 +479,7 @@ ui.importFileInput?.addEventListener("change", async () => {
     renderEventBox();
     renderFacilities();
     renderLog();
+    renderFavour();
 
     // update treasury input (in case actions changed it)
     ui.treasuryInput.value = String(state.treasuryGP);
@@ -786,10 +815,12 @@ function renderArtisanTools(){
     `;
   }).join("");
 
-  for(let i=0;i<6;i++){
+    for(let i=0;i<6;i++){
     const sel = document.getElementById(`artisanSel_${i}`);
     if(sel) sel.value = state.artisanTools[i] || "";
   }
+
+  bindArtisanTooltips();
 }
 
 function readArtisanToolsFromUI(){
@@ -799,6 +830,60 @@ function readArtisanToolsFromUI(){
     state.artisanTools[i] = sel ? (sel.value || "") : "";
   }
   saveState();
+}
+   function bindArtisanTooltips(){
+  const tip = document.getElementById("artisanTooltip");
+  if(!tip) return;
+
+  // Avoid re-binding every render
+  const selects = Array.from(document.querySelectorAll("#artisanToolGrid select"));
+  for(const sel of selects){
+    if(sel.dataset.ttBound === "1") continue;
+    sel.dataset.ttBound = "1";
+
+    const show = (e)=>{
+      const table = sel.value;
+      if(!table){
+        tip.hidden = true;
+        return;
+      }
+      const items = (DATA.tools && DATA.tools[table]) ? DATA.tools[table] : [];
+      const preview = items.slice(0, 24); // keep it tidy
+
+      tip.innerHTML = `
+        <div class="ttTitle">${escapeHtml(table)}</div>
+        ${items.length
+          ? `<div class="small muted">Enables ${items.length} craftable item(s). Showing first ${preview.length}:</div>
+             <ul>${preview.map(x=>`<li>${escapeHtml(String(x))}</li>`).join("")}</ul>`
+          : `<div class="small muted">No items found for this tool table.</div>`
+        }
+      `;
+
+      tip.hidden = false;
+      positionTooltip(e, tip);
+    };
+
+    const move = (e)=> positionTooltip(e, tip);
+    const hide = ()=> { tip.hidden = true; };
+
+    sel.addEventListener("mouseenter", show);
+    sel.addEventListener("mousemove", move);
+    sel.addEventListener("mouseleave", hide);
+    sel.addEventListener("change", show);
+  }
+}
+
+function positionTooltip(e, tip){
+  const pad = 14;
+  const x = (e.clientX || 0) + pad;
+  const y = (e.clientY || 0) + pad;
+
+  // Keep on screen
+  const maxX = window.innerWidth - (tip.offsetWidth || 420) - 18;
+  const maxY = window.innerHeight - (tip.offsetHeight || 200) - 18;
+
+  tip.style.left = `${Math.max(18, Math.min(x, maxX))}px`;
+  tip.style.top  = `${Math.max(18, Math.min(y, maxY))}px`;
 }
 
    function renderFacilities(){
@@ -1192,6 +1277,9 @@ function readArtisanToolsFromUI(){
     // artisan tool selections (6 dropdowns)
     artisanTools: ["","","","","",""],
 
+    // Favour of The Gods (0-100 per god)
+    favour: { telluria: 0, aurush: 0, pelagos: 0 },
+
     // turns + events + log
     turn: 1,
     lastEvent: null,
@@ -1226,6 +1314,12 @@ function readArtisanToolsFromUI(){
       warehouse: Array.isArray(s.warehouse) ? s.warehouse : DEFAULT_STATE.warehouse,
 
       artisanTools: Array.isArray(s.artisanTools) ? s.artisanTools : DEFAULT_STATE.artisanTools,
+
+        favour: {
+        telluria: clampInt(s.favour?.telluria ?? 0, 0, 100),
+        aurush: clampInt(s.favour?.aurush ?? 0, 0, 100),
+        pelagos: clampInt(s.favour?.pelagos ?? 0, 0, 100),
+      },
 
       turn: clampInt(s.turn ?? DEFAULT_STATE.turn, 1),
       lastEvent: s.lastEvent || null,
@@ -1274,6 +1368,63 @@ function readArtisanToolsFromUI(){
     }
   }
 
+  function ensureFavourShape(){
+  if(!state.favour || typeof state.favour !== "object"){
+    state.favour = { telluria: 0, aurush: 0, pelagos: 0 };
+  }
+  for(const k of ["telluria","aurush","pelagos"]){
+    state.favour[k] = clampInt(state.favour[k] ?? 0, 0, 100);
+  }
+}
+
+function renderFavour(){
+  ensureFavourShape();
+
+  const panel = document.getElementById("favourPanel");
+  if(!panel) return;
+
+  for(const god of ["telluria","aurush","pelagos"]){
+    const v = clampInt(state.favour[god] ?? 0, 0, 100);
+    const fill = document.getElementById(`favourFill_${god}`);
+    const pct  = document.getElementById(`favourPct_${god}`);
+    const btn  = document.getElementById(`favourClaim_${god}`);
+
+    if(fill) fill.style.width = `${v}%`;
+    if(pct) pct.textContent = `${v}%`;
+
+    const isFull = v >= 100;
+    if(btn) btn.hidden = !isFull;
+  }
+}
+
+function bindFavourButtonsOnce(){
+  for(const god of ["telluria","aurush","pelagos"]){
+    const btn = document.getElementById(`favourClaim_${god}`);
+    if(!btn) continue;
+    if(btn.dataset.bound === "1") continue;
+    btn.dataset.bound = "1";
+
+    btn.addEventListener("click", ()=>{
+      ensureFavourShape();
+      state.favour[god] = 0;
+      saveState();
+      log("Favour Claimed", `${god.toUpperCase()} favour claimed. Bar reset to 0%.`);
+      render();
+    });
+  }
+}
+
+function addFavourPercent(god, amount){
+  ensureFavourShape();
+  const g = String(god || "").toLowerCase();
+  if(!["telluria","aurush","pelagos"].includes(g)) return;
+
+  const add = clampInt(amount ?? 0, 0, 100);
+  state.favour[g] = clampInt((state.favour[g] ?? 0) + add, 0, 100);
+  saveState();
+  renderFavour();
+}
+ 
   // ---------- Utils ----------
   function d(sides){ return 1 + Math.floor(Math.random()*sides); }
 
