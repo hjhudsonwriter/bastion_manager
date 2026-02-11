@@ -26,107 +26,108 @@
           {
             "label": "Cloak of Billowing"
           },
-          {
+                    {
             "label": "Cloak of Many Fashions"
-          
+          },
           {
             "label": "Clothes of Mending"
-          
+          },
           {
             "label": "Dark Shard Amulet"
-          
+          },
           {
             "label": "Enduring Spellbook"
-          
+          },
           {
             "label": "Ersatz Eye"
-          
+          },
           {
             "label": "Hat of Vermin"
-          
+          },
           {
             "label": "Hat of Wizardry"
-          
+          },
           {
             "label": "Heward's Handy Spice Pouch"
-          
+          },
           {
             "label": "Horn of Silent Alarm"
-          
+          },
           {
             "label": "Instrument of Illusions"
-          
+          },
           {
             "label": "Instrument of Scribing"
-          
+          },
           {
             "label": "Lock of Trickery"
-          
+          },
           {
             "label": "Mystery Key"
-          
+          },
           {
             "label": "Orb of Direction"
-          
+          },
           {
             "label": "Orb of Time"
-          
+          },
           {
             "label": "Perfume of Bewitching"
-          
+          },
           {
             "label": "Pipe of Smoke Monsters"
-          
+          },
           {
             "label": "Potion of Climbing"
-          
+          },
           {
             "label": "Potion of Comprehension"
-          
+          },
           {
             "label": "Pot of Awakening"
-          
+          },
           {
             "label": "Prosthetic Limb"
-          
+          },
           {
             "label": "Rival Coin"
-          
+          },
           {
             "label": "Rope of Mending"
-          
+          },
           {
             "label": "Ruby of the War Mage"
-          
+          },
           {
             "label": "Spell Scroll (cantrip or level 1 spell)"
-          
+          },
           {
             "label": "Staff of Adornment"
-          
+          },
           {
             "label": "Staff of Birdcalls"
-          
+          },
           {
             "label": "Staff of Flowers"
-          
+          },
           {
             "label": "Talking Doll"
-          
+          },
           {
             "label": "Tankard of Sobriety"
-          
+          },
           {
             "label": "Wand of Conducting"
-          
+          },
           {
             "label": "Wand of Pyrotechnics"
           }
+
         ],
         "costGP": 0,
         "costText": "0",
-        "notes": null
-      
+                "notes": null
+      },
       {
         "id": "craft_uncommon",
         "label": "Craft Uncommon",
