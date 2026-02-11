@@ -1285,5 +1285,141 @@
         "notes": "No cost for recruitment, but each soldier in the regiment costs 1GP per bastion turn. \nLieutenants and Soldiers are added to the 'Military' Panel."
       }
     ]
+  },
+  ,
+  {
+    "name": "Shrine of Telluria",
+    "id": "shrine_telluria",
+    "requiredLevel": 8,
+    "functions": [
+      {
+        "id": "craft",
+        "label": "Craft",
+        "options": [
+          {
+            "label": "Tellurian Root Charm",
+            "notes": "Advantage on CON saving throws once per short rest. Value = 100gp."
+          },
+          {
+            "label": "Tellurian Stone Charm",
+            "notes": "Advantage on WIS saving throws once per short rest when on natural ground (earth, rock, etc). Value = 120gp."
+          }
+        ],
+        "costGP": 0,
+        "costText": "0",
+        "notes": null
+      },
+      {
+        "id": "pray",
+        "label": "Pray",
+        "options": [
+          {
+            "label": "Telluria's Guidance",
+            "special": { "type": "oracle_hint", "god": "telluria" }
+          },
+          {
+            "label": "Telluria's Embrace",
+            "special": { "type": "blessing_rest", "god": "telluria" }
+          },
+          {
+            "label": "Telluria's Blessing",
+            "special": { "type": "favour_blessing", "god": "telluria" }
+          }
+        ],
+        "costGP": 0,
+        "costText": "0",
+        "notes": null
+      }
+    ]
+  },
+  {
+    "name": "Shrine of Aurush",
+    "id": "shrine_aurush",
+    "requiredLevel": 8,
+    "functions": [
+      {
+        "id": "craft",
+        "label": "Craft",
+        "options": [
+          {
+            "label": "Aurush Sun Charm",
+            "notes": "Advantage on DEX saving throws once per short rest while in bright light. Value = 100gp."
+          },
+          {
+            "label": "Aurush Ember Charm",
+            "notes": "Advantage on CHA saving throws once per short rest against fear or charm. Value = 120gp."
+          }
+        ],
+        "costGP": 0,
+        "costText": "0",
+        "notes": null
+      },
+      {
+        "id": "pray",
+        "label": "Pray",
+        "options": [
+          {
+            "label": "Aurush's Insight",
+            "special": { "type": "oracle_hint", "god": "aurush" }
+          },
+          {
+            "label": "Aurush's Radiance",
+            "special": { "type": "blessing_rest", "god": "aurush" }
+          },
+          {
+            "label": "Aurush's Blessing",
+            "special": { "type": "favour_blessing", "god": "aurush" }
+          }
+        ],
+        "costGP": 0,
+        "costText": "0",
+        "notes": null
+      }
+    ]
+  },
+  {
+    "name": "Shrine of Pelagos",
+    "id": "shrine_pelagos",
+    "requiredLevel": 8,
+    "functions": [
+      {
+        "id": "craft",
+        "label": "Craft",
+        "options": [
+          {
+            "label": "Pelagos Tide Charm",
+            "notes": "Advantage on STR saving throws once per short rest while wet or near open water. Value = 100gp."
+          },
+          {
+            "label": "Pelagos Current Charm",
+            "notes": "Advantage on INT saving throws once per short rest to resist disorientation/illusion. Value = 120gp."
+          }
+        ],
+        "costGP": 0,
+        "costText": "0",
+        "notes": null
+      },
+      {
+        "id": "pray",
+        "label": "Pray",
+        "options": [
+          {
+            "label": "Pelagos's Tidings",
+            "special": { "type": "oracle_hint", "god": "pelagos" }
+          },
+          {
+            "label": "Pelagos's Deep Rest",
+            "special": { "type": "blessing_rest", "god": "pelagos" }
+          },
+          {
+            "label": "Pelagos's Blessing",
+            "special": { "type": "favour_blessing", "god": "pelagos" }
+          }
+        ],
+        "costGP": 0,
+        "costText": "0",
+        "notes": null
+      }
+    ]
   }
 ]
