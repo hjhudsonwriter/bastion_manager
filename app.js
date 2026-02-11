@@ -159,6 +159,9 @@ function tickConstruction(){
   storehouse: "storehouse.png",
   greenhouse: "greenhouse.png",
   guildhall: "guildhall.png",
+  shrine_telluria: "shrine_of_telluria.png",
+  shrine_aurush: "shrine_of_aurush.png",
+  shrine_pelagos: "shrine_of_pelagos.png",
 };
 
   init().catch(err => {
