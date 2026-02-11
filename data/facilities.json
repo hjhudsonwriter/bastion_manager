@@ -28,97 +28,97 @@
           },
           {
             "label": "Cloak of Many Fashions"
-          },
+          
           {
             "label": "Clothes of Mending"
-          },
+          
           {
             "label": "Dark Shard Amulet"
-          },
+          
           {
             "label": "Enduring Spellbook"
-          },
+          
           {
             "label": "Ersatz Eye"
-          },
+          
           {
             "label": "Hat of Vermin"
-          },
+          
           {
             "label": "Hat of Wizardry"
-          },
+          
           {
             "label": "Heward's Handy Spice Pouch"
-          },
+          
           {
             "label": "Horn of Silent Alarm"
-          },
+          
           {
             "label": "Instrument of Illusions"
-          },
+          
           {
             "label": "Instrument of Scribing"
-          },
+          
           {
             "label": "Lock of Trickery"
-          },
+          
           {
             "label": "Mystery Key"
-          },
+          
           {
             "label": "Orb of Direction"
-          },
+          
           {
             "label": "Orb of Time"
-          },
+          
           {
             "label": "Perfume of Bewitching"
-          },
+          
           {
             "label": "Pipe of Smoke Monsters"
-          },
+          
           {
             "label": "Potion of Climbing"
-          },
+          
           {
             "label": "Potion of Comprehension"
-          },
+          
           {
             "label": "Pot of Awakening"
-          },
+          
           {
             "label": "Prosthetic Limb"
-          },
+          
           {
             "label": "Rival Coin"
-          },
+          
           {
             "label": "Rope of Mending"
-          },
+          
           {
             "label": "Ruby of the War Mage"
-          },
+          
           {
             "label": "Spell Scroll (cantrip or level 1 spell)"
-          },
+          
           {
             "label": "Staff of Adornment"
-          },
+          
           {
             "label": "Staff of Birdcalls"
-          },
+          
           {
             "label": "Staff of Flowers"
-          },
+          
           {
             "label": "Talking Doll"
-          },
+          
           {
             "label": "Tankard of Sobriety"
-          },
+          
           {
             "label": "Wand of Conducting"
-          },
+          
           {
             "label": "Wand of Pyrotechnics"
           }
@@ -126,176 +126,176 @@
         "costGP": 0,
         "costText": "0",
         "notes": null
-      },
+      
       {
         "id": "craft_uncommon",
         "label": "Craft Uncommon",
         "options": [
           {
             "label": "Amulet of Proof against Detection and Location"
-          },
+          
           {
             "label": "Baba Yaga's Dancing Broom"
-          },
+          
           {
             "label": "Bag of Holding"
-          },
+          
           {
             "label": "Bag of Tricks"
-          },
+          
           {
             "label": "Brooch of Shielding"
-          },
+          
           {
             "label": "Broom of Flying"
-          },
+          
           {
             "label": "Cap of Water Breathing"
-          },
+          
           {
             "label": "Circlet of Blasting"
-          },
+          
           {
             "label": "Cloak of Protection"
-          },
+          
           {
             "label": "Cloak of the Manta Ray"
-          },
+          
           {
             "label": "Decanter of Endless Water"
-          },
+          
           {
             "label": "Deck of Illusions"
-          },
+          
           {
             "label": "Driftglobe"
-          },
+          
           {
             "label": "Dust of Disappearance"
-          },
+          
           {
             "label": "Dust of Dryness"
-          },
+          
           {
             "label": "Dust of Sneezing and Choking"
-          },
+          
           {
             "label": "Elemental Gem"
-          },
+          
           {
             "label": "Enspelled Staff (cantrip or level 1 spell)"
-          },
+          
           {
             "label": "Eversmoking Bottle"
-          },
+          
           {
             "label": "Eyes of Charming"
-          },
+          
           {
             "label": "Eyes of Minute Seeing"
-          },
+          
           {
             "label": "Figurine of Wondrous Power (silver raven)"
-          },
+          
           {
             "label": "Gem of Brightness"
-          },
+          
           {
             "label": "Hag Eye"
-          },
+          
           {
             "label": "Hat of Disguise"
-          },
+          
           {
             "label": "Headband of Intellect"
-          },
+          
           {
             "label": "Helm of Comprehending Languages"
-          },
+          
           {
             "label": "Helm of Telepathy"
-          },
+          
           {
             "label": "Immovable Rod"
-          },
+          
           {
             "label": "Lantern of Revealing"
-          },
+          
           {
             "label": "Medallion of Thoughts"
-          },
+          
           {
             "label": "Mithral Armor"
-          },
+          
           {
             "label": "Necklace of Adaptation"
-          },
+          
           {
             "label": "Oil of Slipperiness"
-          },
+          
           {
             "label": "Pearl of Power"
-          },
+          
           {
             "label": "Periapt of Health"
-          },
+          
           {
             "label": "Philter of Love"
-          },
+          
           {
             "label": "Potion of Animal Friendship"
-          },
+          
           {
             "label": "Potion of Fire Breath"
-          },
+          
           {
             "label": "Potion of Giant Strength (hill)"
-          },
+          
           {
             "label": "Potion of Growth"
-          },
+          
           {
             "label": "Potion of Poison"
-          },
+          
           {
             "label": "Potion of Resistance"
-          },
+          
           {
             "label": "Potion of Water Breathing"
-          },
+          
           {
             "label": "Quaal's Feather Token (anchor, fan, or tree)"
-          },
+          
           {
             "label": "Ring of Mind Shielding"
-          },
+          
           {
             "label": "Robe of Useful Items"
-          },
+          
           {
             "label": "Rod of the Pact Keeper"
-          },
+          
           {
             "label": "Rope of Climbing"
-          },
+          
           {
             "label": "Saddle of the Cavalier"
-          },
+          
           {
             "label": "Sending Stones"
-          },
+          
           {
             "label": "Slippers of Spider Climbing"
-          },
+          
           {
             "label": "Spell Scroll (level 2 or level 3 spell)"
-          },
+          
           {
             "label": "Staff of the Adder"
-          },
+          
           {
             "label": "Staff of the Python"
-          },
+          
           {
             "label": "Wand of Magic Detection"
           },
@@ -1286,7 +1286,6 @@
       }
     ]
   },
-  ,
   {
     "name": "Shrine of Telluria",
     "id": "shrine_telluria",
