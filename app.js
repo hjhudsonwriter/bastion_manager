@@ -802,7 +802,7 @@ function ensureDiplomacyState(){
   }
 
   // Default built facilities to level 1 if missing
-  const built = getBuiltFacilityIds();
+  const built = builtFacilityIds();
   for(const id of built){
     if(state.facilityLevels[id] == null) state.facilityLevels[id] = 1;
   }
@@ -993,7 +993,9 @@ function allBuiltFacilityIds(){
   optionLabel = picked;
 }
 
-      // Summit discount applies to Hall of Emissaries actions (except upgrades)
+      let { costGP } = computeFnCost(fac, fn, chosen);
+
+// Summit discount applies to Hall of Emissaries actions (except upgrades)
 if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
   const activeSummit = (state.diplomacy?.summits || [])[0];
   if(activeSummit && activeSummit.costReductionPct){
@@ -1001,7 +1003,6 @@ if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
     costGP = Math.max(0, Math.floor(costGP * (100 - pct) / 100));
   }
 }
-  const { costGP } = computeFnCost(fac, fn, chosen);
 
   if(costGP > state.treasuryGP){
     alert(`Not enough gp. Need ${costGP}gp, you have ${state.treasuryGP}gp.`);
