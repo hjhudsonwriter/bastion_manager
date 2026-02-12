@@ -42,6 +42,8 @@ body{
     radial-gradient(1200px 700px at 20% 0%, rgba(177,18,42,.18), transparent 55%),
     radial-gradient(900px 600px at 85% 10%, rgba(214,178,94,.10), transparent 60%),
     linear-gradient(180deg, var(--bg), var(--bg2));
+    /* Reserve space for the fixed Favour panel on wide screens */
+  padding-left: 340px;
 }
 
 .topbar{
@@ -699,8 +701,8 @@ select option{
 .favourPanel{
   position: fixed;
   left: 18px;
-  top: 110px; /* below topbar */
-  width: 300px;
+  top: 92px;          /* a bit closer to top bar */
+  width: 300px;       /* fixed tidy width */
   z-index: 20;
 
   padding: 12px 12px;
@@ -714,7 +716,7 @@ select option{
   .favourPanel{
     position: static;
     width: auto;
-    margin: 0 18px;
+    margin: 0 18px 12px 18px;
   }
 }
 
