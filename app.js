@@ -1961,6 +1961,16 @@ function positionTooltip(e, tip){
 
     // Favour of The Gods (0-100 per god)
     favour: { telluria: 0, aurush: 0, pelagos: 0 },
+         // Political Capital per clan (-100..+100)
+    politicalCapital: {
+      blackstone: 0,
+      bacca: 0,
+      farmer: 0,
+      slade: 0,
+      molten: 0,
+      rowthorn: 0,
+      karr: 0
+    },
 
     // turns + events + log
     turn: 1,
@@ -2001,6 +2011,16 @@ function positionTooltip(e, tip){
         telluria: clampInt(s.favour?.telluria ?? 0, 0, 100),
         aurush: clampInt(s.favour?.aurush ?? 0, 0, 100),
         pelagos: clampInt(s.favour?.pelagos ?? 0, 0, 100),
+      },
+
+             politicalCapital: {
+        blackstone: clampInt(s.politicalCapital?.blackstone ?? 0, -100, 100),
+        bacca:      clampInt(s.politicalCapital?.bacca ?? 0, -100, 100),
+        farmer:     clampInt(s.politicalCapital?.farmer ?? 0, -100, 100),
+        slade:      clampInt(s.politicalCapital?.slade ?? 0, -100, 100),
+        molten:     clampInt(s.politicalCapital?.molten ?? 0, -100, 100),
+        rowthorn:   clampInt(s.politicalCapital?.rowthorn ?? 0, -100, 100),
+        karr:       clampInt(s.politicalCapital?.karr ?? 0, -100, 100),
       },
 
       turn: clampInt(s.turn ?? DEFAULT_STATE.turn, 1),
