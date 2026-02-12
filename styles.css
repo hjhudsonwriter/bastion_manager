@@ -1382,20 +1382,29 @@ select option{
 .siModal.siModal--hall{
   position: relative;
 
-  /* Bigger, more “event” scale */
-  width: min(980px, 96vw);
+  /* Bigger impact */
+  width: min(1280px, 98vw);
+  max-height: 92vh;
 
   background:
     linear-gradient(180deg, rgba(58,18,25,.70), rgba(27,10,13,.86)),
     url("assets/facilities/hall_inner.png");
   background-size: cover;
   background-position: center;
+
+  /* Slightly more “grand hall” spacing */
+  border-radius: 22px;
 }
 
-/* Scale typography inside Hall modals */
-.siModal.siModal--hall .siModalTitle{ font-size: 14px; }
-.siModal.siModal--hall .siModalBody{ font-size: 15px; }
-.siModal.siModal--hall .siModalFoot .btn{ font-size: 14px; padding: 10px 14px; }
+/* Scale typography and spacing inside Hall modals */
+.siModal.siModal--hall .siModalHead{ padding: 18px 20px; }
+.siModal.siModal--hall .siModalBody{ padding: 18px 20px 10px; font-size: 18px; }
+.siModal.siModal--hall .siModalFoot{ padding: 14px 20px 20px; }
+
+.siModal.siModal--hall .siModalTitle{ font-size: 16px; }
+.siModal.siModal--hall .siModalFoot .btn{ font-size: 16px; padding: 12px 18px; }
+
+.siModal.siModal--hall .siDiceNumber{ font-size: 104px; }
 
 /* Dice number bigger for Hall */
 .siModal.siModal--hall .siDiceNumber{ font-size: 86px; }
