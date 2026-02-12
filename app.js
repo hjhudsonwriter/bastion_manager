@@ -468,11 +468,7 @@ ui.importFileInput?.addEventListener("change", async () => {
   return;
 }
 
-  // Hall of Emissaries (diplomacy actions)
-if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
-  ensureDiplomacyState();
-
-    // ---------------- Hall of Emissaries (Dice + Consequences) ----------------
+  // Hall of Emissaries (Dice + Consequences)
   if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
     ensureDiplomacyState();
 
@@ -501,8 +497,6 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissar
     const mod = diplomacyModForHall();
 
     // 1) Dice animation
-    // NOTE: this function is async, so it will only work via completeOrderAsync (Step 5).
-    // If called from plain completeOrder, it will do nothing harmful, but won’t await properly.
     const roll = await rollD20Animated({
       title: `${fn.label} (${opt})`,
       mod,
@@ -512,24 +506,21 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissar
     const tier = tierFromRoll(roll.d20, roll.total, dc);
 
     // 2) Apply outcome
-    const changes = []; // bullet list for the resolution popup
+    const changes = [];
     let summary = "";
 
-    // Helper: add a “contract-like” record
     const addContract = (arrName, rec) => {
       state.diplomacy[arrName].push(rec);
       changes.push(`New record: ${rec.title} (${rec.turnsLeft} turns)`);
       if(rec.incomePerTurn) changes.push(`Income: +${rec.incomePerTurn} gp/turn`);
     };
 
-    // Helper: random in inclusive range
     const randBetween = (a, b) => {
       const min = clampInt(Math.min(a,b), -999999, 999999);
       const max = clampInt(Math.max(a,b), -999999, 999999);
       return min + Math.floor(Math.random() * (max - min + 1));
     };
 
-    // Default adjustments by tier
     let turnsAdj = 0;
     let incomeMult = 1;
 
@@ -573,7 +564,6 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissar
       const gMax = clampInt(fn.special.oneTimeTreasuryMax ?? gMin, gMin);
 
       if(incomeMult === 0){
-        // Bad failure: it costs you to smooth it over
         const penalty = clampInt(Math.ceil((gMin + gMax) / 6), 0);
         state.treasuryGP -= penalty;
         changes.push(`Treasury: -${penalty} gp`);
@@ -601,7 +591,7 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissar
       }
     }
 
-    // ---- CONTRACT TYPES (agreement / arbitration / consortium) ----
+    // ---- CONTRACT TYPES ----
     else {
       const iMin = clampInt(fn.special.incomeMin ?? 0, 0);
       const iMax = clampInt(fn.special.incomeMax ?? iMin, iMin);
@@ -639,7 +629,7 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissar
       }
     }
 
-    // 3) Show resolution popup (order resolution modal)
+    // 3) Resolution popup
     const changeListHtml = changes.length
       ? `<ul class="siResList">${changes.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>`
       : `<div class="small muted">No tracked changes.</div>`;
@@ -667,7 +657,6 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissar
       primaryText: "Continue"
     });
 
-    // 4) Log entry + save
     log("Order Resolved", `${fn.label} (${opt}) → ${formatTier(tier)}. ${summary}`);
     ui.treasuryInput.value = String(state.treasuryGP);
     saveState();
@@ -1185,7 +1174,7 @@ function ensureDiplomacyPanel(){
 
   panel.querySelector("#clearDiplomacyBtn").addEventListener("click", () => {
     if(!confirm("Clear Diplomacy & Trade records? (Does not undo gold already gained.)")) return;
-    state.diplomacy = { agreements: [], delegations: [], summits: [], arbitrations: [], consortiums: [] };
+    state.diplomacy = { agreements: [], delegations: [], summits: [], arbitrations: [], consortiums: [], rep: 0, cooldowns: {} };
     saveState();
     log("Diplomacy", "Cleared diplomacy records.");
     render();
