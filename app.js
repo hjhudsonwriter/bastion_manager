@@ -1024,19 +1024,32 @@ if(whTableBody){
 
 function ensureDiplomacyState(){
   if(!state.facilityLevels) state.facilityLevels = {};
-  if(!state.diplomacy){
-  state.diplomacy = {
-    agreements: [],     // { id, title, clan, turnsLeft, incomePerTurn }
-    delegations: [],    // { id, title, clan, turnsLeft }
-    summits: [],        // { id, title, pair, turnsLeft, costReductionPct }
-    arbitrations: [],   // same as agreements style
-    consortiums: [],    // same as agreements style
 
-    // NEW (safe defaults):
-    rep: 0,             // -5..+5 (general diplomatic reputation)
-    cooldowns: {}       // { [kindOrFnId]: turnsLeft }
-         tokens: 0
-  };
+  if(!state.diplomacy){
+    state.diplomacy = {
+      agreements: [],     // { id, title, clan, turnsLeft, incomePerTurn }
+      delegations: [],    // { id, title, clan, turnsLeft }
+      summits: [],        // { id, title, pair, turnsLeft, costReductionPct }
+      arbitrations: [],   // same as agreements style
+      consortiums: [],    // same as agreements style
+
+      // Safe defaults:
+      rep: 0,             // -5..+5 (legacy/general diplomacy rep, ok to keep even if not used much)
+      cooldowns: {},      // { [kindOrFnId]: turnsLeft }
+      tokens: 0           // Diplomatic Assets: Favour Tokens
+    };
+  } else {
+    // Backwards compatibility for old saves
+    if(typeof state.diplomacy.rep !== "number") state.diplomacy.rep = 0;
+
+    if(!state.diplomacy.cooldowns || typeof state.diplomacy.cooldowns !== "object"){
+      state.diplomacy.cooldowns = {};
+    }
+
+    if(typeof state.diplomacy.tokens !== "number"){
+      state.diplomacy.tokens = 0;
+    }
+  }
 } else {
   // Backwards compatibility for old saves
   if(typeof state.diplomacy.rep !== "number") state.diplomacy.rep = 0;
