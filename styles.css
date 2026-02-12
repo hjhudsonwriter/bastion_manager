@@ -1168,5 +1168,5 @@ select option{
 
 /* === Hall image crop: center the crests === */
 .hallImg{
-  object-position: center 42%; /* try 42% first */
+  object-position: center 38%; /* try 42% first */
 }
