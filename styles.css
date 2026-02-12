@@ -1402,3 +1402,34 @@ select option{
   position: relative;
   z-index: 1;
 }
+
+/* =========================
+   Diplomatic Assets
+   ========================= */
+
+.daRow{
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 10px;
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.06));
+  margin-bottom: 8px;
+}
+
+.daName{ font-size: 12px; opacity: .92; }
+.daDesc{ margin: 0; }
+
+.daPill{
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(214,178,94,.35);
+  background: rgba(0,0,0,.25);
+  color: rgba(214,178,94,.95);
+}
