@@ -527,11 +527,28 @@ ui.importFileInput?.addEventListener("change", async () => {
     let turnsAdj = 0;
     let incomeMult = 1;
 
-    if(tier === "critical_success"){ turnsAdj = 2; incomeMult = 1.35; adjustDiplomacyRep(+1); changes.push("Reputation: +1"); }
-    if(tier === "great_success"){ turnsAdj = 1; incomeMult = 1.20; adjustDiplomacyRep(+1); changes.push("Reputation: +1"); }
-    if(tier === "success"){ turnsAdj = 0; incomeMult = 1.00; }
-    if(tier === "failure"){ turnsAdj = -1; incomeMult = 0.75; adjustDiplomacyRep(-1); changes.push("Reputation: -1"); }
-    if(tier === "bad_failure"){ turnsAdj = -2; incomeMult = 0; adjustDiplomacyRep(-2); changes.push("Reputation: -2"); setDiplomacyCooldown(kind, 2); changes.push("Cooldown: 2 turns"); }
+    // Political Capital deltas (per clan) instead of global honour/reputation.
+// (You can tweak these numbers any time.)
+let pcDelta = 0;
+
+if(tier === "critical_success"){ turnsAdj = 2; incomeMult = 1.35; pcDelta = +25; }
+if(tier === "great_success"){    turnsAdj = 1; incomeMult = 1.20; pcDelta = +15; }
+if(tier === "success"){          turnsAdj = 0; incomeMult = 1.00; pcDelta = +8;  }
+if(tier === "failure"){          turnsAdj = -1; incomeMult = 0.75; pcDelta = -10; }
+if(tier === "bad_failure"){      turnsAdj = -2; incomeMult = 0;    pcDelta = -20; setDiplomacyCooldown(kind, 2); changes.push("Cooldown: 2 turns"); }
+
+// Apply political capital to the target clan(s)
+if(kind === "summit"){
+  // Summit "pair" might be "Blackstone & Rowthorn" etc.
+  const parts = String(opt).split("&").map(x => x.trim()).filter(Boolean);
+  for(const p of parts) addPoliticalCapital(p, pcDelta);
+  if(parts.length){
+    changes.push(`Political Capital: ${pcDelta >= 0 ? "+" : ""}${pcDelta} (${parts.join(" & ")})`);
+  }
+} else {
+  addPoliticalCapital(opt, pcDelta);
+  changes.push(`Political Capital: ${pcDelta >= 0 ? "+" : ""}${pcDelta} (${String(opt)})`);
+}
 
     const turns = clampInt(baseTurns + turnsAdj, 1, 30);
 
