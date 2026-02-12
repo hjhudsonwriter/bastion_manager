@@ -851,7 +851,7 @@ select option{
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(10, 4, 2, 0.75); /* increase to 0.85 if you want darker */
+  background: rgba(0, 0, 0, 0.86);
   z-index: 0;
 }
 
@@ -877,15 +877,16 @@ select option{
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
 .dipBox{
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 12px;
   padding: 10px 12px;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.55);
   backdrop-filter: blur(2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+
 }
 
 .dipBoxTitle{
@@ -939,6 +940,12 @@ select option{
   padding: 18px 0 10px 0;
   margin-top: 2px;
 }
+.hallTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0 10px 0;
+}
 
 .pill{
   border-radius: 999px;
@@ -974,8 +981,6 @@ select option{
   object-position: center 18%;
   display:block;
 }
-
-.hallImg{ width: 100%; height: 100%; object-fit: cover; display:block; }
 
 .hallFns{
   display: grid;
