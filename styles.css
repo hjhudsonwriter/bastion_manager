@@ -701,8 +701,10 @@ select option{
 .favourPanel{
   position: fixed;
   left: 18px;
-  top: 92px;          /* a bit closer to top bar */
-  width: 300px;       /* fixed tidy width */
+  top: 92px;        /* pinned under top bar */
+  width: 300px;
+  max-height: calc(100vh - 120px);  /* keeps it contained */
+  overflow: auto;   /* future panels can scroll inside */
   z-index: 20;
 
   padding: 12px 12px;
@@ -787,3 +789,48 @@ select option{
 }
 .artisanTooltip ul{ margin: 6px 0 0 18px; padding: 0; }
 .artisanTooltip li{ margin: 2px 0; }
+
+/* God icons (leaf / fire / wave) */
+.favourName{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.godIcon{
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 1px rgba(214,178,94,.35), 0 6px 14px rgba(0,0,0,.35) inset;
+}
+
+/* Simple “symbolic” icons using CSS masks (no image files needed) */
+.godIcon--telluria{
+  background: rgba(55, 200, 95, .95);
+  -webkit-mask: radial-gradient(circle at 30% 60%, #000 52%, transparent 53%),
+                radial-gradient(circle at 60% 40%, #000 55%, transparent 56%),
+                linear-gradient(#000 0 0);
+  -webkit-mask-composite: source-over;
+          mask: radial-gradient(circle at 30% 60%, #000 52%, transparent 53%),
+                radial-gradient(circle at 60% 40%, #000 55%, transparent 56%),
+                linear-gradient(#000 0 0);
+}
+
+.godIcon--aurush{
+  background: rgba(235, 55, 55, .95);
+  -webkit-mask: radial-gradient(circle at 50% 30%, #000 52%, transparent 53%),
+                conic-gradient(from 0deg, #000 0 20%, transparent 20% 30%, #000 30% 50%, transparent 50% 60%, #000 60% 80%, transparent 80% 100%);
+          mask: radial-gradient(circle at 50% 30%, #000 52%, transparent 53%),
+                conic-gradient(from 0deg, #000 0 20%, transparent 20% 30%, #000 30% 50%, transparent 50% 60%, #000 60% 80%, transparent 80% 100%);
+}
+
+.godIcon--pelagos{
+  background: rgba(60, 145, 255, .95);
+  -webkit-mask: radial-gradient(circle at 35% 65%, #000 45%, transparent 46%),
+                radial-gradient(circle at 65% 65%, #000 45%, transparent 46%),
+                linear-gradient(#000 0 0);
+          mask: radial-gradient(circle at 35% 65%, #000 45%, transparent 46%),
+                radial-gradient(circle at 65% 65%, #000 45%, transparent 46%),
+                linear-gradient(#000 0 0);
+}
