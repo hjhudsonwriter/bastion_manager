@@ -272,6 +272,9 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
 
     ui.advanceTurnBtn.addEventListener("click", () => {
   state.turn += 1;
+       
+         tickDiplomacyOnAdvanceTurn(); // ✅ add this line
+
        tickConstruction();
        // Bastion Event disappears when you move to the next turn
 state.lastEvent = null;
