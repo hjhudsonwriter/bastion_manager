@@ -1025,3 +1025,92 @@ select option{
   position: relative;
   z-index: 1;
 }
+
+/* =========================
+   DIPLOMACY PANEL OVERRIDES
+   (keep at bottom of file)
+   ========================= */
+
+#diplomacyPanel{
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background image + strong dimming (your “drastically altered opacity”) */
+#diplomacyPanel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image: url("assets/facilities/hall_of_emissaries.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.16;              /* <-- lower = fainter image */
+  transform: scale(1.02);
+  z-index: 0;
+}
+
+/* Dark tint over the image to keep text readable */
+#diplomacyPanel::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: rgba(10, 5, 6, 0.72); /* <-- increase to darken more */
+  z-index: 0;
+}
+
+#diplomacyPanel .card__head,
+#diplomacyPanel .dipGrid,
+#diplomacyPanel .dipFoot{
+  position: relative;
+  z-index: 1;
+}
+
+/* EXACT 50/50 split */
+.dipGrid{
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* center divider */
+  gap: 16px;
+  align-items: start;
+  margin-top: 10px;
+}
+
+/* LEFT: stack all boxes neatly top-to-bottom */
+.dipBoxes{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Make each record box a bit tighter and cleaner */
+.dipBox{
+  padding: 12px 14px;
+}
+
+/* RIGHT: Hall card should climb higher */
+.dipRight{
+  padding-top: 0 !important;
+}
+
+.hallCard{
+  margin-top: 0 !important;
+  align-self: start;
+}
+
+/* Hall title alignment: nudge the hall header up so it sits closer to the main title line */
+.hallTop{
+  padding-top: 0 !important;
+  margin-top: -6px; /* small lift; adjust to taste */
+}
+
+/* Hall image crop: raise the “window” so banners show */
+.hallImg{
+  object-fit: cover;
+  object-position: center 20%; /* smaller % = higher crop */
+}
+
+/* If your image wrapper has a fixed height, this helps it feel more premium */
+.hallImgWrap{
+  height: 170px;     /* tweak after you see it */
+  overflow: hidden;
+  border-radius: 14px;
+}
