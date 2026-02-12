@@ -580,36 +580,93 @@ if(kind === "summit"){
 
     // ---- HOST DELEGATION ----
     else if(kind === "host_delegation"){
-      const gMin = clampInt(fn.special.oneTimeTreasuryMin ?? 0, 0);
-      const gMax = clampInt(fn.special.oneTimeTreasuryMax ?? gMin, gMin);
+  ensureDiplomacyState();
 
-      if(incomeMult === 0){
-        const penalty = clampInt(Math.ceil((gMin + gMax) / 6), 0);
-        state.treasuryGP -= penalty;
-        changes.push(`Treasury: -${penalty} gp`);
-        summary = `The delegation is insulted. You pay to soothe egos and salvage the relationship.`;
-      } else {
-        let gained = randBetween(gMin, gMax);
+  const tone = String(o?.meta?.tone || "assertive");
+  const gMin = clampInt(fn.special.oneTimeTreasuryMin ?? 0, 0);
+  const gMax = clampInt(fn.special.oneTimeTreasuryMax ?? gMin, gMin);
 
-        if(tier === "great_success") gained += clampInt(Math.ceil(gained * 0.25), 0);
-        if(tier === "critical_success") gained += clampInt(Math.ceil(gained * 0.50), 0);
-        if(tier === "failure") gained = clampInt(Math.floor(gained * 0.60), 0);
+  // Tone adjusts risk/reward slightly
+  const toneMod =
+    tone === "conciliatory" ? +2 :
+    tone === "opportunistic" ? -2 :
+    0;
 
-        state.treasuryGP += gained;
-        changes.push(`Treasury: +${gained} gp`);
+  const diplomacyDC = 13;
+  const insightDC = 12;
 
-        state.diplomacy.delegations.push({
-          id: uid(),
-          title: "Hosted Delegation",
-          clan: String(opt),
-          turnsLeft: turns
-        });
+  const modDiplomacy = diplomacyModForHall() + toneMod;
+  const modInsight = diplomacyModForHall(); // simple: same base, different DC
 
-        appendToWarehouse(`Delegation Gift (${opt})`, 1, "", "Hall of Emissaries");
-        changes.push(`Delegation active: ${turns} turns`);
-        summary = `A feast, a toast, and a quiet exchange of favours.`;
-      }
-    }
+  // Two animated rolls
+  const r1 = await rollD20Animated({ title: `Diplomacy Roll (${tone})`, mod: modDiplomacy, dc: diplomacyDC, modalClass: "siModal--hall" });
+  const r2 = await rollD20Animated({ title: `Insight Roll (${tone})`, mod: modInsight, dc: insightDC, modalClass: "siModal--hall" });
+
+  const s1 = r1.total >= diplomacyDC;
+  const s2 = r2.total >= insightDC;
+  const successes = (s1?1:0) + (s2?1:0);
+
+  // Outcome mapping
+  // Strong: 2 successes
+  // Normal: 1 success
+  // Weak: 0 successes but not terrible (either total within 2 of DC)
+  // Fail: 0 successes and clearly bad
+  const weak =
+    !s1 && !s2 && (r1.total >= diplomacyDC - 2 || r2.total >= insightDC - 2);
+
+  let pcDelta = 0;
+  let tokenGain = 0;
+  let summary = "";
+  let gained = 0;
+
+  if(successes === 2){
+    pcDelta = +15;
+    tokenGain = 1;
+    summary = "The delegation leaves impressed. Promises become leverage.";
+  } else if(successes === 1){
+    pcDelta = +8;
+    summary = "A workable meeting. You earn cautious goodwill.";
+  } else if(weak){
+    pcDelta = 0;
+    summary = "Awkward, but not disastrous. No real shift.";
+  } else {
+    pcDelta = -12;
+    summary = "A diplomatic stumble. Word travels faster than apologies.";
+  }
+
+  // Political capital applies to the target clan
+  addPoliticalCapital(opt, pcDelta);
+  changes.push(`Political Capital: ${pcDelta >= 0 ? "+" : ""}${pcDelta} (${String(opt)})`);
+
+  // Tokens
+  if(tokenGain > 0){
+    state.diplomacy.tokens = clampInt((state.diplomacy.tokens ?? 0) + tokenGain, 0, 999);
+    changes.push(`Favour Token: +${tokenGain}`);
+  }
+
+  // Optional gift gold: conciliatory yields smaller gold, opportunistic yields bigger gold (but higher risk already)
+  gained = clampInt(randBetween(gMin, gMax), 0, 999999);
+  if(tone === "conciliatory") gained = clampInt(Math.floor(gained * 0.85), 0, 999999);
+  if(tone === "opportunistic") gained = clampInt(Math.floor(gained * 1.15), 0, 999999);
+
+  // Only pay out gold on non-fail
+  if(successes > 0 || weak){
+    state.treasuryGP += gained;
+    changes.push(`Treasury: +${gained} gp`);
+  } else {
+    const penalty = clampInt(Math.ceil((gMin + gMax) / 6), 0);
+    state.treasuryGP -= penalty;
+    changes.push(`Treasury: -${penalty} gp`);
+  }
+
+  state.diplomacy.delegations.push({
+    id: uid(),
+    title: `Hosted Delegation (${tone})`,
+    clan: String(opt),
+    turnsLeft: turns
+  });
+  changes.push(`Delegation active: ${turns} turns`);
+}
 
     // ---- CONTRACT TYPES ----
     else {
