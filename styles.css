@@ -124,7 +124,7 @@ select option{
   border: 1px solid rgba(214,178,94,.55);
   background: rgba(0,0,0,.35);
   color: var(--text);
-  padding:10px 12px;
+   padding: 7px 12px;
   border-radius:14px;
   cursor:pointer;
   font-family:var(--ui);
@@ -842,9 +842,13 @@ select option{
 
 .dipGrid{
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 18px;
-  margin-top: 10px;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+.dipRight{
+  border-left: 1px solid rgba(255,255,255,0.12);
+  padding-left: 24px;
 }
 
 .dipLeft{ min-width: 0; }
@@ -857,22 +861,23 @@ select option{
 }
 
 .dipBox{
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 14px;
-  padding: 12px;
-  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(2px);
 }
 
 .dipBoxTitle{
   font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 8px;
-  opacity: 0.9;
+  margin-bottom: 6px;
+  opacity: 0.75;
 }
 
-.dipRow{ padding: 8px 0; border-top: 1px dashed rgba(255,255,255,0.10); }
+.dipRow{ padding: 6px 0; border-top: 1px dashed rgba(255,255,255,0.10); }
 .dipRow:first-of-type{ border-top: 0; padding-top: 0; }
 .dipRowName{ font-weight: 700; }
 .dipRowMeta{ font-size: 12px; opacity: 0.8; margin-top: 2px; }
@@ -890,50 +895,62 @@ select option{
 .hallNameRow{
   display:flex;
   align-items:center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .hallName{ font-weight: 900; font-size: 18px; letter-spacing: 0.02em; }
 .hallLevel{
   font-weight: 900;
-  font-size: 12px;
-  padding: 4px 8px;
+  font-size: 11px;
+  padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(0,0,0,0.25);
+  background: linear-gradient(135deg,#3a2b0f,#6b4d18);
+  border: 1px solid rgba(255,215,120,0.4);
 }
 
 .pill{
   border-radius: 999px;
-  padding: 6px 10px;
-  font-weight: 800;
-  font-size: 12px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(0,0,0,0.35);
+  padding: 5px 12px;
+  font-weight: 700;
+  font-size: 11px;
+  border: 1px solid rgba(255,215,120,0.4);
+  background: rgba(120,80,20,0.25);
   cursor: pointer;
 }
-.pill:hover{ filter: brightness(1.08); }
+.pill:hover{
+  background: rgba(120,80,20,0.4);
+}
 
 .hallBody{
-  display: grid;
-  grid-template-columns: 190px 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
-  margin-top: 12px;
-  align-items: start;
+  margin-top: 14px;
 }
 
 .hallImgWrap{
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
+  height: 140px; /* shorter banner style */
+  border: 1px solid rgba(255,255,255,0.15);
   background: rgba(0,0,0,0.25);
-  height: 190px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+}
+.hallImg{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .hallImg{ width: 100%; height: 100%; object-fit: cover; display:block; }
 
-.hallFns .fn{ margin-bottom: 10px; }
+.hallFns{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hallFns .fn{
+  margin: 0;
+}
