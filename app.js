@@ -500,7 +500,6 @@ ui.importFileInput?.addEventListener("change", async () => {
 
     // 1) Dice animation
     const roll = await rollD20Manual({
-       if(!roll){ log("Order Resolved", `${fn.label} was cancelled at the roll step.`); saveState(); render(); return; }
   title: `${fn.label} (${opt})`,
   mod,
   dc,
