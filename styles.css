@@ -991,3 +991,37 @@ select option{
 .hallFns .fn{
   margin: 0;
 }
+
+/* Diplomacy header split: aligns Hall title with Diplomacy title */
+.dipHead{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.dipHeadRight{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  padding-top: 2px;
+}
+
+.hallHeadRow{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hallHeadTitle{
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+
+/* Make sure header elements sit above overlay */
+#diplomacyPanel .card__head{
+  position: relative;
+  z-index: 1;
+}
