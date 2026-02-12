@@ -1158,7 +1158,14 @@ async function rollD20Animated({ title, mod = 0, dc = null, modalClass = "" }){
   return { d20: final, total };
 }
 
-function openSIModalChoice({ title, bodyHtml, primaryText = "Confirm", secondaryText = "Cancel", modalClass = "" }){
+function openSIModalChoice({
+  title,
+  bodyHtml,
+  primaryText = "Confirm",
+  secondaryText = "Cancel",
+  modalClass = "",
+  collectIds = []
+}){
   return new Promise(resolve => {
     const ov = document.createElement("div");
     ov.className = "siModalOverlay";
@@ -1177,9 +1184,19 @@ function openSIModalChoice({ title, bodyHtml, primaryText = "Confirm", secondary
     `;
     document.body.appendChild(ov);
 
-    const close = (result) => {
+    const snapshotValues = () => {
+      const values = {};
+      for(const id of (collectIds || [])){
+        const el = ov.querySelector(`#${CSS.escape(id)}`);
+        if(el && "value" in el) values[id] = el.value;
+      }
+      return values;
+    };
+
+    const close = (action) => {
+      const values = (action === "ok") ? snapshotValues() : {};
       ov.remove();
-      resolve(result);
+      resolve({ action, values });
     };
 
     ov.addEventListener("click", (e) => { if(e.target === ov) close("cancel"); });
@@ -1323,26 +1340,27 @@ async function openHallPlanningModal(facId, fnId){
     "Proceed";
 
   const res = await openSIModalChoice({
-    title: fn.label,
-    bodyHtml,
-    primaryText: actionVerb,
-    secondaryText: "Cancel",
-    modalClass: "siModal--hall"
-  });
+  title: fn.label,
+  bodyHtml,
+  primaryText: actionVerb,
+  secondaryText: "Cancel",
+  modalClass: "siModal--hall",
+  collectIds: ["hallClanSel", "hallDurSel", "hallToneSel"]
+});
 
-  if(res !== "ok") return null;
+if(res.action !== "ok") return null;
 
-  const chosenIdx = clampInt(document.getElementById("hallClanSel")?.value ?? defaultIdx, 0);
+const chosenIdx = clampInt(res.values.hallClanSel ?? defaultIdx, 0);
 
-  const meta = {};
-  if(kind === "trade_agreement"){
-    meta.durationTurns = clampInt(document.getElementById("hallDurSel")?.value ?? defaultDur, 1, 30);
-  }
-  if(kind === "host_delegation"){
-    meta.tone = String(document.getElementById("hallToneSel")?.value || "assertive");
-  }
+const meta = {};
+if(kind === "trade_agreement"){
+  meta.durationTurns = clampInt(res.values.hallDurSel ?? defaultDur, 1, 30);
+}
+if(kind === "host_delegation"){
+  meta.tone = String(res.values.hallToneSel || "assertive");
+}
 
-  return { optionIdx: chosenIdx, meta };
+return { optionIdx: chosenIdx, meta };
 }
 // Create a UI panel dynamically (so you don't need to edit HTML)
 function ensureDiplomacyPanel(){
