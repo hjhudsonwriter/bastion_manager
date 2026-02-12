@@ -834,3 +834,28 @@ select option{
                 radial-gradient(circle at 65% 65%, #000 45%, transparent 46%),
                 linear-gradient(#000 0 0);
 }
+
+/* SVG God Icons */
+.godIconSvg{
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.godIcon--telluria{
+  stroke: #37c85f;
+}
+.godIcon--telluria{ filter: drop-shadow(0 0 4px rgba(55,200,95,.6)); }
+
+.godIcon--aurush{
+  stroke: #eb3737;
+}
+.godIcon--aurush{ filter: drop-shadow(0 0 4px rgba(235,55,55,.6)); }
+
+.godIcon--pelagos{
+  stroke: #3c91ff;
+}
+.godIcon--pelagos{ filter: drop-shadow(0 0 4px rgba(60,145,255,.6)); }
