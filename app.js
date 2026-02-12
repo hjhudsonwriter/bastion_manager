@@ -182,6 +182,8 @@ function tickConstruction(){
       fetch(withBase("data/events.json")).then(r=>r.json()),
     ]);
     DATA = { facilities, tools, events };
+     ensureDiplomacyState();
+     ensureDiplomacyPanel();
 
     // Wire controls
     ui.treasuryInput.value = String(state.treasuryGP);
@@ -439,6 +441,100 @@ ui.importFileInput?.addEventListener("change", async () => {
   return;
 }
 
+  // Hall of Emissaries (diplomacy actions)
+if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
+  ensureDiplomacyState();
+
+  const kind = fn.special.kind;
+  const opt = optionLabel || chosen?.value || "—";
+  const turns = clampInt(fn.special.durationTurns ?? 2, 1, 20);
+
+  // Summit discount flag
+  if(kind === "summit"){
+    const pct = clampInt(fn.special.costReductionPct ?? 0, 0, 90);
+    state.diplomacy.summits.push({
+      id: uid(),
+      title: "Inter-Clan Summit",
+      pair: String(opt),
+      turnsLeft: turns,
+      costReductionPct: pct
+    });
+    appendToWarehouse("Summit Charter", 1, "", "Hall of Emissaries");
+    log("Order Completed", `${label} → Summit convened (${opt}). Trade actions cost -${pct}% for ${turns} turns.`);
+    saveState();
+    return;
+  }
+
+  // Delegation: one-time gp + a token item
+  if(kind === "host_delegation"){
+    const gMin = clampInt(fn.special.oneTimeTreasuryMin ?? 0, 0);
+    const gMax = clampInt(fn.special.oneTimeTreasuryMax ?? gMin, gMin);
+    const gained = clampInt(gMin + Math.floor(Math.random() * (gMax - gMin + 1)), 0);
+    state.treasuryGP += gained;
+
+    state.diplomacy.delegations.push({
+      id: uid(),
+      title: "Hosted Delegation",
+      clan: String(opt),
+      turnsLeft: turns
+    });
+
+    appendToWarehouse(`Delegation Gift (${opt})`, 1, "", "Hall of Emissaries");
+    log("Order Completed", `${label} → Hosted ${opt}. Received +${gained} gp and a Delegation Gift.`);
+    saveState();
+    return;
+  }
+
+  // Agreements / Arbitration / Consortium: passive gp per turn
+  const iMin = clampInt(fn.special.incomeMin ?? 0, 0);
+  const iMax = clampInt(fn.special.incomeMax ?? iMin, iMin);
+  const perTurn = clampInt(iMin + Math.floor(Math.random() * (iMax - iMin + 1)), 0);
+
+  const rec = {
+    id: uid(),
+    title:
+      kind === "arbitration" ? "Arbitration Authority"
+      : kind === "consortium" ? "Trade Consortium"
+      : "Trade Agreement",
+    clan: String(opt),
+    turnsLeft: turns,
+    incomePerTurn: perTurn
+  };
+
+  if(kind === "arbitration") state.diplomacy.arbitrations.push(rec);
+  else if(kind === "consortium") state.diplomacy.consortiums.push(rec);
+  else state.diplomacy.agreements.push(rec);
+
+  appendToWarehouse(`${rec.title} Contract`, 1, "", "Hall of Emissaries");
+  log("Order Completed", `${label} → ${rec.title} established with ${opt}: +${perTurn} gp/turn for ${turns} turns.`);
+  saveState();
+  return;
+}
+
+// Upgrade facility (Level Up)
+if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade_facility"){
+  ensureDiplomacyState();
+  const cur = getFacilityLevel(fac.id);
+  const max = clampInt(fn.special.maxLevel ?? 3, 1, 3);
+
+  if(cur >= max){
+    log("Upgrade", "Hall of Emissaries is already max level.");
+    return;
+  }
+
+  const next = cur + 1;
+  const cost = clampInt(fn.special.costByNextLevel?.[String(next)] ?? 0, 0);
+
+  // Cost already paid when order was issued (treasury is deducted at issue time),
+  // but in case anything changes later, keep it simple and just apply the level.
+  setFacilityLevel(fac.id, next);
+
+  log("Upgrade", `Hall of Emissaries upgraded to Level ${next}.`);
+  saveState();
+  render();
+  return;
+}
+    
   // Dock charter → warehouse
   if(fac.id==="dock" && fn.id==="charter_berth"){
     appendToWarehouse(optionLabel || "Chartered vessel", 1, "", "Dock");
@@ -475,6 +571,7 @@ ui.importFileInput?.addEventListener("change", async () => {
     renderList(ui.militaryList, state.military, "No military recruited yet.");
      renderList(ui.defenderRoster, state.defenderBeasts, "No beasts recruited yet.");
     renderWarehouse();
+     renderDiplomacy();
      renderArtisanTools();
 
     renderEventBox();
@@ -896,6 +993,14 @@ function allBuiltFacilityIds(){
   optionLabel = picked;
 }
 
+      // Summit discount applies to Hall of Emissaries actions (except upgrades)
+if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
+  const activeSummit = (state.diplomacy?.summits || [])[0];
+  if(activeSummit && activeSummit.costReductionPct){
+    const pct = clampInt(activeSummit.costReductionPct, 0, 90);
+    costGP = Math.max(0, Math.floor(costGP * (100 - pct) / 100));
+  }
+}
   const { costGP } = computeFnCost(fac, fn, chosen);
 
   if(costGP > state.treasuryGP){
