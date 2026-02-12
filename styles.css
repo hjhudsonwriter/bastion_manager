@@ -838,13 +838,21 @@ select option{
 
 /* ---------------- Diplomacy & Trade layout ---------------- */
 
-#diplomacyPanel { padding-left: 18px; padding-right: 18px; } /* nudges text away from border */
+#diplomacyPanel{
+  background-image: url("assets/facilities/hall_of_emissaries.png");
+  background-size: cover;
+  background-position: center;
+  padding-left: 18px;
+  padding-right: 18px;
+}
 
 .dipGrid{
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-top: 16px;
+  align-items: stretch;
+min-height: 520px;
 }
 .dipRight{
   border-left: 1px solid rgba(255,255,255,0.12);
@@ -856,8 +864,9 @@ select option{
 
 .dipBoxes{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
 .dipBox{
@@ -890,6 +899,7 @@ select option{
   border-radius: 16px;
   padding: 14px;
   background: rgba(0,0,0,0.20);
+  height: 100%;
 }
 
 .hallNameRow{
@@ -941,6 +951,8 @@ select option{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 18%;
+  display:block;
 }
 
 .hallImg{ width: 100%; height: 100%; object-fit: cover; display:block; }
