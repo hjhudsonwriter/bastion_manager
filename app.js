@@ -369,6 +369,8 @@ ui.importFileInput?.addEventListener("change", async () => {
     render();
     bindFavourButtonsOnce();
     renderFavour();
+    bindPoliticalButtonsOnce();
+    renderPoliticalCapital();
   }
 
    async function completeOrderAsync(o){
@@ -498,10 +500,11 @@ ui.importFileInput?.addEventListener("change", async () => {
 
     // 1) Dice animation
     const roll = await rollD20Animated({
-      title: `${fn.label} (${opt})`,
-      mod,
-      dc
-    });
+  title: `${fn.label} (${opt})`,
+  mod,
+  dc,
+  modalClass: "siModal--hall"
+});
 
     const tier = tierFromRoll(roll.d20, roll.total, dc);
 
@@ -635,8 +638,8 @@ ui.importFileInput?.addEventListener("change", async () => {
       : `<div class="small muted">No tracked changes.</div>`;
 
     await openSIModal({
-      title: "Order Resolved",
-      bodyHtml: `
+  title: "Order Resolved",
+  bodyHtml: `
         <div class="siResTop">
           <div class="siResAction">${escapeHtml(fn.label)}</div>
           <div class="siResTarget">Target: <b>${escapeHtml(String(opt))}</b></div>
@@ -654,8 +657,9 @@ ui.importFileInput?.addEventListener("change", async () => {
           ${changeListHtml}
         </div>
       `,
-      primaryText: "Continue"
-    });
+      primaryText: "Continue",
+  modalClass: "siModal--hall"
+});
 
     log("Order Resolved", `${fn.label} (${opt}) → ${formatTier(tier)}. ${summary}`);
     ui.treasuryInput.value = String(state.treasuryGP);
@@ -731,6 +735,7 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
     renderFacilities();
     renderLog();
     renderFavour();
+    renderPoliticalCapital();
 
     // update treasury input (in case actions changed it)
     ui.treasuryInput.value = String(state.treasuryGP);
@@ -985,13 +990,13 @@ function setFacilityLevel(facId, lvl){
 
    // ---------------- SI Modal System (generic, reusable) ----------------
 
-function openSIModal({ title, bodyHtml, primaryText = "Close" }){
+function openSIModal({ title, bodyHtml, primaryText = "Close", modalClass = "" }){
   return new Promise(resolve => {
     // Overlay
     const ov = document.createElement("div");
     ov.className = "siModalOverlay";
     ov.innerHTML = `
-      <div class="siModal" role="dialog" aria-modal="true">
+      <div class="siModal ${modalClass ? String(modalClass) : ""}" role="dialog" aria-modal="true">
         <div class="siModalHead">
           <div class="siModalTitle">${escapeHtml(title || "")}</div>
           <button class="siModalX" type="button" aria-label="Close">✕</button>
@@ -1028,11 +1033,11 @@ function openSIModal({ title, bodyHtml, primaryText = "Close" }){
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-async function rollD20Animated({ title, mod = 0, dc = null }){
+async function rollD20Animated({ title, mod = 0, dc = null, modalClass = "" }){
   const ov = document.createElement("div");
   ov.className = "siModalOverlay";
   ov.innerHTML = `
-    <div class="siModal siModal--dice" role="dialog" aria-modal="true">
+    <div class="siModal siModal--dice ${modalClass ? String(modalClass) : ""}" role="dialog" aria-modal="true">
       <div class="siModalHead">
         <div class="siModalTitle">${escapeHtml(title || "Rolling…")}</div>
         <div class="siDiceMeta">
@@ -2125,6 +2130,94 @@ function addFavourPercent(god, amount){
   state.favour[g] = clampInt((state.favour[g] ?? 0) + add, 0, 100);
   saveState();
   renderFavour();
+}
+
+   // =========================
+// Political Capital (Clans)
+// =========================
+
+function ensurePoliticalCapitalShape(){
+  if(!state.politicalCapital || typeof state.politicalCapital !== "object"){
+    state.politicalCapital = {
+      blackstone: 0, bacca: 0, farmer: 0, slade: 0, molten: 0, rowthorn: 0, karr: 0
+    };
+  }
+  for(const k of ["blackstone","bacca","farmer","slade","molten","rowthorn","karr"]){
+    state.politicalCapital[k] = clampInt(state.politicalCapital[k] ?? 0, -100, 100);
+  }
+}
+
+function clanIdFromLabel(label){
+  const raw = String(label || "").toLowerCase().trim();
+  const s = raw.replace(/^clan\s+/, "").replace(/\s+/g, " ");
+  const map = {
+    "blackstone":"blackstone",
+    "bacca":"bacca",
+    "farmer":"farmer",
+    "slade":"slade",
+    "molten":"molten",
+    "rowthorn":"rowthorn",
+    "karr":"karr",
+  };
+  return map[s] || null;
+}
+
+function addPoliticalCapital(clanLabel, delta){
+  ensurePoliticalCapitalShape();
+  const id = clanIdFromLabel(clanLabel);
+  if(!id) return;
+  state.politicalCapital[id] = clampInt((state.politicalCapital[id] ?? 0) + clampInt(delta, -100, 100), -100, 100);
+  saveState();
+  renderPoliticalCapital();
+}
+
+function renderPoliticalCapital(){
+  ensurePoliticalCapitalShape();
+
+  for(const id of ["blackstone","bacca","farmer","slade","molten","rowthorn","karr"]){
+    const v = clampInt(state.politicalCapital[id] ?? 0, -100, 100);
+
+    const fill = document.getElementById(`pcFill_${id}`);
+    const val  = document.getElementById(`pcVal_${id}`);
+    const btn  = document.getElementById(`pcClaim_${id}`);
+
+    if(val) val.textContent = String(v);
+
+    // Convert -100..+100 into a bar that grows left or right from the center.
+    // Bar width is 100% total, so each side is 50%.
+    const pct = Math.min(100, Math.abs(v));        // 0..100
+    const sideWidth = (pct / 100) * 50;           // 0..50
+
+    if(fill){
+      if(v >= 0){
+        fill.style.left = "50%";
+        fill.style.width = `${sideWidth}%`;
+      } else {
+        fill.style.left = `${50 - sideWidth}%`;
+        fill.style.width = `${sideWidth}%`;
+      }
+    }
+
+    const atExtreme = Math.abs(v) >= 100;
+    if(btn) btn.hidden = !atExtreme;
+  }
+}
+
+function bindPoliticalButtonsOnce(){
+  for(const id of ["blackstone","bacca","farmer","slade","molten","rowthorn","karr"]){
+    const btn = document.getElementById(`pcClaim_${id}`);
+    if(!btn) continue;
+    if(btn.dataset.bound === "1") continue;
+    btn.dataset.bound = "1";
+
+    btn.addEventListener("click", ()=>{
+      ensurePoliticalCapitalShape();
+      state.politicalCapital[id] = 0;
+      saveState();
+      log("Honour Change", `Honour Change prompted for Clan ${id.toUpperCase()}. Political Capital reset to neutral.`);
+      render();
+    });
+  }
 }
  
   // ---------- Utils ----------
