@@ -499,7 +499,8 @@ ui.importFileInput?.addEventListener("change", async () => {
     const mod = diplomacyModForHall();
 
     // 1) Dice animation
-    const roll = await rollD20Animated({
+    const roll = await rollD20Manual({
+       if(!roll){ log("Order Resolved", `${fn.label} was cancelled at the roll step.`); saveState(); render(); return; }
   title: `${fn.label} (${opt})`,
   mod,
   dc,
@@ -599,8 +600,10 @@ if(kind === "summit"){
   const modInsight = diplomacyModForHall(); // simple: same base, different DC
 
   // Two animated rolls
-  const r1 = await rollD20Animated({ title: `Diplomacy Roll (${tone})`, mod: modDiplomacy, dc: diplomacyDC, modalClass: "siModal--hall" });
-  const r2 = await rollD20Animated({ title: `Insight Roll (${tone})`, mod: modInsight, dc: insightDC, modalClass: "siModal--hall" });
+  const r1 = await rollD20Manual({ title: `Diplomacy Roll (${tone})`, mod: modDiplomacy, dc: diplomacyDC, modalClass: "siModal--hall" });
+       if(!roll){ log("Order Resolved", `${fn.label} was cancelled at the roll step.`); saveState(); render(); return; }
+  const r2 = await rollD20Manual({ title: `Insight Roll (${tone})`, mod: modInsight, dc: insightDC, modalClass: "siModal--hall" });
+       if(!roll){ log("Order Resolved", `${fn.label} was cancelled at the roll step.`); saveState(); render(); return; }
 
   const s1 = r1.total >= diplomacyDC;
   const s2 = r2.total >= insightDC;
@@ -711,7 +714,9 @@ if(kind === "summit"){
       ? `<ul class="siResList">${changes.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>`
       : `<div class="small muted">No tracked changes.</div>`;
 
-    await openSIModal({
+    const narrative = clanReactionLine(opt, tier);
+
+      await openSIModal({
   title: "Order Resolved",
   bodyHtml: `
         <div class="siResTop">
@@ -726,6 +731,9 @@ if(kind === "summit"){
 
         <div class="siResSummary">${escapeHtml(summary)}</div>
 
+        <div class="siResSummary">${escapeHtml(narrative)}</div>
+        <div class="siResSummary" style="margin-top:10px">${escapeHtml(summary)}</div>
+
         <div class="siResChanges">
           <div class="siResChangesTitle">Applied Changes</div>
           ${changeListHtml}
@@ -735,7 +743,7 @@ if(kind === "summit"){
   modalClass: "siModal--hall"
 });
 
-    log("Order Resolved", `${fn.label} (${opt}) → ${formatTier(tier)}. ${summary}`);
+    log("Order Resolved", `${fn.label} (${opt}) → ${formatTier(tier)}. ${narrative} ${summary}`);
     ui.treasuryInput.value = String(state.treasuryGP);
     saveState();
     render();
@@ -1158,6 +1166,42 @@ async function rollD20Animated({ title, mod = 0, dc = null, modalClass = "" }){
   return { d20: final, total };
 }
 
+   async function rollD20Manual({ title, mod = 0, dc = null, modalClass = "" }){
+  const bodyHtml = `
+    <div class="field">
+      <div>Enter your d20 result</div>
+      <input id="siManualD20" type="number" min="1" max="20" value="10" />
+      <div class="small muted" style="margin-top:6px">
+        Modifier: <b>${mod >= 0 ? "+" : ""}${escapeHtml(String(mod))}</b>
+        ${dc != null ? ` • DC <b>${escapeHtml(String(dc))}</b>` : ""}
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
+      <button class="btn btn--ghost" type="button" id="siManualRollBtn">Roll 1d20</button>
+      <div class="small muted" id="siManualPreview" style="align-self:center"></div>
+    </div>
+  `;
+
+  // Open a choice modal that lets us collect input values on confirm
+  const res = await openSIModalChoice({
+    title: title || "Roll",
+    bodyHtml,
+    primaryText: "Continue",
+    secondaryText: "Cancel",
+    modalClass,
+    collectIds: ["siManualD20"]
+  });
+
+  // If user cancelled
+  if(res.action !== "ok") return null;
+
+  // Parse typed d20
+  const d20 = clampInt(res.values.siManualD20 ?? 10, 1, 20);
+  const total = d20 + clampInt(mod, -50, 50);
+  return { d20, total };
+}
+
 function openSIModalChoice({
   title,
   bodyHtml,
@@ -1203,6 +1247,17 @@ function openSIModalChoice({
     ov.querySelector(".siModalX")?.addEventListener("click", ()=>close("cancel"));
     ov.querySelector(".siModalSecondary")?.addEventListener("click", ()=>close("cancel"));
     ov.querySelector(".siModalPrimary")?.addEventListener("click", ()=>close("ok"));
+         // Optional: if a manual roll button exists in the modal, wire it
+    const rollBtn = ov.querySelector("#siManualRollBtn");
+    const rollInput = ov.querySelector("#siManualD20");
+    const preview = ov.querySelector("#siManualPreview");
+    if(rollBtn && rollInput){
+      rollBtn.addEventListener("click", ()=>{
+        const v = clampInt(1 + Math.floor(Math.random()*20), 1, 20);
+        rollInput.value = String(v);
+        if(preview) preview.textContent = `Rolled: ${v}`;
+      });
+    }
 
     const onKey = (e) => {
       if(e.key === "Escape"){
@@ -1262,6 +1317,28 @@ function formatTier(t){
   if(t === "success") return "Success";
   if(t === "failure") return "Failure";
   return "Bad Failure";
+}
+function clanReactionLine(clanLabel, tier){
+  const clan = String(clanLabel || "").trim();
+  const good = [
+    `${clan} accepts with measured approval.`,
+    `${clan}'s envoy nods once, and the room quietly shifts.`,
+    `A seal is pressed. ${clan} seems satisfied.`
+  ];
+  const mid = [
+    `${clan} agrees, but their eyes keep counting.`,
+    `${clan} watches carefully. Nothing is free.`,
+    `The ink dries. The court stays quiet.`
+  ];
+  const bad = [
+    `${clan} withdraws behind polite smiles.`,
+    `${clan}'s envoy leaves without finishing their wine.`,
+    `A quiet insult lands like a thrown gauntlet. ${clan} remembers.`
+  ];
+
+  if(tier === "critical_success" || tier === "great_success") return good[Math.floor(Math.random()*good.length)];
+  if(tier === "success") return mid[Math.floor(Math.random()*mid.length)];
+  return bad[Math.floor(Math.random()*bad.length)];
 }
 
 async function openHallPlanningModal(facId, fnId){
