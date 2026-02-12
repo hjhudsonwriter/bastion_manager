@@ -274,6 +274,7 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
   state.turn += 1;
        
          tickDiplomacyOnAdvanceTurn(); // ✅ add this line
+       ui.treasuryInput.value = String(state.treasuryGP);
 
        tickConstruction();
        // Bastion Event disappears when you move to the next turn
