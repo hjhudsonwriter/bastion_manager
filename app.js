@@ -394,7 +394,7 @@ ui.importFileInput?.addEventListener("change", async () => {
   completeOrder(o);
 }
 
-   function completeOrder(o){
+   async function completeOrder(o){
   const fac = DATA.facilities.find(f => f.id === o.facId);
   if(!fac) return;
   const fn = (fac.functions || []).find(x => x.id === o.fnId);
@@ -1730,6 +1730,14 @@ function positionTooltip(e, tip){
   function renderFunction(fac, fn, locked){
     const key = `${fac.id}__${fn.id}`;
     const needsOption = (fn.options && fn.options.length>0);
+         // NEW: Hall of Emissaries cooldown UX (disable Issue Order during cooldown)
+    let cooldownLeft = 0;
+    if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
+      cooldownLeft = diplomacyCooldownTurnsLeft(String(fn.special.kind || ""));
+    }
+
+    const isDisabled = locked || (cooldownLeft > 0);
+    const btnText = cooldownLeft > 0 ? `Cooldown: ${cooldownLeft} turn${cooldownLeft===1?"":"s"}` : "Issue Order";
 
     // Workshop's Craft function is special: it depends on "tools installed".
     // For MVP we let the DM pick ANY tool list from the spreadsheet tables.
@@ -1771,9 +1779,9 @@ function positionTooltip(e, tip){
           <div class="fnCost" id="cost_${escapeHtml(key)}">${escapeHtml(costText)}</div>
         </div>
         ${selectHtml}
-        <button class="btn btn--small" data-action="runFn" data-fac="${escapeHtml(fac.id)}" data-fn="${escapeHtml(fn.id)}" ${locked ? "disabled" : ""}>
-          Issue Order
-        </button>
+        <button class="btn btn--small" data-action="runFn" data-fac="${escapeHtml(fac.id)}" data-fn="${escapeHtml(fn.id)}" ${isDisabled ? "disabled" : ""}>
+  ${escapeHtml(btnText)}
+</button>
         ${notes}
       </div>
     `;
