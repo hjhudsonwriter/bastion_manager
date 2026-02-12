@@ -1467,11 +1467,24 @@ hallUpgradePill.onclick = () => {
 
   // Wire all hall function buttons rendered by renderFunction()
   hallCard.querySelectorAll("[data-action='runFn']").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const facId = btn.getAttribute("data-fac");
-      const fnId = btn.getAttribute("data-fn");
-      issueOrder(facId, fnId);
-    });
+    btn.addEventListener("click", async () => {
+  const facId = btn.getAttribute("data-fac");
+  const fnId = btn.getAttribute("data-fn");
+
+  // Hall emissary actions get the planning modal
+  const fac = DATA.facilities.find(f => f.id === facId);
+  const fn = fac ? (fac.functions || []).find(x => x.id === fnId) : null;
+
+  if(facId === "hall_of_emissaries" && fn?.special?.type === "emissary_action"){
+    const plan = await openHallPlanningModal(facId, fnId);
+    if(!plan) return;
+    issueOrderWithMeta(facId, fnId, plan.optionIdx, plan.meta);
+    return;
+  }
+
+  // Everything else unchanged
+  issueOrder(facId, fnId);
+});
   });
 }
 
