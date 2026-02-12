@@ -753,6 +753,7 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
     renderLog();
     renderFavour();
     renderPoliticalCapital();
+    renderDiplomaticAssets(); 
 
     // update treasury input (in case actions changed it)
     ui.treasuryInput.value = String(state.treasuryGP);
@@ -977,12 +978,14 @@ function ensureDiplomacyState(){
     // NEW (safe defaults):
     rep: 0,             // -5..+5 (general diplomatic reputation)
     cooldowns: {}       // { [kindOrFnId]: turnsLeft }
+         tokens: 0
   };
 } else {
   // Backwards compatibility for old saves
   if(typeof state.diplomacy.rep !== "number") state.diplomacy.rep = 0;
   if(!state.diplomacy.cooldowns || typeof state.diplomacy.cooldowns !== "object"){
     state.diplomacy.cooldowns = {};
+       if(typeof state.diplomacy.tokens !== "number") state.diplomacy.tokens = 0;
   }
 }
 
@@ -1093,6 +1096,45 @@ async function rollD20Animated({ title, mod = 0, dc = null, modalClass = "" }){
   return { d20: final, total };
 }
 
+function openSIModalChoice({ title, bodyHtml, primaryText = "Confirm", secondaryText = "Cancel", modalClass = "" }){
+  return new Promise(resolve => {
+    const ov = document.createElement("div");
+    ov.className = "siModalOverlay";
+    ov.innerHTML = `
+      <div class="siModal ${modalClass ? String(modalClass) : ""}" role="dialog" aria-modal="true">
+        <div class="siModalHead">
+          <div class="siModalTitle">${escapeHtml(title || "")}</div>
+          <button class="siModalX" type="button" aria-label="Close">✕</button>
+        </div>
+        <div class="siModalBody">${bodyHtml || ""}</div>
+        <div class="siModalFoot" style="justify-content:space-between">
+          <button class="btn btn--ghost siModalSecondary" type="button">${escapeHtml(secondaryText)}</button>
+          <button class="btn btn--primary siModalPrimary" type="button">${escapeHtml(primaryText)}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(ov);
+
+    const close = (result) => {
+      ov.remove();
+      resolve(result);
+    };
+
+    ov.addEventListener("click", (e) => { if(e.target === ov) close("cancel"); });
+    ov.querySelector(".siModalX")?.addEventListener("click", ()=>close("cancel"));
+    ov.querySelector(".siModalSecondary")?.addEventListener("click", ()=>close("cancel"));
+    ov.querySelector(".siModalPrimary")?.addEventListener("click", ()=>close("ok"));
+
+    const onKey = (e) => {
+      if(e.key === "Escape"){
+        document.removeEventListener("keydown", onKey);
+        close("cancel");
+      }
+    };
+    document.addEventListener("keydown", onKey);
+  });
+}
+
 // ---------------- Diplomacy action math ----------------
 
 function diplomacyModForHall(){
@@ -1143,6 +1185,103 @@ function formatTier(t){
   return "Bad Failure";
 }
 
+async function openHallPlanningModal(facId, fnId){
+  const fac = DATA.facilities.find(f => f.id === facId);
+  if(!fac) return null;
+  const fn = (fac.functions || []).find(x => x.id === fnId);
+  if(!fn || fac.id !== "hall_of_emissaries" || fn.special?.type !== "emissary_action") return null;
+
+  const kind = String(fn.special.kind || "");
+  const options = (fn.options || []).map((o, idx) => {
+    const label = o.label || String(o);
+    return { idx, label };
+  });
+
+  // Default to whatever is currently selected on the card
+  const sel = document.getElementById(`sel_${facId}__${fnId}`);
+  const defaultIdx = clampInt(sel ? sel.value : 0, 0);
+
+  const durationChoices = [1,3,6];
+  const defaultDur = durationChoices.includes(fn.special.durationTurns) ? fn.special.durationTurns : 3;
+
+  let extraHtml = "";
+
+  if(kind === "trade_agreement"){
+    extraHtml = `
+      <div style="margin-top:10px">
+        <div class="small muted" style="margin-bottom:6px">Duration</div>
+        <select id="hallDurSel">
+          ${durationChoices.map(t=>`<option value="${t}" ${t===defaultDur?"selected":""}>${t} turn${t===1?"":"s"}</option>`).join("")}
+        </select>
+      </div>
+      <div class="siResSummary" style="margin-top:12px">
+        <b>Projected:</b> A negotiation roll will determine income/turn, duration stability, and Political Capital change.
+      </div>
+    `;
+  }
+
+  if(kind === "host_delegation"){
+    extraHtml = `
+      <div style="margin-top:10px">
+        <div class="small muted" style="margin-bottom:6px">Tone</div>
+        <select id="hallToneSel">
+          <option value="conciliatory">Conciliatory (safer)</option>
+          <option value="assertive">Assertive (balanced)</option>
+          <option value="opportunistic">Opportunistic (higher risk)</option>
+        </select>
+      </div>
+      <div class="siResSummary" style="margin-top:12px">
+        <b>Projected:</b> Two rolls (Diplomacy + Insight). Strong results can award a Favour Token.
+      </div>
+    `;
+  }
+
+  // Generic preview for other kinds for now
+  if(kind !== "trade_agreement" && kind !== "host_delegation"){
+    extraHtml = `
+      <div class="siResSummary" style="margin-top:12px">
+        <b>Projected:</b> Political Capital shifts on resolution. Duration and income are affected by your roll tier.
+      </div>
+    `;
+  }
+
+  const bodyHtml = `
+    <div>
+      <div class="small muted" style="margin-bottom:6px">Select target</div>
+      <select id="hallClanSel">
+        ${options.map(o => `<option value="${o.idx}" ${o.idx===defaultIdx?"selected":""}>${escapeHtml(o.label)}</option>`).join("")}
+      </select>
+      ${extraHtml}
+    </div>
+  `;
+
+  const actionVerb =
+    kind === "trade_agreement" ? "Negotiate" :
+    kind === "host_delegation" ? "Receive Delegation" :
+    "Proceed";
+
+  const res = await openSIModalChoice({
+    title: fn.label,
+    bodyHtml,
+    primaryText: actionVerb,
+    secondaryText: "Cancel",
+    modalClass: "siModal--hall"
+  });
+
+  if(res !== "ok") return null;
+
+  const chosenIdx = clampInt(document.getElementById("hallClanSel")?.value ?? defaultIdx, 0);
+
+  const meta = {};
+  if(kind === "trade_agreement"){
+    meta.durationTurns = clampInt(document.getElementById("hallDurSel")?.value ?? defaultDur, 1, 30);
+  }
+  if(kind === "host_delegation"){
+    meta.tone = String(document.getElementById("hallToneSel")?.value || "assertive");
+  }
+
+  return { optionIdx: chosenIdx, meta };
+}
 // Create a UI panel dynamically (so you don't need to edit HTML)
 function ensureDiplomacyPanel(){
   if(document.getElementById("diplomacyPanel")) return;
@@ -1474,6 +1613,65 @@ if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
     costGP,
     issuedTurn: state.turn,
     completeTurn: state.turn + 1
+  });
+
+  saveState();
+  log("Order Issued", label);
+  render();
+}
+
+function issueOrderWithMeta(facId, fnId, optionIdxOverride, meta){
+  const fac = DATA.facilities.find(f => f.id === facId);
+  if(!fac) return;
+  const fn = (fac.functions || []).find(x => x.id === fnId);
+  if(!fn) return;
+
+  if(state.pendingOrders.some(o => o.facId === facId && o.fnId === fnId)){
+    alert("That order is already pending.");
+    return;
+  }
+
+  let chosen = null;
+  let optionLabel = null;
+
+  if(fn.options && fn.options.length){
+    const idx = clampInt(optionIdxOverride ?? 0, 0);
+    chosen = fn.options[idx] || null;
+    optionLabel = chosen && chosen.label ? chosen.label : String(chosen || "");
+  }
+
+  let { costGP } = computeFnCost(fac, fn, chosen);
+
+  // Summit discount applies to Hall of Emissaries actions (except upgrades)
+  if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
+    const activeSummit = (state.diplomacy?.summits || [])[0];
+    if(activeSummit && activeSummit.costReductionPct){
+      const pct = clampInt(activeSummit.costReductionPct, 0, 90);
+      costGP = Math.max(0, Math.floor(costGP * (100 - pct) / 100));
+    }
+  }
+
+  if(costGP > state.treasuryGP){
+    alert(`Not enough gp. Need ${costGP}gp, you have ${state.treasuryGP}gp.`);
+    return;
+  }
+
+  state.treasuryGP -= costGP;
+
+  const id = uid();
+  const label = `${fac.name}: ${fn.label}${optionLabel ? ` (${optionLabel})` : ""}`;
+
+  state.pendingOrders.push({
+    id,
+    facId,
+    fnId,
+    chosen,
+    optionLabel,
+    label,
+    costGP,
+    issuedTurn: state.turn,
+    completeTurn: state.turn + 1,
+    meta: meta && typeof meta === "object" ? meta : null
   });
 
   saveState();
@@ -2218,6 +2416,13 @@ function renderPoliticalCapital(){
     const atExtreme = Math.abs(v) >= 100;
     if(btn) btn.hidden = !atExtreme;
   }
+}
+
+function renderDiplomaticAssets(){
+  ensureDiplomacyState();
+  const pill = document.getElementById("daTokensPill");
+  if(!pill) return;
+  pill.textContent = String(clampInt(state.diplomacy.tokens ?? 0, 0, 999));
 }
 
 function bindPoliticalButtonsOnce(){
