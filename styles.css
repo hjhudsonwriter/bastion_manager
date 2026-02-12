@@ -839,11 +839,20 @@ select option{
 /* ---------------- Diplomacy & Trade layout ---------------- */
 
 #diplomacyPanel{
+  position: relative;
   background-image: url("assets/facilities/hall_of_emissaries.png");
   background-size: cover;
   background-position: center;
+  overflow: hidden;
   padding-left: 18px;
   padding-right: 18px;
+}
+  #diplomacyPanel::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 4, 2, 0.75); /* increase to 0.85 if you want darker */
+  z-index: 0;
 }
 
 .dipGrid{
@@ -852,7 +861,9 @@ select option{
   gap: 24px;
   margin-top: 16px;
   align-items: stretch;
-min-height: 520px;
+  min-height: 520px;
+  position: relative;
+  z-index: 1;
 }
 .dipRight{
   border-left: 1px solid rgba(255,255,255,0.12);
@@ -882,7 +893,7 @@ min-height: 520px;
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   opacity: 0.75;
 }
 
@@ -897,8 +908,9 @@ min-height: 520px;
 .hallCard{
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 16px;
-  padding: 14px;
+  padding: 0 14px 14px 14px;
   background: rgba(0,0,0,0.20);
+  backdrop-filter: blur(4px);
   height: 100%;
 }
 
@@ -918,6 +930,14 @@ min-height: 520px;
   border-radius: 999px;
   background: linear-gradient(135deg,#3a2b0f,#6b4d18);
   border: 1px solid rgba(255,215,120,0.4);
+}
+
+.hallHead{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0 10px 0;
+  margin-top: 2px;
 }
 
 .pill{
