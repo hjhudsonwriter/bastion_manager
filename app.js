@@ -1287,32 +1287,32 @@ async function openHallPlanningModal(facId, fnId){
 
   if(kind === "trade_agreement"){
     extraHtml = `
-      <div style="margin-top:10px">
-        <div class="small muted" style="margin-bottom:6px">Duration</div>
-        <select id="hallDurSel">
-          ${durationChoices.map(t=>`<option value="${t}" ${t===defaultDur?"selected":""}>${t} turn${t===1?"":"s"}</option>`).join("")}
-        </select>
-      </div>
-      <div class="siResSummary" style="margin-top:12px">
-        <b>Projected:</b> A negotiation roll will determine income/turn, duration stability, and Political Capital change.
-      </div>
-    `;
+  <div style="margin-top:10px" class="field">
+    <div>Duration</div>
+    <select id="hallDurSel">
+      ${durationChoices.map(t=>`<option value="${t}" ${t===defaultDur?"selected":""}>${t} turn${t===1?"":"s"}</option>`).join("")}
+    </select>
+  </div>
+  <div class="siResSummary" style="margin-top:12px">
+    <b>Projected:</b> A negotiation roll will determine income/turn, duration stability, and Political Capital change.
+  </div>
+`;
   }
 
   if(kind === "host_delegation"){
     extraHtml = `
-      <div style="margin-top:10px">
-        <div class="small muted" style="margin-bottom:6px">Tone</div>
-        <select id="hallToneSel">
-          <option value="conciliatory">Conciliatory (safer)</option>
-          <option value="assertive">Assertive (balanced)</option>
-          <option value="opportunistic">Opportunistic (higher risk)</option>
-        </select>
-      </div>
-      <div class="siResSummary" style="margin-top:12px">
-        <b>Projected:</b> Two rolls (Diplomacy + Insight). Strong results can award a Favour Token.
-      </div>
-    `;
+  <div style="margin-top:10px" class="field">
+    <div>Tone</div>
+    <select id="hallToneSel">
+      <option value="conciliatory">Conciliatory (safer)</option>
+      <option value="assertive">Assertive (balanced)</option>
+      <option value="opportunistic">Opportunistic (higher risk)</option>
+    </select>
+  </div>
+  <div class="siResSummary" style="margin-top:12px">
+    <b>Projected:</b> Two rolls (Diplomacy + Insight). Strong results can award a Favour Token.
+  </div>
+`;
   }
 
   // Generic preview for other kinds for now
@@ -1325,14 +1325,16 @@ async function openHallPlanningModal(facId, fnId){
   }
 
   const bodyHtml = `
-    <div>
-      <div class="small muted" style="margin-bottom:6px">Select target</div>
+  <div>
+    <div class="field">
+      <div>Select target</div>
       <select id="hallClanSel">
         ${options.map(o => `<option value="${o.idx}" ${o.idx===defaultIdx?"selected":""}>${escapeHtml(o.label)}</option>`).join("")}
       </select>
-      ${extraHtml}
     </div>
-  `;
+    ${extraHtml}
+  </div>
+`;
 
   const actionVerb =
     kind === "trade_agreement" ? "Negotiate" :
