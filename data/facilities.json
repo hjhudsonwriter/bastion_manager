@@ -1288,6 +1288,117 @@
     ]
   },
   {
+  "name": "Hall of Emissaries",
+  "id": "hall_of_emissaries",
+  "requiredLevel": 5,
+  "threshold": "Political / Trade",
+  "description": "A neutral hall for delegations, contracts, arbitration and inter-clan diplomacy.",
+  "functions": [
+    {
+      "id": "upgrade_hall",
+      "label": "Upgrade Hall (Level Up)",
+      "costGP": 0,
+      "special": {
+        "type": "upgrade_facility",
+        "maxLevel": 3,
+        "costByNextLevel": {
+          "2": 600,
+          "3": 1200
+        }
+      }
+    },
+    {
+      "id": "secure_trade_agreement",
+      "label": "Secure Trade Agreement",
+      "costGP": 250,
+      "requiredFacilityLevel": 1,
+      "options": [
+        { "label": "Clan Blackstone", "value": "Blackstone" },
+        { "label": "Clan Rowthorn", "value": "Rowthorn" },
+        { "label": "Clan Karr", "value": "Karr" },
+        { "label": "Clan Farmer", "value": "Farmer" },
+        { "label": "Clan Slade", "value": "Slade" },
+        { "label": "Clan Bacca", "value": "Bacca" },
+        { "label": "Clan Molten", "value": "Molten" }
+      ],
+      "special": {
+        "type": "emissary_action",
+        "kind": "trade_agreement",
+        "durationTurns": 4,
+        "incomeMin": 60,
+        "incomeMax": 140
+      }
+    },
+    {
+      "id": "host_delegation",
+      "label": "Host Delegation",
+      "costGP": 150,
+      "requiredFacilityLevel": 1,
+      "options": [
+        { "label": "Clan Blackstone", "value": "Blackstone" },
+        { "label": "Clan Rowthorn", "value": "Rowthorn" },
+        { "label": "Clan Karr", "value": "Karr" },
+        { "label": "Clan Farmer", "value": "Farmer" },
+        { "label": "Clan Slade", "value": "Slade" },
+        { "label": "Clan Bacca", "value": "Bacca" },
+        { "label": "Clan Molten", "value": "Molten" }
+      ],
+      "special": {
+        "type": "emissary_action",
+        "kind": "host_delegation",
+        "durationTurns": 2,
+        "oneTimeTreasuryMin": 80,
+        "oneTimeTreasuryMax": 220
+      }
+    },
+    {
+      "id": "inter_clan_summit",
+      "label": "Inter-Clan Summit",
+      "costGP": 450,
+      "requiredFacilityLevel": 2,
+      "options": [
+        { "label": "Blackstone + Rowthorn", "value": "Blackstone/Rowthorn" },
+        { "label": "Blackstone + Karr", "value": "Blackstone/Karr" },
+        { "label": "Rowthorn + Karr", "value": "Rowthorn/Karr" },
+        { "label": "Farmer + Slade", "value": "Farmer/Slade" },
+        { "label": "Bacca + Molten", "value": "Bacca/Molten" }
+      ],
+      "special": {
+        "type": "emissary_action",
+        "kind": "summit",
+        "durationTurns": 3,
+        "costReductionPct": 25
+      }
+    },
+    {
+      "id": "arbitration_authority",
+      "label": "Arbitration Authority",
+      "costGP": 600,
+      "requiredFacilityLevel": 3,
+      "special": {
+        "type": "emissary_action",
+        "kind": "arbitration",
+        "durationTurns": 4,
+        "incomeMin": 90,
+        "incomeMax": 190
+      }
+    },
+    {
+      "id": "trade_consortium",
+      "label": "Trade Consortium",
+      "costGP": 900,
+      "requiredFacilityLevel": 3,
+      "special": {
+        "type": "emissary_action",
+        "kind": "consortium",
+        "durationTurns": 5,
+        "incomeMin": 140,
+        "incomeMax": 260
+      }
+    }
+  ]
+},
+  {
     "name": "Shrine of Telluria",
     "id": "shrine_telluria",
     "requiredLevel": 8,
