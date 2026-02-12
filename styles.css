@@ -1114,3 +1114,59 @@ select option{
   overflow: hidden;
   border-radius: 14px;
 }
+
+/* === Hall header spacing + size (top right) === */
+.dipHeadRight{
+  padding-top: 8px;      /* pulls it away from the top border */
+  padding-right: 14px;   /* pulls it away from the right border */
+}
+
+.hallHeadRow{
+  gap: 12px;
+}
+
+.hallHeadTitle{
+  font-size: 20px;       /* slightly larger */
+  letter-spacing: 0.03em;
+}
+
+#hallLevelBadge{
+  transform: scale(1.05);
+}
+
+/* === Upgrade pill: make it premium === */
+.pill{
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  border-radius: 999px;
+  border: 1px solid rgba(255, 215, 140, 0.55);
+
+  background: linear-gradient(180deg, rgba(140,95,25,0.55), rgba(70,40,10,0.55));
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+
+  cursor: pointer;
+}
+
+.pill:hover{
+  filter: brightness(1.08);
+  box-shadow:
+    0 8px 22px rgba(0,0,0,0.42),
+    inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+.pill:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* === Hall image crop: center the crests === */
+.hallImg{
+  object-position: center 42%; /* try 42% first */
+}
