@@ -1050,14 +1050,6 @@ function ensureDiplomacyState(){
       state.diplomacy.tokens = 0;
     }
   }
-} else {
-  // Backwards compatibility for old saves
-  if(typeof state.diplomacy.rep !== "number") state.diplomacy.rep = 0;
-  if(!state.diplomacy.cooldowns || typeof state.diplomacy.cooldowns !== "object"){
-    state.diplomacy.cooldowns = {};
-       if(typeof state.diplomacy.tokens !== "number") state.diplomacy.tokens = 0;
-  }
-}
 
   // Default built facilities to level 1 if missing
   const built = builtFacilityIds();
@@ -1405,7 +1397,7 @@ function ensureDiplomacyPanel(){
 
   panel.querySelector("#clearDiplomacyBtn").addEventListener("click", () => {
     if(!confirm("Clear Diplomacy & Trade records? (Does not undo gold already gained.)")) return;
-    state.diplomacy = { agreements: [], delegations: [], summits: [], arbitrations: [], consortiums: [], rep: 0, cooldowns: {} };
+    state.diplomacy = { agreements: [], delegations: [], summits: [], arbitrations: [], consortiums: [], rep: 0, cooldowns: {}, tokens: 0 };
     saveState();
     log("Diplomacy", "Cleared diplomacy records.");
     render();
