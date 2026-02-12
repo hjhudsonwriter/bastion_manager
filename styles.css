@@ -1310,3 +1310,95 @@ select option{
 .siResList li{
   margin: 6px 0;
 }
+
+/* =========================
+   Political Capital (Clans)
+   ========================= */
+
+.pcTitle{
+  font-family: var(--ui);
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(214,178,94,.95);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.pcRow{
+  display: grid;
+  grid-template-columns: 92px 1fr 44px auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 8px;
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.06));
+  margin-bottom: 8px;
+}
+
+.pcName{ font-size: 12px; opacity: .92; }
+.pcVal{ font-size: 12px; text-align: right; opacity: .85; font-family: var(--mono); }
+
+.pcBar{
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(214,178,94,.35);
+  background: rgba(0,0,0,.35);
+  overflow: hidden;
+}
+
+/* Center “neutral” marker line */
+.pcBar::after{
+  content:"";
+  position:absolute;
+  left: 50%;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: rgba(214,178,94,.55);
+  filter: drop-shadow(0 0 3px rgba(214,178,94,.25));
+}
+
+.pcFill{
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  left: 50%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(214,178,94,.45), rgba(177,18,42,.70));
+}
+
+/* Hint text */
+.pcHint{ margin-top: 6px; font-size: 12px; }
+
+/* =========================
+   Hall Modal Background Skin
+   (hall_inner.png)
+   ========================= */
+
+.siModal.siModal--hall{
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(58,18,25,.70), rgba(27,10,13,.86)),
+    url("assets/facilities/hall_inner.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.siModal.siModal--hall::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,.45);
+  pointer-events:none;
+}
+
+.siModal.siModal--hall .siModalHead,
+.siModal.siModal--hall .siModalBody,
+.siModal.siModal--hall .siModalFoot{
+  position: relative;
+  z-index: 1;
+}
