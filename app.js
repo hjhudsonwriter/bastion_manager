@@ -270,7 +270,7 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
       render();
     });
 
-    ui.advanceTurnBtn.addEventListener("click", () => {
+    ui.advanceTurnBtn.addEventListener("click", async () => {
   state.turn += 1;
        
          tickDiplomacyOnAdvanceTurn(); // ✅ add this line
@@ -288,8 +288,8 @@ state.lastEvent = null;
   state.pendingOrders = state.pendingOrders.filter(o => o.completeTurn !== state.turn);
 
   for(const o of due){
-    completeOrder(o);
-  }
+  await completeOrderAsync(o);
+}
 
   // Auto Bastion Event every 4 turns
 if(state.turn % 4 === 0){
@@ -371,6 +371,29 @@ ui.importFileInput?.addEventListener("change", async () => {
     renderFavour();
   }
 
+   async function completeOrderAsync(o){
+  const fac = DATA.facilities.find(f => f.id === o.facId);
+  if(!fac){
+    completeOrder(o);
+    return;
+  }
+
+  const fn = (fac.functions || []).find(x => x.id === o.fnId);
+  if(!fn){
+    completeOrder(o);
+    return;
+  }
+
+  // Only Hall emissary actions need async (dice + modal)
+  if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
+    await completeOrder(o); // completeOrder now contains awaits for this branch
+    return;
+  }
+
+  // Everything else stays synchronous and untouched
+  completeOrder(o);
+}
+
    function completeOrder(o){
   const fac = DATA.facilities.find(f => f.id === o.facId);
   if(!fac) return;
@@ -449,71 +472,208 @@ ui.importFileInput?.addEventListener("change", async () => {
 if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
   ensureDiplomacyState();
 
-  const kind = fn.special.kind;
-  const opt = optionLabel || chosen?.value || "—";
-  const turns = clampInt(fn.special.durationTurns ?? 2, 1, 20);
+    // ---------------- Hall of Emissaries (Dice + Consequences) ----------------
+  if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
+    ensureDiplomacyState();
 
-  // Summit discount flag
-  if(kind === "summit"){
-    const pct = clampInt(fn.special.costReductionPct ?? 0, 0, 90);
-    state.diplomacy.summits.push({
-      id: uid(),
-      title: "Inter-Clan Summit",
-      pair: String(opt),
-      turnsLeft: turns,
-      costReductionPct: pct
+    const kind = String(fn.special.kind || "unknown");
+    const opt = optionLabel || chosen?.value || "—";
+    const baseTurns = clampInt(fn.special.durationTurns ?? 2, 1, 20);
+
+    // Base DCs per action kind (tweak any time)
+    const DC_BY_KIND = {
+      trade_agreement: 14,
+      host_delegation: 13,
+      summit: 12,
+      arbitration: 15,
+      consortium: 16
+    };
+    const dc = DC_BY_KIND[kind] ?? 14;
+
+    // Cooldown gate (consequence system)
+    const cdLeft = diplomacyCooldownTurnsLeft(kind);
+    if(cdLeft > 0){
+      log("Order Completed", `${label} → Blocked (cooldown ${cdLeft} turns remaining).`);
+      saveState();
+      return;
+    }
+
+    const mod = diplomacyModForHall();
+
+    // 1) Dice animation
+    // NOTE: this function is async, so it will only work via completeOrderAsync (Step 5).
+    // If called from plain completeOrder, it will do nothing harmful, but won’t await properly.
+    const roll = await rollD20Animated({
+      title: `${fn.label} (${opt})`,
+      mod,
+      dc
     });
-    appendToWarehouse("Summit Charter", 1, "", "Hall of Emissaries");
-    log("Order Completed", `${label} → Summit convened (${opt}). Trade actions cost -${pct}% for ${turns} turns.`);
+
+    const tier = tierFromRoll(roll.d20, roll.total, dc);
+
+    // 2) Apply outcome
+    const changes = []; // bullet list for the resolution popup
+    let summary = "";
+
+    // Helper: add a “contract-like” record
+    const addContract = (arrName, rec) => {
+      state.diplomacy[arrName].push(rec);
+      changes.push(`New record: ${rec.title} (${rec.turnsLeft} turns)`);
+      if(rec.incomePerTurn) changes.push(`Income: +${rec.incomePerTurn} gp/turn`);
+    };
+
+    // Helper: random in inclusive range
+    const randBetween = (a, b) => {
+      const min = clampInt(Math.min(a,b), -999999, 999999);
+      const max = clampInt(Math.max(a,b), -999999, 999999);
+      return min + Math.floor(Math.random() * (max - min + 1));
+    };
+
+    // Default adjustments by tier
+    let turnsAdj = 0;
+    let incomeMult = 1;
+
+    if(tier === "critical_success"){ turnsAdj = 2; incomeMult = 1.35; adjustDiplomacyRep(+1); changes.push("Reputation: +1"); }
+    if(tier === "great_success"){ turnsAdj = 1; incomeMult = 1.20; adjustDiplomacyRep(+1); changes.push("Reputation: +1"); }
+    if(tier === "success"){ turnsAdj = 0; incomeMult = 1.00; }
+    if(tier === "failure"){ turnsAdj = -1; incomeMult = 0.75; adjustDiplomacyRep(-1); changes.push("Reputation: -1"); }
+    if(tier === "bad_failure"){ turnsAdj = -2; incomeMult = 0; adjustDiplomacyRep(-2); changes.push("Reputation: -2"); setDiplomacyCooldown(kind, 2); changes.push("Cooldown: 2 turns"); }
+
+    const turns = clampInt(baseTurns + turnsAdj, 1, 30);
+
+    // ---- SUMMIT ----
+    if(kind === "summit"){
+      if(incomeMult === 0){
+        summary = `The summit collapses into accusation and slammed goblets. No accord is reached.`;
+      } else {
+        const basePct = clampInt(fn.special.costReductionPct ?? 0, 0, 90);
+        const pct =
+          tier === "critical_success" ? clampInt(basePct + 10, 0, 90) :
+          tier === "great_success"    ? clampInt(basePct + 5, 0, 90) :
+          tier === "failure"          ? clampInt(basePct - 5, 0, 90) :
+                                        basePct;
+
+        state.diplomacy.summits.push({
+          id: uid(),
+          title: "Inter-Clan Summit",
+          pair: String(opt),
+          turnsLeft: turns,
+          costReductionPct: pct
+        });
+
+        appendToWarehouse("Summit Charter", 1, "", "Hall of Emissaries");
+        changes.push(`Trade action discount: ${pct}% (${turns} turns)`);
+        summary = `A charter is inked. Trade routes loosen. The room exhales.`;
+      }
+    }
+
+    // ---- HOST DELEGATION ----
+    else if(kind === "host_delegation"){
+      const gMin = clampInt(fn.special.oneTimeTreasuryMin ?? 0, 0);
+      const gMax = clampInt(fn.special.oneTimeTreasuryMax ?? gMin, gMin);
+
+      if(incomeMult === 0){
+        // Bad failure: it costs you to smooth it over
+        const penalty = clampInt(Math.ceil((gMin + gMax) / 6), 0);
+        state.treasuryGP -= penalty;
+        changes.push(`Treasury: -${penalty} gp`);
+        summary = `The delegation is insulted. You pay to soothe egos and salvage the relationship.`;
+      } else {
+        let gained = randBetween(gMin, gMax);
+
+        if(tier === "great_success") gained += clampInt(Math.ceil(gained * 0.25), 0);
+        if(tier === "critical_success") gained += clampInt(Math.ceil(gained * 0.50), 0);
+        if(tier === "failure") gained = clampInt(Math.floor(gained * 0.60), 0);
+
+        state.treasuryGP += gained;
+        changes.push(`Treasury: +${gained} gp`);
+
+        state.diplomacy.delegations.push({
+          id: uid(),
+          title: "Hosted Delegation",
+          clan: String(opt),
+          turnsLeft: turns
+        });
+
+        appendToWarehouse(`Delegation Gift (${opt})`, 1, "", "Hall of Emissaries");
+        changes.push(`Delegation active: ${turns} turns`);
+        summary = `A feast, a toast, and a quiet exchange of favours.`;
+      }
+    }
+
+    // ---- CONTRACT TYPES (agreement / arbitration / consortium) ----
+    else {
+      const iMin = clampInt(fn.special.incomeMin ?? 0, 0);
+      const iMax = clampInt(fn.special.incomeMax ?? iMin, iMin);
+      const baseIncome = randBetween(iMin, iMax);
+
+      if(incomeMult === 0){
+        summary = `Negotiations sour. Ink never touches parchment.`;
+      } else {
+        const perTurn = clampInt(Math.floor(baseIncome * incomeMult), 0);
+
+        const title =
+          kind === "arbitration" ? "Arbitration Authority"
+          : kind === "consortium" ? "Trade Consortium"
+          : "Trade Agreement";
+
+        const rec = {
+          id: uid(),
+          title,
+          clan: String(opt),
+          turnsLeft: turns,
+          incomePerTurn: perTurn
+        };
+
+        if(kind === "arbitration") addContract("arbitrations", rec);
+        else if(kind === "consortium") addContract("consortiums", rec);
+        else addContract("agreements", rec);
+
+        appendToWarehouse(`${rec.title} Contract`, 1, "", "Hall of Emissaries");
+
+        summary =
+          tier === "critical_success" ? `The deal is legendary. Other emissaries will quote this contract for years.` :
+          tier === "great_success" ? `A strong deal. Clean clauses. Better margins.` :
+          tier === "failure" ? `A deal, but you concede ground. The margins are thinner.` :
+          `Terms are acceptable. The contract is sealed.`;
+      }
+    }
+
+    // 3) Show resolution popup (order resolution modal)
+    const changeListHtml = changes.length
+      ? `<ul class="siResList">${changes.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>`
+      : `<div class="small muted">No tracked changes.</div>`;
+
+    await openSIModal({
+      title: "Order Resolved",
+      bodyHtml: `
+        <div class="siResTop">
+          <div class="siResAction">${escapeHtml(fn.label)}</div>
+          <div class="siResTarget">Target: <b>${escapeHtml(String(opt))}</b></div>
+        </div>
+
+        <div class="siResRoll">
+          <div><b>Roll</b>: d20 (${escapeHtml(String(roll.d20))}) ${mod >= 0 ? "+" : ""}${escapeHtml(String(mod))} = <b>${escapeHtml(String(roll.total))}</b></div>
+          <div><b>DC</b>: ${escapeHtml(String(dc))} • <b>${escapeHtml(formatTier(tier))}</b></div>
+        </div>
+
+        <div class="siResSummary">${escapeHtml(summary)}</div>
+
+        <div class="siResChanges">
+          <div class="siResChangesTitle">Applied Changes</div>
+          ${changeListHtml}
+        </div>
+      `,
+      primaryText: "Continue"
+    });
+
+    // 4) Log entry + save
+    log("Order Resolved", `${fn.label} (${opt}) → ${formatTier(tier)}. ${summary}`);
+    ui.treasuryInput.value = String(state.treasuryGP);
     saveState();
+    render();
     return;
   }
-
-  // Delegation: one-time gp + a token item
-  if(kind === "host_delegation"){
-    const gMin = clampInt(fn.special.oneTimeTreasuryMin ?? 0, 0);
-    const gMax = clampInt(fn.special.oneTimeTreasuryMax ?? gMin, gMin);
-    const gained = clampInt(gMin + Math.floor(Math.random() * (gMax - gMin + 1)), 0);
-    state.treasuryGP += gained;
-
-    state.diplomacy.delegations.push({
-      id: uid(),
-      title: "Hosted Delegation",
-      clan: String(opt),
-      turnsLeft: turns
-    });
-
-    appendToWarehouse(`Delegation Gift (${opt})`, 1, "", "Hall of Emissaries");
-    log("Order Completed", `${label} → Hosted ${opt}. Received +${gained} gp and a Delegation Gift.`);
-    saveState();
-    return;
-  }
-
-  // Agreements / Arbitration / Consortium: passive gp per turn
-  const iMin = clampInt(fn.special.incomeMin ?? 0, 0);
-  const iMax = clampInt(fn.special.incomeMax ?? iMin, iMin);
-  const perTurn = clampInt(iMin + Math.floor(Math.random() * (iMax - iMin + 1)), 0);
-
-  const rec = {
-    id: uid(),
-    title:
-      kind === "arbitration" ? "Arbitration Authority"
-      : kind === "consortium" ? "Trade Consortium"
-      : "Trade Agreement",
-    clan: String(opt),
-    turnsLeft: turns,
-    incomePerTurn: perTurn
-  };
-
-  if(kind === "arbitration") state.diplomacy.arbitrations.push(rec);
-  else if(kind === "consortium") state.diplomacy.consortiums.push(rec);
-  else state.diplomacy.agreements.push(rec);
-
-  appendToWarehouse(`${rec.title} Contract`, 1, "", "Hall of Emissaries");
-  log("Order Completed", `${label} → ${rec.title} established with ${opt}: +${perTurn} gp/turn for ${turns} turns.`);
-  saveState();
-  return;
-}
 
 // Upgrade facility (Level Up)
 if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade_facility"){
@@ -796,14 +956,24 @@ if(whTableBody){
 function ensureDiplomacyState(){
   if(!state.facilityLevels) state.facilityLevels = {};
   if(!state.diplomacy){
-    state.diplomacy = {
-      agreements: [],     // { id, title, clan, turnsLeft, incomePerTurn }
-      delegations: [],    // { id, title, clan, turnsLeft }
-      summits: [],        // { id, title, pair, turnsLeft, costReductionPct }
-      arbitrations: [],   // same as agreements style
-      consortiums: []     // same as agreements style
-    };
+  state.diplomacy = {
+    agreements: [],     // { id, title, clan, turnsLeft, incomePerTurn }
+    delegations: [],    // { id, title, clan, turnsLeft }
+    summits: [],        // { id, title, pair, turnsLeft, costReductionPct }
+    arbitrations: [],   // same as agreements style
+    consortiums: [],    // same as agreements style
+
+    // NEW (safe defaults):
+    rep: 0,             // -5..+5 (general diplomatic reputation)
+    cooldowns: {}       // { [kindOrFnId]: turnsLeft }
+  };
+} else {
+  // Backwards compatibility for old saves
+  if(typeof state.diplomacy.rep !== "number") state.diplomacy.rep = 0;
+  if(!state.diplomacy.cooldowns || typeof state.diplomacy.cooldowns !== "object"){
+    state.diplomacy.cooldowns = {};
   }
+}
 
   // Default built facilities to level 1 if missing
   const built = builtFacilityIds();
@@ -822,6 +992,144 @@ function setFacilityLevel(facId, lvl){
   if(!state.facilityLevels) state.facilityLevels = {};
   state.facilityLevels[facId] = clampInt(lvl, 1, 3);
   saveState();
+}
+
+   // ---------------- SI Modal System (generic, reusable) ----------------
+
+function openSIModal({ title, bodyHtml, primaryText = "Close" }){
+  return new Promise(resolve => {
+    // Overlay
+    const ov = document.createElement("div");
+    ov.className = "siModalOverlay";
+    ov.innerHTML = `
+      <div class="siModal" role="dialog" aria-modal="true">
+        <div class="siModalHead">
+          <div class="siModalTitle">${escapeHtml(title || "")}</div>
+          <button class="siModalX" type="button" aria-label="Close">✕</button>
+        </div>
+        <div class="siModalBody">${bodyHtml || ""}</div>
+        <div class="siModalFoot">
+          <button class="btn btn--primary siModalClose" type="button">${escapeHtml(primaryText)}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(ov);
+
+    const close = () => {
+      ov.remove();
+      resolve();
+    };
+
+    ov.addEventListener("click", (e) => {
+      if(e.target === ov) close();
+    });
+    ov.querySelector(".siModalX")?.addEventListener("click", close);
+    ov.querySelector(".siModalClose")?.addEventListener("click", close);
+
+    // ESC closes
+    const onKey = (e) => {
+      if(e.key === "Escape"){
+        document.removeEventListener("keydown", onKey);
+        close();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+  });
+}
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function rollD20Animated({ title, mod = 0, dc = null }){
+  const ov = document.createElement("div");
+  ov.className = "siModalOverlay";
+  ov.innerHTML = `
+    <div class="siModal siModal--dice" role="dialog" aria-modal="true">
+      <div class="siModalHead">
+        <div class="siModalTitle">${escapeHtml(title || "Rolling…")}</div>
+        <div class="siDiceMeta">
+          <span class="siDiceChip">d20</span>
+          <span class="siDiceChip">${mod >= 0 ? "+" : ""}${escapeHtml(String(mod))}</span>
+          ${dc != null ? `<span class="siDiceChip">DC ${escapeHtml(String(dc))}</span>` : ""}
+        </div>
+      </div>
+      <div class="siModalBody">
+        <div class="siDiceNumber" id="siDiceNumber">?</div>
+        <div class="small muted" style="margin-top:10px">The seal wax cracks. A quill pauses mid-stroke.</div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(ov);
+
+  const numberEl = ov.querySelector("#siDiceNumber");
+  const final = clampInt(d(20), 1, 20);
+  const total = final + clampInt(mod, -50, 50);
+
+  // roll animation 0.8–1.2s
+  const duration = 800 + Math.floor(Math.random() * 400);
+  const start = Date.now();
+
+  while(Date.now() - start < duration){
+    if(numberEl) numberEl.textContent = String(clampInt(d(20), 1, 20));
+    await sleep(55);
+  }
+
+  if(numberEl) numberEl.textContent = String(final);
+
+  // tiny pause so it “lands”
+  await sleep(260);
+
+  ov.remove();
+  return { d20: final, total };
+}
+
+// ---------------- Diplomacy action math ----------------
+
+function diplomacyModForHall(){
+  const hallLvl = getFacilityLevel("hall_of_emissaries");
+  const rep = clampInt(state.diplomacy?.rep ?? 0, -5, 5);
+
+  // Hall level matters a lot, rep matters a little
+  const hallBonus = hallLvl === 1 ? 2 : hallLvl === 2 ? 4 : 6;
+  return hallBonus + rep;
+}
+
+function diplomacyCooldownTurnsLeft(key){
+  const cd = state.diplomacy?.cooldowns?.[key];
+  return clampInt(cd ?? 0, 0, 99);
+}
+
+function setDiplomacyCooldown(key, turns){
+  ensureDiplomacyState();
+  const t = clampInt(turns, 0, 99);
+  if(!state.diplomacy.cooldowns) state.diplomacy.cooldowns = {};
+  if(t <= 0) delete state.diplomacy.cooldowns[key];
+  else state.diplomacy.cooldowns[key] = t;
+}
+
+function adjustDiplomacyRep(delta){
+  ensureDiplomacyState();
+  state.diplomacy.rep = clampInt((state.diplomacy.rep ?? 0) + clampInt(delta, -10, 10), -5, 5);
+}
+
+function tierFromRoll(d20, total, dc){
+  const nat20 = d20 === 20;
+  const nat1  = d20 === 1;
+
+  if(nat20) return "critical_success";
+  if(nat1)  return "critical_failure";
+
+  if(total >= dc + 5) return "great_success";
+  if(total >= dc)     return "success";
+  if(total <= dc - 5) return "bad_failure";
+  return "failure";
+}
+
+function formatTier(t){
+  if(t === "critical_success") return "Critical Success";
+  if(t === "great_success") return "Great Success";
+  if(t === "success") return "Success";
+  if(t === "failure") return "Failure";
+  return "Bad Failure";
 }
 
 // Create a UI panel dynamically (so you don't need to edit HTML)
@@ -1040,6 +1348,14 @@ function tickDiplomacyOnAdvanceTurn(){
   d.summits = dec(d.summits);
   d.arbitrations = dec(d.arbitrations);
   d.consortiums = dec(d.consortiums);
+
+     // NEW: tick diplomacy cooldowns
+  if(d.cooldowns && typeof d.cooldowns === "object"){
+    for(const k of Object.keys(d.cooldowns)){
+      d.cooldowns[k] = clampInt(d.cooldowns[k] - 1, 0);
+      if(d.cooldowns[k] <= 0) delete d.cooldowns[k];
+    }
+  }
 
   saveState();
 }
