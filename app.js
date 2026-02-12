@@ -1250,7 +1250,12 @@ function positionTooltip(e, tip){
   const builtFacilities = DATA.facilities.filter(f => builtIds.includes(f.id));
 
   ui.facilitiesGrid.innerHTML = builtFacilities.map(fac => {
-    const fns = (fac.functions || []).map(fn => renderFunction(fac, fn, false)).join("");
+    const fns = (fac.functions || []).map(fn => {
+  const facLvl = getFacilityLevel(fac.id);
+  const req = clampInt(fn.requiredFacilityLevel ?? 1, 1, 3);
+  const locked = facLvl < req;
+  return renderFunction(fac, fn, locked);
+}).join("");
 
     const imgFile = FACILITY_IMG[fac.id];
     const imgHtml = imgFile
