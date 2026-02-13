@@ -1603,13 +1603,13 @@ select option{
 
   /* Make it visible */
   opacity: 1;
-  mix-blend-mode: normal;
+  mix-blend-mode: screen;
 
   /* Stronger gold glow */
   filter:
-    drop-shadow(0 0 10px rgba(214,178,94,.85))
-    drop-shadow(0 0 24px rgba(214,178,94,.55))
-    drop-shadow(0 0 44px rgba(214,178,94,.35));
+  drop-shadow(0 0 12px rgba(214,178,94,.95))
+  drop-shadow(0 0 30px rgba(214,178,94,.65))
+  drop-shadow(0 0 60px rgba(214,178,94,.35));
 
   animation: tradeRouteSwell 2.2s ease-in-out infinite;
 
@@ -1619,9 +1619,9 @@ select option{
 
 .tradeRouteOverlay--strong{
   filter:
-    drop-shadow(0 0 12px rgba(214,178,94,.95))
-    drop-shadow(0 0 30px rgba(214,178,94,.65))
-    drop-shadow(0 0 56px rgba(214,178,94,.42));
+  drop-shadow(0 0 12px rgba(214,178,94,.95))
+  drop-shadow(0 0 30px rgba(214,178,94,.65))
+  drop-shadow(0 0 60px rgba(214,178,94,.35));
 }
 
 @keyframes tradeRouteSwell{
