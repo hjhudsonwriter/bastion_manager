@@ -1612,6 +1612,9 @@ select option{
     drop-shadow(0 0 44px rgba(214,178,94,.35));
 
   animation: tradeRouteSwell 2.2s ease-in-out infinite;
+
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--s, 1));
+  transform-origin: top left;
 }
 
 .tradeRouteOverlay--strong{
