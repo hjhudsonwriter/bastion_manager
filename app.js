@@ -2009,9 +2009,10 @@ async function openTradeMapModal(){
     bodyHtml: `
       <div class="tradeMapWrap">
   <div class="tradeMapCanvas">
-    <img class="tradeMapImg"
-         src="assets/ui/clan_trading_locations.png?v=6"
-         alt="Clan Trading Locations" />
+    <img id="tradeMapImg"
+     class="tradeMapImg"
+     src="assets/ui/clan_trading_locations.png?v=6"
+     alt="Clan Trading Locations" />
 
     <img id="tradeRouteBase"
          class="tradeRouteOverlay tradeRouteOverlayBase"
@@ -2035,20 +2036,41 @@ async function openTradeMapModal(){
     primaryText: "Close",
     modalClass: "siModal--hall"
   });
- // After modal renders, highlight active routes
-// After modal renders, highlight active routes (wait for image load)
+ // After modal renders, wait for images, then sync overlay sizing + draw highlights
 setTimeout(() => {
+  const mapImg  = document.getElementById("tradeMapImg");
   const baseImg = document.getElementById("tradeRouteBase");
-  if(!baseImg) return;
 
-  const run = () => renderActiveRouteHighlights();
+  if(!mapImg || !baseImg) return;
 
-  // If already loaded, run immediately; otherwise wait
-  if(baseImg.complete && baseImg.naturalWidth > 0){
+  const ready = (img) => img.complete && img.naturalWidth > 0;
+
+  const run = () => {
+    syncTradeMapOverlaysToMap();
+    renderActiveRouteHighlights();
+  };
+
+  // If both already loaded, run immediately
+  if(ready(mapImg) && ready(baseImg)){
     run();
-  } else {
-    baseImg.addEventListener("load", run, { once:true });
+    return;
   }
+
+  // Otherwise wait until both have loaded
+  let done = false;
+  const tryRun = () => {
+    if(done) return;
+    if(ready(mapImg) && ready(baseImg)){
+      done = true;
+      run();
+    }
+  };
+
+  mapImg.addEventListener("load", tryRun, { once: true });
+  baseImg.addEventListener("load", tryRun, { once: true });
+
+  // Also try a moment later in case cached images don’t fire load
+  setTimeout(tryRun, 80);
 }, 0);
 }
 
@@ -3078,46 +3100,75 @@ function colourMatch(r,g,b, target, tolerance=70){
     Math.abs(b-target[2]) < tolerance
   );
 }
-
-function renderActiveRouteHighlights(){
+function syncTradeMapOverlaysToMap(){
+  const mapImg  = document.getElementById("tradeMapImg");
   const baseImg = document.getElementById("tradeRouteBase");
   const canvas  = document.getElementById("tradeRouteHighlight");
-  if(!baseImg || !canvas) return;
+  if(!mapImg || !baseImg || !canvas) return;
 
-   const mapImg = document.querySelector(".tradeMapImg");
-if(mapImg){
-  console.log("MAP natural:", mapImg.naturalWidth, mapImg.naturalHeight, "display:", mapImg.clientWidth, mapImg.clientHeight);
+  // Force overlay + canvas to match the *rendered* map dimensions exactly
+  const w = mapImg.clientWidth;
+  const h = mapImg.clientHeight;
+
+  // Base overlay image matches map box
+  baseImg.style.width  = w + "px";
+  baseImg.style.height = h + "px";
+
+  // Canvas CSS box matches map box
+  canvas.style.width  = w + "px";
+  canvas.style.height = h + "px";
+
+  // Canvas internal resolution accounts for device pixel ratio (crisper glow)
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width  = Math.max(1, Math.round(w * dpr));
+  canvas.height = Math.max(1, Math.round(h * dpr));
+
+  const ctx = canvas.getContext("2d");
+  if(ctx){
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
 }
-console.log("ROUTES natural:", baseImg.naturalWidth, baseImg.naturalHeight, "display:", baseImg.clientWidth, baseImg.clientHeight);
+
+function renderActiveRouteHighlights(){
+  const mapImg  = document.getElementById("tradeMapImg");
+  const baseImg = document.getElementById("tradeRouteBase");
+  const canvas  = document.getElementById("tradeRouteHighlight");
+  if(!mapImg || !baseImg || !canvas) return;
 
   const routes = (state.tradeNetwork?.routes || [])
-    .filter(r => r.status !== "removed")
-    .map(r => r.clan);
+    .filter(r => r && r.status !== "removed")
+    .map(r => String(r.clan || "").trim())
+    .filter(Boolean);
 
   if(!routes.length) return;
 
+  // Ensure canvas matches map before drawing
+  syncTradeMapOverlaysToMap();
+
+  const w = mapImg.clientWidth;
+  const h = mapImg.clientHeight;
+
   const ctx = canvas.getContext("2d");
+  if(!ctx) return;
 
-  canvas.width  = baseImg.clientWidth;
-  canvas.height = baseImg.clientHeight;
+  // Draw the base overlay into the canvas at the same size as the map
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(baseImg, 0, 0, w, h);
 
-  ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
-
-  const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+  const imgData = ctx.getImageData(0, 0, w, h);
   const data = imgData.data;
 
-  for(let i=0;i<data.length;i+=4){
+  for(let i=0; i<data.length; i+=4){
     const r = data[i];
     const g = data[i+1];
     const b = data[i+2];
     const a = data[i+3];
-
     if(a === 0) continue;
 
     let keep = false;
     for(const clan of routes){
       const target = ROUTE_COLOURS[clan];
-      if(target && colourMatch(r,g,b,target)){
+      if(target && colourMatch(r,g,b,target,70)){
         keep = true;
         break;
       }
@@ -3128,7 +3179,7 @@ console.log("ROUTES natural:", baseImg.naturalWidth, baseImg.naturalHeight, "dis
     }
   }
 
-  ctx.putImageData(imgData,0,0);
+  ctx.putImageData(imgData, 0, 0);
 }
 
   function escapeHtml(s){
