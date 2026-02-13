@@ -1567,3 +1567,42 @@ select option{
 .tradeMapWrap::-webkit-scrollbar-track{
   background: rgba(0,0,0,.18);
 }
+
+/* =========================
+   Trade Route SVG Overlays
+   ========================= */
+
+.tradeMapWrap{
+  position: relative;
+}
+
+/* Each route overlay is a transparent SVG sitting on top of the map */
+.tradeRouteOverlay{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: .95;
+  mix-blend-mode: screen;
+
+  /* Gold glow */
+  filter:
+    drop-shadow(0 0 6px rgba(214,178,94,.55))
+    drop-shadow(0 0 16px rgba(214,178,94,.35));
+  
+  animation: tradeRouteSwell 2.6s ease-in-out infinite;
+}
+
+/* A slightly stronger glow when multiple overlays stack */
+.tradeRouteOverlay--strong{
+  filter:
+    drop-shadow(0 0 8px rgba(214,178,94,.70))
+    drop-shadow(0 0 22px rgba(214,178,94,.45));
+}
+
+@keyframes tradeRouteSwell{
+  0%   { opacity: .78; filter: drop-shadow(0 0 5px rgba(214,178,94,.45)) drop-shadow(0 0 14px rgba(214,178,94,.28)); }
+  50%  { opacity: 1.00; filter: drop-shadow(0 0 9px rgba(214,178,94,.72)) drop-shadow(0 0 26px rgba(214,178,94,.42)); }
+  100% { opacity: .78; filter: drop-shadow(0 0 5px rgba(214,178,94,.45)) drop-shadow(0 0 14px rgba(214,178,94,.28)); }
+}
