@@ -2034,9 +2034,10 @@ if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
   render();
 }
 
-function issueOrderWithMeta(facId, fnId, optionIdxOverride, meta){
+   function issueOrderWithMeta(facId, fnId, optionIdxOverride, meta){
   const fac = DATA.facilities.find(f => f.id === facId);
   if(!fac) return;
+
   const fn = (fac.functions || []).find(x => x.id === fnId);
   if(!fn) return;
 
@@ -2045,7 +2046,7 @@ function issueOrderWithMeta(facId, fnId, optionIdxOverride, meta){
     return;
   }
 
-    let chosen = null;
+  let chosen = null;
   let optionLabel = null;
 
   // If the function has real options in facilities.json, use them
@@ -2054,17 +2055,12 @@ function issueOrderWithMeta(facId, fnId, optionIdxOverride, meta){
     chosen = fn.options[idx] || null;
     optionLabel = chosen && chosen.label ? chosen.label : String(chosen || "");
   } else {
-    // If there are NO fn.options (Arbitration/Consortium), use meta.targetClan from the planning modal
-    const t = meta && typeof meta === "object" ? String(meta.targetClan || "") : "";
+    // If there are NO fn.options (e.g. Arbitration/Consortium), use meta.targetClan from the planning modal
+    const t = (meta && typeof meta === "object") ? String(meta.targetClan || "") : "";
     if(t){
       optionLabel = t;
       chosen = { label: t };
     }
-  }
-
-    const idx = clampInt(optionIdxOverride ?? 0, 0);
-    chosen = fn.options[idx] || null;
-    optionLabel = chosen && chosen.label ? chosen.label : String(chosen || "");
   }
 
   let { costGP } = computeFnCost(fac, fn, chosen);
@@ -2098,13 +2094,14 @@ function issueOrderWithMeta(facId, fnId, optionIdxOverride, meta){
     costGP,
     issuedTurn: state.turn,
     completeTurn: state.turn + 1,
-    meta: meta && typeof meta === "object" ? meta : null
+    meta: (meta && typeof meta === "object") ? meta : null
   });
 
   saveState();
   log("Order Issued", label);
   render();
 }
+
 
    function toolTableNames(){
   return Object.keys(DATA.tools || {}).filter(k => k.endsWith("Tools") || k.endsWith("Supplies"));
