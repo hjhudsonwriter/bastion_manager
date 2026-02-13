@@ -2033,12 +2033,11 @@ async function openTradeMapModal(){
     `,
     primaryText: "Close",
     modalClass: "siModal--hall"
-
-     // After modal renders, highlight active routes
+  });
+ // After modal renders, highlight active routes
 setTimeout(() => {
   renderActiveRouteHighlights();
 }, 50);
-  });
 }
 
 // =========================
