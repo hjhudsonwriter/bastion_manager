@@ -475,7 +475,7 @@ ui.importFileInput?.addEventListener("change", async () => {
     ensureDiplomacyState();
 
     const kind = String(fn.special.kind || "unknown");
-    const opt = optionLabel || chosen?.value || "—";
+    const opt = o.optionLabel || (o.meta && o.meta.targetClan) || "";
     const baseTurns = clampInt(fn.special.durationTurns ?? 2, 1, 20);
 
     // Base DCs per action kind (tweak any time)
@@ -1484,7 +1484,9 @@ if(kind === "host_delegation"){
   meta.tone = String(res.values.hallToneSel || "assertive");
 }
 
-return { optionIdx: chosenIdx, meta };
+  // Always store the chosen clan label (important for functions that have no fn.options in facilities.json)
+  meta.targetClan = String((options[chosenIdx] && options[chosenIdx].label) ? options[chosenIdx].label : "");
+  return { optionIdx: chosenIdx, meta };
 }
 // Create a UI panel dynamically (so you don't need to edit HTML)
 function ensureDiplomacyPanel(){
@@ -2043,10 +2045,23 @@ function issueOrderWithMeta(facId, fnId, optionIdxOverride, meta){
     return;
   }
 
-  let chosen = null;
+    let chosen = null;
   let optionLabel = null;
 
+  // If the function has real options in facilities.json, use them
   if(fn.options && fn.options.length){
+    const idx = clampInt(optionIdxOverride ?? 0, 0);
+    chosen = fn.options[idx] || null;
+    optionLabel = chosen && chosen.label ? chosen.label : String(chosen || "");
+  } else {
+    // If there are NO fn.options (Arbitration/Consortium), use meta.targetClan from the planning modal
+    const t = meta && typeof meta === "object" ? String(meta.targetClan || "") : "";
+    if(t){
+      optionLabel = t;
+      chosen = { label: t };
+    }
+  }
+
     const idx = clampInt(optionIdxOverride ?? 0, 0);
     chosen = fn.options[idx] || null;
     optionLabel = chosen && chosen.label ? chosen.label : String(chosen || "");
