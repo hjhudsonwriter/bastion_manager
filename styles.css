@@ -1454,3 +1454,99 @@ select option{
   background: rgba(0,0,0,.25);
   color: rgba(214,178,94,.95);
 }
+
+/* =========================
+   Trade Map Modal
+   ========================= */
+
+.tradeMapWrap{
+  position: relative;
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(214,178,94,.25);
+  background: rgba(0,0,0,.25);
+}
+
+.tradeMapImg{
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: contrast(1.05) saturate(1.05);
+}
+
+.tradeMapSvg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tradeRouteLine{
+  fill: none;
+  stroke: rgba(214,178,94,.95);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 10 10;
+  filter: drop-shadow(0 0 6px rgba(214,178,94,.25));
+  opacity: .92;
+}
+
+.tradeRouteDot{
+  fill: rgba(214,178,94,.95);
+  opacity: .95;
+}
+
+/* =========================
+   Trade Network Panel bits
+   ========================= */
+
+.tnGrid{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.tnStat{
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.18);
+}
+
+.tnStatLabel{ font-size: 12px; opacity: .75; }
+.tnStatVal{ font-family: var(--mono); font-size: 14px; margin-top: 4px; color: rgba(214,178,94,.95); }
+
+.tnRoutes{
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.tnRoute{
+  border: 1px solid rgba(214,178,94,.22);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.14);
+}
+
+.tnRouteTop{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+
+.tnRouteName{ font-weight: 800; letter-spacing:.02em; }
+.tnRouteMeta{ font-size: 12px; opacity: .85; }
+
+.tnRouteBtns{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
