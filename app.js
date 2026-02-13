@@ -1880,7 +1880,7 @@ async function openTradeMapModal(){
     title: "Sea Trade Routes",
     bodyHtml: `
       <div class="siTradeMapWrap">
-        <img class="siTradeMapImg" src="assets/ui/clan_trading_locations.png?v=1" alt="Clan Trading Locations" />
+        <img class="siTradeMapImg" src="https://hjhudsonwriter.github.io/bastion_manager/assets/ui/clan_trading_locations.png?v=1" alt="Clan Trading Locations" />
       </div>
 
       <div class="siResChanges" style="margin-top:14px">
