@@ -1307,39 +1307,6 @@ const CLAN_TRADE = {
 // Uses a stable 0..1000 coordinate space (viewBox)
 // =========================
 
-const TRADE_MAP_OVERLAY = {
-  // Must match the real pixel size of assets/ui/clan_trading_locations.png
-  w: 1533,
-  h: 2047,
-
-  // Ironbow location (pixel coords) – tweak if needed
-  ironbow: [1131, 1264],
-
-  // Hub pin locations (pixel coords) – based on your provided map
-  hubs: {
-    Blackstone: [548, 497],
-    Karr:       [1116, 359],
-    Bacca:      [881, 1223],
-    Farmer:     [247, 1407],
-    Molten:     [424, 1806],
-    Slade:      [1036, 1695],
-    Rowthorn:   [1191, 1759],
-  },
-
-  // Waypoint sea-lanes (pixel coords). You can refine later.
-  // These are meant to travel through ocean corridors rather than straight lines.
-  paths: {
-    Blackstone: [[1131,1264],[980,1120],[820,900],[660,700],[548,497]],
-    Karr:       [[1131,1264],[1180,1040],[1230,820],[1190,560],[1116,359]],
-    Bacca:      [[1131,1264],[1000,1280],[930,1250],[881,1223]],
-    Farmer:     [[1131,1264],[980,1400],[760,1500],[520,1550],[320,1500],[247,1407]],
-    Molten:     [[1131,1264],[980,1420],[820,1600],[640,1750],[424,1806]],
-    Slade:      [[1131,1264],[1110,1400],[1080,1550],[1036,1695]],
-    Rowthorn:   [[1131,1264],[1210,1400],[1270,1600],[1191,1759]],
-  }
-};
-
-
 function getActiveRouteClans(){
   const set = new Set();
 
@@ -1954,10 +1921,52 @@ async function resolveTradeRoutesModal(){
 
   log("Trade Network", `Routes resolved. +${totalGained} gp. Stability ${state.tradeNetwork.stability ?? 75}%.`);
 }
+function tradeRouteOverlayFileForClan(clanName){
+  const n = String(clanName || "").trim().toLowerCase();
+
+  // normalize common cases
+  if(n === "blackstone") return "assets/ui/blackstone_trade_route.svg";
+  if(n === "karr") return "assets/ui/karr_trade_route.svg";
+  if(n === "bacca") return "assets/ui/bacca_trade_route.svg";
+  if(n === "farmer") return "assets/ui/farmer_trade_route.svg";
+  if(n === "molten") return "assets/ui/molten_trade_route.svg";
+  if(n === "slade") return "assets/ui/slade_trade_route.svg";
+  if(n === "rowthorn") return "assets/ui/rowthorn_trade_route.svg";
+
+  return null;
+}
+
 async function openTradeMapModal(){
-  // Uses: assets/ui/clan_trading_locations.png
+  // Base map (pins removed): assets/ui/clan_trading_locations.png
   const routes = (state.tradeNetwork?.routes || [])
     .filter(r => r && r.status !== "removed");
+
+  // Build list of active clans
+  const activeClans = [];
+  for(const r of routes){
+    const c = String(r.clan || "").trim();
+    if(c && !activeClans.includes(c)) activeClans.push(c);
+  }
+
+  // Optional: also show trade agreements as routes
+  if(state.diplomacy?.agreements){
+    for(const a of state.diplomacy.agreements){
+      if(!a || a.turnsLeft <= 0) continue;
+      const c = String(a.clan || "").trim();
+      if(c && !activeClans.includes(c)) activeClans.push(c);
+    }
+  }
+
+  // Build overlay <img> tags for each active clan that has an overlay file
+  const overlayImgs = activeClans
+    .map(c => ({ clan: c, file: tradeRouteOverlayFileForClan(c) }))
+    .filter(x => !!x.file);
+
+  const overlaysHtml = overlayImgs.map((x, i) => {
+    const strong = overlayImgs.length > 1 ? " tradeRouteOverlay--strong" : "";
+    // cache-bust helps when swapping svg files
+    return `<img class="tradeRouteOverlay${strong}" src="${x.file}?v=1" alt="${escapeHtml(x.clan)} route overlay" />`;
+  }).join("");
 
   const activeList = routes.length
     ? `<ul class="siResList">
@@ -1969,21 +1978,20 @@ async function openTradeMapModal(){
       </ul>`
     : `<div class="small muted">No active routes yet. Create a Trade Consortium to open at least one route.</div>`;
 
-  const clans = getActiveRouteClans();
-  const overlaySvg = renderTradeRouteOverlaySvg(clans);
+  const shownText = overlayImgs.length ? overlayImgs.map(x=>x.clan).join(", ") : "none";
 
   await openSIModal({
     title: "Sea Trade Routes",
     bodyHtml: `
       <div class="tradeMapWrap">
         <img class="tradeMapImg"
-             src="assets/ui/clan_trading_locations.png?v=2"
+             src="assets/ui/clan_trading_locations.png?v=3"
              alt="Clan Trading Locations" />
-        ${overlaySvg}
+        ${overlaysHtml}
       </div>
 
       <div class="small muted" style="margin-top:10px">
-        Showing routes for: <b>${escapeHtml(clans.length ? clans.join(", ") : "none")}</b>
+        Showing routes for: <b>${escapeHtml(shownText)}</b>
       </div>
 
       <div class="siResChanges" style="margin-top:14px">
