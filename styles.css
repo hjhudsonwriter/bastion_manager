@@ -1684,3 +1684,30 @@ select option{
     drop-shadow(0 0 30px rgba(214,178,94,.55))
     drop-shadow(0 0 60px rgba(214,178,94,.30));
 }
+
+/* =========================
+   TRADE ROUTES VISIBILITY BOOST (SAFE: does not affect placement)
+   ========================= */
+
+#tradeRouteBase.tradeRouteOverlayBase{
+  opacity: 0.92 !important;         /* was too faint */
+  mix-blend-mode: normal !important; /* stop screen washing it out */
+  filter:
+    drop-shadow(0 0 6px rgba(214,178,94,.45))
+    drop-shadow(0 0 16px rgba(214,178,94,.28)) !important;
+}
+
+/* Make the highlighted routes POP with a hot gold glow */
+#tradeRouteHighlight.tradeRouteOverlayHi{
+  opacity: 1 !important;
+  mix-blend-mode: screen !important;
+  filter:
+    drop-shadow(0 0 10px rgba(255,220,150,.95))
+    drop-shadow(0 0 26px rgba(214,178,94,.70))
+    drop-shadow(0 0 60px rgba(214,178,94,.40)) !important;
+}
+
+/* Optional: slightly dim the map behind so the routes stand out */
+.tradeMapCanvas .tradeMapImg{
+  filter: brightness(0.92) contrast(1.05) saturate(1.04) !important;
+}
