@@ -1463,15 +1463,20 @@ select option{
   position: relative;
   width: 100%;
   border-radius: 18px;
-  overflow: hidden;
+  overflow: auto;                 /* <-- enables scrolling */
   border: 1px solid rgba(214,178,94,.25);
   background: rgba(0,0,0,.25);
+
+  /* Make it a fixed “map viewport” inside the modal */
+  max-height: 62vh;               /* adjust if you want taller/shorter */
 }
 
 .tradeMapImg{
   width: 100%;
   height: auto;
   display: block;
+
+  /* Keep it crisp and readable */
   filter: contrast(1.05) saturate(1.05);
 }
 
@@ -1549,4 +1554,16 @@ select option{
   gap:8px;
   margin-top:10px;
   flex-wrap:wrap;
+}
+
+.tradeMapWrap::-webkit-scrollbar{
+  width: 10px;
+  height: 10px;
+}
+.tradeMapWrap::-webkit-scrollbar-thumb{
+  background: rgba(214,178,94,.28);
+  border-radius: 10px;
+}
+.tradeMapWrap::-webkit-scrollbar-track{
+  background: rgba(0,0,0,.18);
 }
