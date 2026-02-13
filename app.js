@@ -756,9 +756,7 @@ if(kind === "summit"){
         </div>
 
         <div class="siResSummary">${escapeHtml(summary)}</div>
-
         <div class="siResSummary">${escapeHtml(narrative)}</div>
-        <div class="siResSummary" style="margin-top:10px">${escapeHtml(summary)}</div>
 
         <div class="siResChanges">
           <div class="siResChangesTitle">Applied Changes</div>
@@ -1389,10 +1387,16 @@ async function openHallPlanningModal(facId, fnId){
   if(!fn || fac.id !== "hall_of_emissaries" || fn.special?.type !== "emissary_action") return null;
 
   const kind = String(fn.special.kind || "");
-  const options = (fn.options || []).map((o, idx) => {
-    const label = o.label || String(o);
-    return { idx, label };
-  });
+  let options = (fn.options || []).map((o, idx) => {
+  const label = o.label || String(o);
+  return { idx, label };
+});
+
+// If this function has no options in facilities.json, generate all clans automatically
+if(options.length === 0){
+  const clanNames = ["Blackstone","Karr","Bacca","Farmer","Molten","Slade","Rowthorn"];
+  options = clanNames.map((label, idx) => ({ idx, label }));
+}
 
   // Default to whatever is currently selected on the card
   const sel = document.getElementById(`sel_${facId}__${fnId}`);
@@ -1854,6 +1858,40 @@ async function resolveTradeRoutesModal(){
   });
 
   log("Trade Network", `Routes resolved. +${totalGained} gp. Stability ${state.tradeNetwork.stability ?? 75}%.`);
+}
+async function openTradeMapModal(){
+  // Requires: assets/ui/clan_trading_locations.png
+  const routes = (state.tradeNetwork?.routes || [])
+    .filter(r => r && r.status !== "removed");
+
+  const activeList = routes.length
+    ? `<ul class="siResList">
+        ${routes.map(r => {
+          const status = r.status === "disrupted" ? "DISRUPTED" : "ACTIVE";
+          const meta = `${r.commodity || "Goods"} • ${r.risk || "medium"} risk • ${clampInt(r.yieldGP ?? 0, 0, 999999)} gp/turn`;
+          return `<li><b>${escapeHtml(String(r.clan || "Unknown"))}</b> — ${escapeHtml(status)} <span class="small muted">(${escapeHtml(meta)})</span></li>`;
+        }).join("")}
+      </ul>`
+    : `<div class="small muted">No active routes yet. Create a Trade Consortium to open at least one route.</div>`;
+
+  await openSIModal({
+    title: "Sea Trade Routes",
+    bodyHtml: `
+      <div class="siTradeMapWrap">
+        <img class="siTradeMapImg" src="${withBase("assets/ui/clan_trading_locations.png")}" alt="Clan Trading Locations" />
+      </div>
+
+      <div class="siResChanges" style="margin-top:14px">
+        <div class="siResChangesTitle">Active Routes</div>
+        ${activeList}
+        <div class="small muted" style="margin-top:10px">
+          (Later upgrade) We can draw dotted sea-lanes on top of this map. For now, this is the route roster + reference map.
+        </div>
+      </div>
+    `,
+    primaryText: "Close",
+    modalClass: "siModal--hall"
+  });
 }
 
 // =========================
