@@ -1308,35 +1308,37 @@ const CLAN_TRADE = {
 // =========================
 
 const TRADE_MAP_OVERLAY = {
-  viewBox: 1000,
+  // Must match the real pixel size of assets/ui/clan_trading_locations.png
+  w: 1533,
+  h: 2047,
 
-  // NOTE: These points are in "map space" (0..1000).
-  // If you ever want to tweak a route, edit the arrays below.
-  // Goal: sea lanes that avoid land and feel like coastal shipping routes.
+  // Ironbow location (pixel coords) – tweak if needed
+  ironbow: [1131, 1264],
 
-  ironbow: [760, 610], // approx Ironbow label/arrow location
-
+  // Hub pin locations (pixel coords) – based on your provided map
   hubs: {
-    Blackstone: [360, 250],
-    Karr:       [820, 180],
-    Bacca:      [610, 610],
-    Farmer:     [170, 690],
-    Molten:     [270, 880],
-    Slade:      [780, 820],
-    Rowthorn:   [840, 860],
+    Blackstone: [548, 497],
+    Karr:       [1116, 359],
+    Bacca:      [881, 1223],
+    Farmer:     [247, 1407],
+    Molten:     [424, 1806],
+    Slade:      [1036, 1695],
+    Rowthorn:   [1191, 1759],
   },
 
-  // Curved-ish lanes using waypoint polylines (dotted stroke makes it feel nautical)
+  // Waypoint sea-lanes (pixel coords). You can refine later.
+  // These are meant to travel through ocean corridors rather than straight lines.
   paths: {
-    Blackstone: [[760,610],[680,560],[560,460],[450,360],[360,250]],
-    Karr:       [[760,610],[820,520],[880,420],[880,280],[820,180]],
-    Bacca:      [[760,610],[700,620],[650,615],[610,610]],
-    Farmer:     [[760,610],[660,690],[520,740],[380,760],[250,730],[170,690]],
-    Molten:     [[760,610],[650,720],[520,800],[400,850],[270,880]],
-    Slade:      [[760,610],[780,690],[790,760],[780,820]],
-    Rowthorn:   [[760,610],[820,680],[880,760],[860,860]],
+    Blackstone: [[1131,1264],[980,1120],[820,900],[660,700],[548,497]],
+    Karr:       [[1131,1264],[1180,1040],[1230,820],[1190,560],[1116,359]],
+    Bacca:      [[1131,1264],[1000,1280],[930,1250],[881,1223]],
+    Farmer:     [[1131,1264],[980,1400],[760,1500],[520,1550],[320,1500],[247,1407]],
+    Molten:     [[1131,1264],[980,1420],[820,1600],[640,1750],[424,1806]],
+    Slade:      [[1131,1264],[1110,1400],[1080,1550],[1036,1695]],
+    Rowthorn:   [[1131,1264],[1210,1400],[1270,1600],[1191,1759]],
   }
 };
+
 
 function getActiveRouteClans(){
   const set = new Set();
@@ -1368,11 +1370,13 @@ function svgPathFromPoints(points){
 }
 
 function renderTradeRouteOverlaySvg(clans){
-  const vb = TRADE_MAP_OVERLAY.viewBox;
+  const w = TRADE_MAP_OVERLAY.w;
+  const h = TRADE_MAP_OVERLAY.h;
+
   const lines = [];
 
-  // Always mark Ironbow start
-  lines.push(`<circle class="tradeRouteDot" cx="${TRADE_MAP_OVERLAY.ironbow[0]}" cy="${TRADE_MAP_OVERLAY.ironbow[1]}" r="7"></circle>`);
+  // Ironbow marker
+  lines.push(`<circle class="tradeRouteDot" cx="${TRADE_MAP_OVERLAY.ironbow[0]}" cy="${TRADE_MAP_OVERLAY.ironbow[1]}" r="9"></circle>`);
 
   for(const clan of clans){
     const pts = TRADE_MAP_OVERLAY.paths[clan];
@@ -1382,11 +1386,11 @@ function renderTradeRouteOverlaySvg(clans){
     const end = pts[pts.length - 1];
 
     lines.push(`<path class="tradeRouteLine" d="${d}"></path>`);
-    lines.push(`<circle class="tradeRouteDot" cx="${end[0]}" cy="${end[1]}" r="7"></circle>`);
+    lines.push(`<circle class="tradeRouteDot" cx="${end[0]}" cy="${end[1]}" r="9"></circle>`);
   }
 
   return `
-    <svg class="tradeMapSvg" viewBox="0 0 ${vb} ${vb}" preserveAspectRatio="none" aria-hidden="true">
+    <svg class="tradeMapSvg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
       ${lines.join("\n")}
     </svg>
   `;
