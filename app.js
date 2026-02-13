@@ -1862,7 +1862,7 @@ async function resolveTradeRoutesModal(){
   log("Trade Network", `Routes resolved. +${totalGained} gp. Stability ${state.tradeNetwork.stability ?? 75}%.`);
 }
 async function openTradeMapModal(){
-  // Requires: assets/ui/clan_trading_locations.png
+  // Uses: assets/ui/clan_trading_locations.png
   const routes = (state.tradeNetwork?.routes || [])
     .filter(r => r && r.status !== "removed");
 
@@ -1879,8 +1879,10 @@ async function openTradeMapModal(){
   await openSIModal({
     title: "Sea Trade Routes",
     bodyHtml: `
-      <div class="siTradeMapWrap">
-        <img class="siTradeMapImg" src="https://hjhudsonwriter.github.io/bastion_manager/assets/ui/clan_trading_locations.png?v=1" alt="Clan Trading Locations" />
+      <div class="tradeMapWrap">
+        <img class="tradeMapImg"
+             src="assets/ui/clan_trading_locations.png?v=1"
+             alt="Clan Trading Locations" />
       </div>
 
       <div class="siResChanges" style="margin-top:14px">
