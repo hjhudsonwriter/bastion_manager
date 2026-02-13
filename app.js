@@ -1302,6 +1302,95 @@ const CLAN_TRADE = {
   molten:     { name:"Molten",     commodity:"Precious Metals", risk:"high" },
   farmer:     { name:"Farmer",     commodity:"Livestock", risk:"high" },
 };
+// =========================
+// Trade Map Route Overlay
+// Uses a stable 0..1000 coordinate space (viewBox)
+// =========================
+
+const TRADE_MAP_OVERLAY = {
+  viewBox: 1000,
+
+  // NOTE: These points are in "map space" (0..1000).
+  // If you ever want to tweak a route, edit the arrays below.
+  // Goal: sea lanes that avoid land and feel like coastal shipping routes.
+
+  ironbow: [760, 610], // approx Ironbow label/arrow location
+
+  hubs: {
+    Blackstone: [360, 250],
+    Karr:       [820, 180],
+    Bacca:      [610, 610],
+    Farmer:     [170, 690],
+    Molten:     [270, 880],
+    Slade:      [780, 820],
+    Rowthorn:   [840, 860],
+  },
+
+  // Curved-ish lanes using waypoint polylines (dotted stroke makes it feel nautical)
+  paths: {
+    Blackstone: [[760,610],[680,560],[560,460],[450,360],[360,250]],
+    Karr:       [[760,610],[820,520],[880,420],[880,280],[820,180]],
+    Bacca:      [[760,610],[700,620],[650,615],[610,610]],
+    Farmer:     [[760,610],[660,690],[520,740],[380,760],[250,730],[170,690]],
+    Molten:     [[760,610],[650,720],[520,800],[400,850],[270,880]],
+    Slade:      [[760,610],[780,690],[790,760],[780,820]],
+    Rowthorn:   [[760,610],[820,680],[880,760],[860,860]],
+  }
+};
+
+function getActiveRouteClans(){
+  const set = new Set();
+
+  // From Trade Network
+  if(state.tradeNetwork?.active){
+    (state.tradeNetwork.routes || []).forEach(r=>{
+      if(!r || r.status === "removed") return;
+      const name = String(r.clan || "").trim();
+      if(name) set.add(name);
+    });
+  }
+
+  // Optional: also show Trade Agreements as routes
+  if(state.diplomacy?.agreements){
+    state.diplomacy.agreements.forEach(a=>{
+      if(!a || a.turnsLeft <= 0) return;
+      const name = String(a.clan || "").trim();
+      if(name) set.add(name);
+    });
+  }
+
+  return Array.from(set);
+}
+
+function svgPathFromPoints(points){
+  if(!points || !points.length) return "";
+  return "M " + points.map(p => `${p[0]} ${p[1]}`).join(" L ");
+}
+
+function renderTradeRouteOverlaySvg(clans){
+  const vb = TRADE_MAP_OVERLAY.viewBox;
+  const lines = [];
+
+  // Always mark Ironbow start
+  lines.push(`<circle class="tradeRouteDot" cx="${TRADE_MAP_OVERLAY.ironbow[0]}" cy="${TRADE_MAP_OVERLAY.ironbow[1]}" r="7"></circle>`);
+
+  for(const clan of clans){
+    const pts = TRADE_MAP_OVERLAY.paths[clan];
+    if(!pts) continue;
+
+    const d = svgPathFromPoints(pts);
+    const end = pts[pts.length - 1];
+
+    lines.push(`<path class="tradeRouteLine" d="${d}"></path>`);
+    lines.push(`<circle class="tradeRouteDot" cx="${end[0]}" cy="${end[1]}" r="7"></circle>`);
+  }
+
+  return `
+    <svg class="tradeMapSvg" viewBox="0 0 ${vb} ${vb}" preserveAspectRatio="none" aria-hidden="true">
+      ${lines.join("\n")}
+    </svg>
+  `;
+}
 
 function clanKey(label){
   // returns: "blackstone" | "bacca" | ... or null
@@ -1876,21 +1965,26 @@ async function openTradeMapModal(){
       </ul>`
     : `<div class="small muted">No active routes yet. Create a Trade Consortium to open at least one route.</div>`;
 
+  const clans = getActiveRouteClans();
+  const overlaySvg = renderTradeRouteOverlaySvg(clans);
+
   await openSIModal({
     title: "Sea Trade Routes",
     bodyHtml: `
       <div class="tradeMapWrap">
         <img class="tradeMapImg"
-             src="assets/ui/clan_trading_locations.png?v=1"
+             src="assets/ui/clan_trading_locations.png?v=2"
              alt="Clan Trading Locations" />
+        ${overlaySvg}
+      </div>
+
+      <div class="small muted" style="margin-top:10px">
+        Showing routes for: <b>${escapeHtml(clans.length ? clans.join(", ") : "none")}</b>
       </div>
 
       <div class="siResChanges" style="margin-top:14px">
         <div class="siResChangesTitle">Active Routes</div>
         ${activeList}
-        <div class="small muted" style="margin-top:10px">
-          (Later upgrade) We can draw dotted sea-lanes on top of this map. For now, this is the route roster + reference map.
-        </div>
       </div>
     `,
     primaryText: "Close",
