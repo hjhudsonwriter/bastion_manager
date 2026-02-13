@@ -1925,13 +1925,13 @@ async function resolveTradeRoutesModal(){
    // Per-clan overlay tweaks (to correct Canva SVG origin offsets).
 // Units are pixels in the rendered modal (safe to tweak).
 const TRADE_OVERLAY_TWEAKS = {
-  Blackstone: { tx: 0, ty: 0, s: 1 },
-  Karr:       { tx: 0, ty: 0, s: 1 },
-  Bacca:      { tx: 0, ty: 0, s: 1 },
-  Farmer:     { tx: 0, ty: 495, s: 1 },
-  Molten:     { tx: 0, ty: 0, s: 1 },
-  Slade:      { tx: 0, ty: 0, s: 1 },
-  Rowthorn:   { tx: 0, ty: 0, s: 1 },
+  Blackstone: { tx: 0, ty: 490, s: 1 },
+  Karr:       { tx: 0, ty: 490, s: 1 },
+  Bacca:      { tx: 0, ty: 490, s: 1 },
+  Farmer:     { tx: 0, ty: 490, s: 1 },
+  Molten:     { tx: 0, ty: 490, s: 1 },
+  Slade:      { tx: 0, ty: 490, s: 1 },
+  Rowthorn:   { tx: 0, ty: 490, s: 1 },
 };
 
 function overlayStyleForClan(clan){
