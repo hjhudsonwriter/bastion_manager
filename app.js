@@ -3093,7 +3093,7 @@ const ROUTE_COLOURS = {
   Rowthorn:   [130,130,130]
 };
 
-function colourMatch(r,g,b, target, tolerance=110){
+function colourMatch(r,g,b, target, tolerance=160){
   return (
     Math.abs(r-target[0]) < tolerance &&
     Math.abs(g-target[1]) < tolerance &&
@@ -3183,7 +3183,42 @@ function renderActiveRouteHighlights(){
     }
   }
 
-  ctx.putImageData(imgData, 0, 0);
+  // Put the filtered pixels back
+ctx.putImageData(imgData, 0, 0);
+
+// --- Bake a glow into the canvas (reliable across browsers) ---
+// 1) Recolour visible pixels to gold
+const goldData = ctx.getImageData(0, 0, w, h);
+const gd = goldData.data;
+
+for(let i=0; i<gd.length; i+=4){
+  const a = gd[i+3];
+  if(a === 0) continue;
+
+  // force a warm gold colour, preserve alpha
+  gd[i]   = 214;  // R
+  gd[i+1] = 178;  // G
+  gd[i+2] = 94;   // B
+}
+ctx.putImageData(goldData, 0, 0);
+
+// 2) Draw multiple blurred “shadow” passes behind it
+ctx.save();
+ctx.globalCompositeOperation = "destination-over";
+ctx.shadowColor = "rgba(214,178,94,0.85)";
+ctx.shadowBlur = 18;
+ctx.shadowOffsetX = 0;
+ctx.shadowOffsetY = 0;
+
+// draw the canvas onto itself to create the shadow behind
+ctx.drawImage(canvas, 0, 0, w, h);
+
+// stronger outer halo
+ctx.shadowColor = "rgba(214,178,94,0.45)";
+ctx.shadowBlur = 42;
+ctx.drawImage(canvas, 0, 0, w, h);
+
+ctx.restore();
 }
 
   function escapeHtml(s){
