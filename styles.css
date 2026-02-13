@@ -1652,3 +1652,35 @@ select option{
   50%  { opacity: 1.00; filter: drop-shadow(0 0 9px rgba(214,178,94,.72)) drop-shadow(0 0 26px rgba(214,178,94,.42)); }
   100% { opacity: .78; filter: drop-shadow(0 0 5px rgba(214,178,94,.45)) drop-shadow(0 0 14px rgba(214,178,94,.28)); }
 }
+
+/* =========================
+   Trade Route Overlay Overrides
+   (force visibility + alignment)
+   ========================= */
+
+.tradeMapCanvas{ position: relative; }
+
+/* Ensure overlay layers always sit above the map image */
+.tradeMapImg{ position: relative; z-index: 1; }
+
+.tradeRouteOverlay{
+  z-index: 5;
+}
+
+/* Make the all-routes layer more visible */
+.tradeRouteOverlayBase{
+  opacity: .60;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 8px rgba(214,178,94,.20));
+}
+
+/* Active highlight layer: stronger glow + pulse */
+.tradeRouteOverlayHi{
+  z-index: 6;
+  opacity: 1;
+  mix-blend-mode: screen;
+  filter:
+    drop-shadow(0 0 12px rgba(214,178,94,.90))
+    drop-shadow(0 0 30px rgba(214,178,94,.55))
+    drop-shadow(0 0 60px rgba(214,178,94,.30));
+}
