@@ -3093,7 +3093,7 @@ const ROUTE_COLOURS = {
   Rowthorn:   [130,130,130]
 };
 
-function colourMatch(r,g,b, target, tolerance=70){
+function colourMatch(r,g,b, target, tolerance=110){
   return (
     Math.abs(r-target[0]) < tolerance &&
     Math.abs(g-target[1]) < tolerance &&
@@ -3140,10 +3140,14 @@ function renderActiveRouteHighlights(){
     .map(r => String(r.clan || "").trim())
     .filter(Boolean);
 
-  if(!routes.length) return;
+  if(!routes.length){
+  // Debug: show nothing to highlight
+  return;
+}
 
   // Ensure canvas matches map before drawing
   syncTradeMapOverlaysToMap();
+   console.log("Active route clans for highlight:", routes);
 
   const w = mapImg.clientWidth;
   const h = mapImg.clientHeight;
