@@ -1928,7 +1928,7 @@ const TRADE_OVERLAY_TWEAKS = {
   Blackstone: { tx: 0, ty: 0, s: 1 },
   Karr:       { tx: 0, ty: 0, s: 1 },
   Bacca:      { tx: 0, ty: 0, s: 1 },
-  Farmer:     { tx: 0, ty: 500, s: 1 },
+  Farmer:     { tx: 0, ty: 470, s: 1 },
   Molten:     { tx: 0, ty: 0, s: 1 },
   Slade:      { tx: 0, ty: 0, s: 1 },
   Rowthorn:   { tx: 0, ty: 0, s: 1 },
