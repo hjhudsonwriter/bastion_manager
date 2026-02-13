@@ -1921,7 +1921,28 @@ async function resolveTradeRoutesModal(){
 
   log("Trade Network", `Routes resolved. +${totalGained} gp. Stability ${state.tradeNetwork.stability ?? 75}%.`);
 }
-function tradeRouteOverlayFileForClan(clanName){
+
+   // Per-clan overlay tweaks (to correct Canva SVG origin offsets).
+// Units are pixels in the rendered modal (safe to tweak).
+const TRADE_OVERLAY_TWEAKS = {
+  Blackstone: { tx: 0, ty: 0, s: 1 },
+  Karr:       { tx: 0, ty: 0, s: 1 },
+  Bacca:      { tx: 0, ty: 0, s: 1 },
+  Farmer:     { tx: 0, ty: 0, s: 1 },
+  Molten:     { tx: 0, ty: 0, s: 1 },
+  Slade:      { tx: 0, ty: 0, s: 1 },
+  Rowthorn:   { tx: 0, ty: 0, s: 1 },
+};
+
+function overlayStyleForClan(clan){
+  const t = TRADE_OVERLAY_TWEAKS[clan] || { tx:0, ty:0, s:1 };
+  const tx = Number(t.tx || 0);
+  const ty = Number(t.ty || 0);
+  const s  = Number(t.s  || 1);
+  return `--tx:${tx}px; --ty:${ty}px; --s:${s};`;
+}
+   
+   function tradeRouteOverlayFileForClan(clanName){
   const n = String(clanName || "").trim().toLowerCase();
 
   // normalize common cases
@@ -1965,7 +1986,10 @@ async function openTradeMapModal(){
   const overlaysHtml = overlayImgs.map((x, i) => {
     const strong = overlayImgs.length > 1 ? " tradeRouteOverlay--strong" : "";
     // cache-bust helps when swapping svg files
-    return `<img class="tradeRouteOverlay${strong}" src="${x.file}?v=1" alt="${escapeHtml(x.clan)} route overlay" />`;
+    return `<img class="tradeRouteOverlay${strong}" data-clan="${escapeHtml(x.clan)}"
+             style="${overlayStyleForClan(x.clan)}"
+             src="${x.file}?v=2"
+             alt="${escapeHtml(x.clan)} route overlay" />`;
   }).join("");
 
   const activeList = routes.length
