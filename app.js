@@ -2011,7 +2011,13 @@ async function openTradeMapModal(){
         <img class="tradeMapImg"
              src="assets/ui/clan_trading_locations.png?v=3"
              alt="Clan Trading Locations" />
-        <img class="tradeRouteOverlay tradeRouteOverlay--strong"
+        <img id="tradeRouteBase"
+     class="tradeRouteOverlay"
+     src="assets/ui/all_trade_routes.png?v=2"
+     alt="All trade routes overlay" />
+
+<canvas id="tradeRouteHighlight"
+        class="tradeRouteOverlay tradeRouteOverlay--strong"></canvas>
      src="assets/ui/all_trade_routes.png?v=1"
      alt="All trade routes overlay" />
       </div>
@@ -2027,6 +2033,11 @@ async function openTradeMapModal(){
     `,
     primaryText: "Close",
     modalClass: "siModal--hall"
+
+     // After modal renders, highlight active routes
+setTimeout(() => {
+  renderActiveRouteHighlights();
+}, 50);
   });
 }
 
@@ -3037,6 +3048,71 @@ function bindPoliticalButtonsOnce(){
     const pad = (n) => String(n).padStart(2,"0");
     return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
+
+   // Clan route colour detection map
+const ROUTE_COLOURS = {
+  Blackstone: [0,255,38],
+  Karr:       [200,210,220],
+  Bacca:      [0,102,255],
+  Farmer:     [255,170,64],
+  Molten:     [255,0,0],
+  Slade:      [90,180,255],
+  Rowthorn:   [130,130,130]
+};
+
+function colourMatch(r,g,b, target, tolerance=40){
+  return (
+    Math.abs(r-target[0]) < tolerance &&
+    Math.abs(g-target[1]) < tolerance &&
+    Math.abs(b-target[2]) < tolerance
+  );
+}
+
+function renderActiveRouteHighlights(){
+  const baseImg = document.getElementById("tradeRouteBase");
+  const canvas  = document.getElementById("tradeRouteHighlight");
+  if(!baseImg || !canvas) return;
+
+  const routes = (state.tradeNetwork?.routes || [])
+    .filter(r => r.status !== "removed")
+    .map(r => r.clan);
+
+  if(!routes.length) return;
+
+  const ctx = canvas.getContext("2d");
+
+  canvas.width  = baseImg.clientWidth;
+  canvas.height = baseImg.clientHeight;
+
+  ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
+
+  const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+  const data = imgData.data;
+
+  for(let i=0;i<data.length;i+=4){
+    const r = data[i];
+    const g = data[i+1];
+    const b = data[i+2];
+    const a = data[i+3];
+
+    if(a === 0) continue;
+
+    let keep = false;
+    for(const clan of routes){
+      const target = ROUTE_COLOURS[clan];
+      if(target && colourMatch(r,g,b,target)){
+        keep = true;
+        break;
+      }
+    }
+
+    if(!keep){
+      data[i+3] = 0; // remove pixel
+    }
+  }
+
+  ctx.putImageData(imgData,0,0);
+}
 
   function escapeHtml(s){
     return String(s)
