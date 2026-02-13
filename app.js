@@ -2012,11 +2012,15 @@ async function openTradeMapModal(){
              src="assets/ui/clan_trading_locations.png?v=3"
              alt="Clan Trading Locations" />
         <img id="tradeRouteBase"
+     class="tradeRouteOverlay tradeRouteOverlayBase"
+     src="assets/ui/all_trade_routes.png?v=3"
+     alt="All trade routes overlay" />
      class="tradeRouteOverlay"
      src="assets/ui/all_trade_routes.png?v=2"
      alt="All trade routes overlay" />
 
 <canvas id="tradeRouteHighlight"
+        class="tradeRouteOverlay tradeRouteOverlayHi"></canvas>
         class="tradeRouteOverlay tradeRouteOverlay--strong"></canvas>
      src="assets/ui/all_trade_routes.png?v=1"
      alt="All trade routes overlay" />
@@ -2035,9 +2039,20 @@ async function openTradeMapModal(){
     modalClass: "siModal--hall"
   });
  // After modal renders, highlight active routes
+// After modal renders, highlight active routes (wait for image load)
 setTimeout(() => {
-  renderActiveRouteHighlights();
-}, 50);
+  const baseImg = document.getElementById("tradeRouteBase");
+  if(!baseImg) return;
+
+  const run = () => renderActiveRouteHighlights();
+
+  // If already loaded, run immediately; otherwise wait
+  if(baseImg.complete && baseImg.naturalWidth > 0){
+    run();
+  } else {
+    baseImg.addEventListener("load", run, { once:true });
+  }
+}, 0);
 }
 
 // =========================
@@ -3059,7 +3074,7 @@ const ROUTE_COLOURS = {
   Rowthorn:   [130,130,130]
 };
 
-function colourMatch(r,g,b, target, tolerance=40){
+function colourMatch(r,g,b, target, tolerance=70){
   return (
     Math.abs(r-target[0]) < tolerance &&
     Math.abs(g-target[1]) < tolerance &&
@@ -3071,6 +3086,12 @@ function renderActiveRouteHighlights(){
   const baseImg = document.getElementById("tradeRouteBase");
   const canvas  = document.getElementById("tradeRouteHighlight");
   if(!baseImg || !canvas) return;
+
+   const mapImg = document.querySelector(".tradeMapImg");
+if(mapImg){
+  console.log("MAP natural:", mapImg.naturalWidth, mapImg.naturalHeight, "display:", mapImg.clientWidth, mapImg.clientHeight);
+}
+console.log("ROUTES natural:", baseImg.naturalWidth, baseImg.naturalHeight, "display:", baseImg.clientWidth, baseImg.clientHeight);
 
   const routes = (state.tradeNetwork?.routes || [])
     .filter(r => r.status !== "removed")
