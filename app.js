@@ -1294,6 +1294,21 @@ function openSIModalChoice({
     document.addEventListener("keydown", onKey);
   });
 }
+// ---------------- Clan Trade Meta (GLOBAL) ----------------
+const CLAN_TRADE = {
+  blackstone: { name:"Blackstone", commodity:"Timber", risk:"low" },
+  bacca:      { name:"Bacca",      commodity:"Weapons", risk:"medium" },
+  slade:      { name:"Slade",      commodity:"Steel", risk:"medium" },
+  rowthorn:   { name:"Rowthorn",   commodity:"Maritime", risk:"low" },
+  karr:       { name:"Karr",       commodity:"Wool & Furs", risk:"high" },
+  molten:     { name:"Molten",     commodity:"Precious Metals", risk:"high" },
+  farmer:     { name:"Farmer",     commodity:"Livestock", risk:"high" },
+};
+
+function clanKey(label){
+  // returns: "blackstone" | "bacca" | ... or null
+  return clanIdFromLabel(label);
+}
 
 // ---------------- Diplomacy action math ----------------
 
@@ -1361,21 +1376,7 @@ function clanReactionLine(clanLabel, tier){
     `${clan}'s envoy leaves without finishing their wine.`,
     `A quiet insult lands like a thrown gauntlet. ${clan} remembers.`
   ];
-
-   const CLAN_TRADE = {
-  blackstone: { name:"Blackstone", commodity:"Timber", risk:"low" },
-  bacca:      { name:"Bacca",      commodity:"Weapons", risk:"medium" },
-  slade:      { name:"Slade",      commodity:"Steel", risk:"medium" },
-  rowthorn:   { name:"Rowthorn",   commodity:"Maritime", risk:"low" },
-  karr:       { name:"Karr",       commodity:"Wool & Furs", risk:"high" },
-  molten:     { name:"Molten",     commodity:"Precious Metals", risk:"high" },
-  farmer:     { name:"Farmer",     commodity:"Livestock", risk:"high" },
-};
-
-function clanKey(label){
-  return clanIdFromLabel(label); // you already have this
-}
-
+   
   if(tier === "critical_success" || tier === "great_success") return good[Math.floor(Math.random()*good.length)];
   if(tier === "success") return mid[Math.floor(Math.random()*mid.length)];
   return bad[Math.floor(Math.random()*bad.length)];
@@ -1507,6 +1508,8 @@ function ensureDiplomacyPanel(){
           <div class="hallHeadTitle">Hall of Emissaries</div>
           <div class="hallLevel" id="hallLevelBadge">L1</div>
           <button class="pill" id="hallUpgradePill" title="Upgrade Hall">Upgrade</button>
+          <button class="pill" id="btnViewTradeRoutes" title="View active sea trade routes">Routes</button>
+<button class="pill" id="btnResolveTradeRoutes" title="Resolve this turn's trade routes">Resolve</button>
         </div>
         <div class="small muted" id="hallHeadSub">Diplomatic actions take 1 Bastion Turn.</div>
       </div>
@@ -1532,7 +1535,15 @@ function ensureDiplomacyPanel(){
 
   whCard.parentElement.insertBefore(panel, whCard);
 
-  panel.querySelector("#clearDiplomacyBtn").addEventListener("click", () => {
+    // Trade network header buttons
+  panel.querySelector("#btnViewTradeRoutes")?.addEventListener("click", () => {
+    openTradeMapModal();
+  });
+  panel.querySelector("#btnResolveTradeRoutes")?.addEventListener("click", () => {
+    resolveTradeRoutesModal();
+  });
+
+   panel.querySelector("#clearDiplomacyBtn").addEventListener("click", () => {
     if(!confirm("Clear Diplomacy & Trade records? (Does not undo gold already gained.)")) return;
     state.diplomacy = { agreements: [], delegations: [], summits: [], arbitrations: [], consortiums: [], rep: 0, cooldowns: {}, tokens: 0 };
     saveState();
@@ -1721,8 +1732,159 @@ function tickDiplomacyOnAdvanceTurn(){
 
   saveState();
 }
-   
-function allBuiltFacilityIds(){
+   // =========================
+// Trade Network (Routes)
+// =========================
+
+function routeDC(route){
+  const base = 12;
+  const stab = clampInt(state.tradeNetwork?.stability ?? 75, 0, 100);
+
+  const stabMod =
+    stab >= 85 ? -2 :
+    stab >= 70 ? -1 :
+    stab >= 50 ? 0 :
+    stab >= 35 ? +1 :
+    +2;
+
+  const riskMod =
+    route.risk === "high" ? +3 :
+    route.risk === "medium" ? +1 :
+    0;
+
+  const strat = String(state.tradeNetwork?.strategy || "balanced");
+  const stratMod =
+    strat === "conservative" ? -1 :
+    strat === "aggressive" ? +2 :
+    0;
+
+  return clampInt(base + stabMod + riskMod + stratMod, 6, 20);
+}
+
+function routePayout(route, tier){
+  const y = clampInt(route.yieldGP ?? 0, 0, 999999);
+  if(tier === "critical_success") return clampInt(Math.floor(y * 1.25), 0, 999999);
+  if(tier === "great_success")    return clampInt(Math.floor(y * 1.10), 0, 999999);
+  if(tier === "success")          return y;
+  if(tier === "failure")          return clampInt(Math.floor(y * 0.50), 0, 999999);
+  return 0; // bad_failure / critical_failure
+}
+
+async function resolveTradeRoutesModal(){
+  if(!state.tradeNetwork?.active){
+    await openSIModal({
+      title: "Ironbow Trade Network",
+      bodyHtml: `<div class="small muted">No active Trade Consortium. Establish a Trade Consortium to open routes.</div>`,
+      primaryText: "Close",
+      modalClass: "siModal--hall"
+    });
+    return;
+  }
+
+  const routes = (state.tradeNetwork.routes || []).filter(r => r && r.status !== "removed");
+  if(routes.length === 0){
+    await openSIModal({
+      title: "Ironbow Trade Network",
+      bodyHtml: `<div class="small muted">No routes exist yet. Activate Trade Consortium targeting a clan to open a route.</div>`,
+      primaryText: "Close",
+      modalClass: "siModal--hall"
+    });
+    return;
+  }
+
+  let totalGained = 0;
+  const narrativeLines = [];
+
+  for(const r of routes){
+    if(r.status === "disrupted"){
+      narrativeLines.push(`${r.clan} route remains disrupted.`);
+      continue;
+    }
+
+    const dc = routeDC(r);
+    const mod = 0;
+
+    const roll = await rollD20Manual({
+      title: `Resolve Route: ${r.clan} (${r.commodity})`,
+      mod,
+      dc,
+      modalClass: "siModal--hall"
+    });
+    if(!roll){
+      log("Trade Network", "Route resolution cancelled.");
+      saveState();
+      render();
+      return;
+    }
+
+    const tier = tierFromRoll(roll.d20, roll.total, dc);
+    const payout = routePayout(r, tier);
+
+    if(payout > 0){
+      state.treasuryGP += payout;
+      totalGained += payout;
+      narrativeLines.push(`${r.clan} convoy makes port. +${payout} gp.`);
+    } else {
+      r.status = "disrupted";
+      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - (r.risk === "high" ? 8 : 5), 0, 100);
+      narrativeLines.push(`${r.clan} route falters. Ships delayed. Stability drops.`);
+      enqueueArbitrationDispute(r.clan, "Trade disruption and disputed tariffs.");
+    }
+  }
+
+  saveState();
+  render();
+
+  await openSIModal({
+    title: "Trade Routes Resolved",
+    bodyHtml: `
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
+        <img src="assets/ui/trade_signing.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
+        <div>
+          <div class="siResSummary"><b>Total Earned:</b> ${escapeHtml(String(totalGained))} gp</div>
+          <div class="siResSummary" style="margin-top:8px"><b>Market Stability:</b> ${escapeHtml(String(state.tradeNetwork.stability ?? 75))}%</div>
+        </div>
+      </div>
+      <ul class="siResList">
+        ${narrativeLines.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}
+      </ul>
+    `,
+    primaryText: "Continue",
+    modalClass: "siModal--hall"
+  });
+
+  log("Trade Network", `Routes resolved. +${totalGained} gp. Stability ${state.tradeNetwork.stability ?? 75}%.`);
+}
+
+// =========================
+// Arbitration (Dispute Queue)
+// =========================
+
+function pickRandomOtherClan(clanA){
+  const list = ["Blackstone","Bacca","Farmer","Slade","Molten","Rowthorn","Karr"];
+  const a = String(clanA||"").toLowerCase();
+  const others = list.filter(x => x.toLowerCase() !== a);
+  return others[Math.floor(Math.random()*others.length)];
+}
+
+function enqueueArbitrationDispute(clanA, reason){
+  if(!state.arbitration || typeof state.arbitration !== "object"){
+    state.arbitration = { queue: [], lastSpawnTurn: -1 };
+  }
+  if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
+
+  state.arbitration.queue.push({
+    id: uid(),
+    a: String(clanA || "Unknown"),
+    b: pickRandomOtherClan(clanA),
+    reason: String(reason || "A dispute over tariffs and cargo claims."),
+    createdTurn: state.turn
+  });
+
+  saveState();
+}
+
+   function allBuiltFacilityIds(){
   const base = Array.isArray(state.builtFacilities) ? state.builtFacilities : [];
   const extra = Array.isArray(state.builtExtras) ? state.builtExtras : [];
   // unique
@@ -2459,7 +2621,7 @@ function positionTooltip(e, tip){
         pelagos: clampInt(s.favour?.pelagos ?? 0, 0, 100),
       },
 
-             politicalCapital: {
+      politicalCapital: {
         blackstone: clampInt(s.politicalCapital?.blackstone ?? 0, -100, 100),
         bacca:      clampInt(s.politicalCapital?.bacca ?? 0, -100, 100),
         farmer:     clampInt(s.politicalCapital?.farmer ?? 0, -100, 100),
@@ -2467,14 +2629,14 @@ function positionTooltip(e, tip){
         molten:     clampInt(s.politicalCapital?.molten ?? 0, -100, 100),
         rowthorn:   clampInt(s.politicalCapital?.rowthorn ?? 0, -100, 100),
         karr:       clampInt(s.politicalCapital?.karr ?? 0, -100, 100),
+      },
 
-                tradeNetwork: s.tradeNetwork && typeof s.tradeNetwork === "object" ? s.tradeNetwork : {
-  active:false, strategy:"balanced", stability:75, routes:[], lastResolvedTurn:-1, recruitmentBoostTurns:0
-},
-arbitration: s.arbitration && typeof s.arbitration === "object" ? s.arbitration : {
-  queue:[], lastSpawnTurn:-1
-},
+      tradeNetwork: (s.tradeNetwork && typeof s.tradeNetwork === "object") ? s.tradeNetwork : {
+        active:false, strategy:"balanced", stability:75, routes:[], lastResolvedTurn:-1, recruitmentBoostTurns:0
+      },
 
+      arbitration: (s.arbitration && typeof s.arbitration === "object") ? s.arbitration : {
+        queue:[], lastSpawnTurn:-1
       },
 
       turn: clampInt(s.turn ?? DEFAULT_STATE.turn, 1),
