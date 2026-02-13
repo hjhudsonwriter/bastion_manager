@@ -2011,7 +2011,9 @@ async function openTradeMapModal(){
         <img class="tradeMapImg"
              src="assets/ui/clan_trading_locations.png?v=3"
              alt="Clan Trading Locations" />
-        ${overlaysHtml}
+        <img class="tradeRouteOverlay tradeRouteOverlay--strong"
+     src="assets/ui/all_trade_routes.png?v=1"
+     alt="All trade routes overlay" />
       </div>
 
       <div class="small muted" style="margin-top:10px">
