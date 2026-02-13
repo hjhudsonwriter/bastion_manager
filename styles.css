@@ -1,1569 +1,589 @@
-/* Fonts (Google Fonts) */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Uncial+Antiqua&display=swap');
+/* =========================
+   Scarlett Isles UI Theme
+   ========================= */
 
-/* The Ironbow Bastion Manager - sleek but friendly UI */
 :root{
-  /* Core palette */
-  --bg:#050506;                 /* true black-ish */
-  --bg2:#0a0708;                /* near-black with warmth */
-  --panel:#2a0f14;              /* burgundy base */
-  --panel2:#1b0a0d;             /* darker burgundy */
-  --panel3:#3a1219;             /* slightly brighter burgundy */
-  --text:#f5f1e8;               /* parchment-white text */
-  --muted:#d2c7b8;              /* softer parchment */
-  --line:rgba(255,255,255,.10); /* fallback hairline */
-  --shadow: 0 18px 40px rgba(0,0,0,.55);
+  --bg0:#0b0b0f;
+  --bg1:#101017;
+  --panel: rgba(0,0,0,.45);
+  --panel2: rgba(0,0,0,.28);
+  --text:#f2efe6;
+  --muted: rgba(242,239,230,.72);
 
-  /* Brand accents */
-  --scarlet:#b1122a;
-  --scarlet2:#7a0c1b;
-
-  /* Gold borders and highlights */
   --gold:#d6b25e;
-  --gold2:#a67c2f;
+  --scarlet:#b1122a;
+  --edge: rgba(214,178,94,.25);
 
-  /* Radii */
-  --radius:16px;
-  --radius2:22px;
+  --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New";
 
-  /* Fonts */
-  --title: "Uncial Antiqua", "Cinzel", serif;
-  --ui: "Cinzel", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --r: 18px;
+  --shadow: 0 10px 30px rgba(0,0,0,.45);
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
 body{
   margin:0;
-  font-family:var(--ui);
-  color:var(--text);
+  font-family: var(--ui);
+  color: var(--text);
   background:
-    radial-gradient(1200px 700px at 20% 0%, rgba(177,18,42,.18), transparent 55%),
-    radial-gradient(900px 600px at 85% 10%, rgba(214,178,94,.10), transparent 60%),
-    linear-gradient(180deg, var(--bg), var(--bg2));
-    /* Reserve space for the fixed Favour panel on wide screens */
-  padding-left: 340px;
+    radial-gradient(1200px 700px at 70% -10%, rgba(177,18,42,.28), transparent 55%),
+    radial-gradient(900px 600px at 15% 10%, rgba(214,178,94,.18), transparent 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
 }
 
+a{ color: var(--gold); }
+
+.wrap{
+  max-width: 1320px;
+  margin: 16px auto 48px;
+  padding: 0 16px;
+}
+
+.small{ font-size: 13px; }
+.muted{ color: var(--muted); }
+
+.divider{
+  height:1px;
+  background: rgba(214,178,94,.16);
+  margin: 12px 0;
+}
+
+/* =========================
+   Topbar
+   ========================= */
+
 .topbar{
-  position:sticky;
-  top:0;
-  z-index:10;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,.55);
+  border-bottom: 1px solid rgba(214,178,94,.18);
+}
+
+.topbar__inner{
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 12px 16px;
   display:flex;
-  gap:16px;
+  gap: 14px;
   align-items:center;
-  justify-content:space-between;
-  padding:14px 18px;
-
-  background: rgba(0,0,0,.78);
-  backdrop-filter: blur(10px);
-
-  border-bottom: 2px solid rgba(214,178,94,.55);
-  box-shadow: 0 10px 24px rgba(0,0,0,.45);
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .brand__title{
-  font-family:var(--title);
-  font-weight:800;
-  letter-spacing:.10em;
-  font-size:16px;
-  color:var(--text);
-  text-shadow: 0 2px 10px rgba(0,0,0,.65);
+  letter-spacing: .12em;
+  font-weight: 900;
+  font-size: 14px;
 }
-
 .brand__sub{
-  color:rgba(214,178,94,.85);
-  font-size:12px;
-  margin-top:4px;
-  letter-spacing:.06em;
-  text-transform:uppercase;
+  font-size: 12px;
+  color: rgba(214,178,94,.82);
+  margin-top: 2px;
 }
 
 .topbar__controls{
   display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:end;
-  justify-content:flex-end;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-size:12px;
-  color:var(--muted);
-}
-.field input, .field select{
-  appearance:none;
-  border: 1px solid rgba(214,178,94,.55);
-  background: rgba(0,0,0,.45);
-  color: var(--text);
-  padding:10px 12px;
-  border-radius:14px;
-  outline:none;
-  font-family:var(--ui);
-}
-.field input::placeholder{ color: rgba(245,241,232,.55); }
-
-.field input:focus, .field select:focus{
-  border-color: rgba(214,178,94,.95);
-  box-shadow: 0 0 0 3px rgba(214,178,94,.18);
-}
-
-/* Dropdown menu options (critical readability) */
-select option{
-  background: #0b090a;
-  color: var(--text);
-}
-
-.field input:focus, .field select:focus{border-color:rgba(255,59,92,.45); box-shadow:0 0 0 3px rgba(255,59,92,.15)}
-
-.btn{
-  border: 1px solid rgba(214,178,94,.55);
-  background: rgba(0,0,0,.35);
-  color: var(--text);
-   padding: 7px 12px;
-  border-radius:14px;
-  cursor:pointer;
-  font-family:var(--ui);
-  letter-spacing:.04em;
-  box-shadow: 0 10px 22px rgba(0,0,0,.35);
-}
-.btn:hover{
-  border-color: rgba(214,178,94,.85);
-  background: rgba(0,0,0,.45);
-}
-
-.btn:hover{border-color:rgba(255,255,255,.22)}
-.btn:disabled{opacity:.45; cursor:not-allowed}
-.btn--primary{
-  background: linear-gradient(135deg, rgba(177,18,42,.98), rgba(122,12,27,.88));
-  border-color: rgba(214,178,94,.75);
-}
-.btn--primary:hover{
-  filter: brightness(1.05);
-}
-
-.btn--ghost{background:transparent; box-shadow:none}
-.btn--small{padding:8px 10px; border-radius:12px; font-size:12px; box-shadow:none}
-
-.layout{
-  max-width: 1600px;
-  margin: 18px auto;
-  padding: 0 18px 22px;
-
-  display: grid;
-  grid-template-columns: 340px minmax(680px, 1fr) 340px;
-  gap: 18px;
-  align-items: start;
-}
-
-.leftCol, .rightCol{
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.mainCol{
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.card--tall{
-  min-height: 640px; /* roughly map height on desktop */
-}
-
-.log--tall{
-  max-height: 560px;
-  overflow: auto;
-  padding-right: 6px;
-}
-
-.card, .mapCard{
-  background:
-    linear-gradient(180deg, rgba(58,18,25,.92), rgba(27,10,13,.92));
-  border: 2px solid rgba(214,178,94,.65);
-  border-radius: var(--radius2);
-  box-shadow: var(--shadow);
-}
-
-.mapCard{
-  overflow:hidden;
-  padding:14px;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.35)),
-    linear-gradient(180deg, rgba(58,18,25,.92), rgba(27,10,13,.92));
-  border: 3px solid rgba(214,178,94,.80);
-}
-
-.cardHeader{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:14px 16px;
-
-  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0));
-  border-bottom: 1px solid rgba(214,178,94,.45);
-}
-
-.cardHeader h2{
-  margin:0;
-  font-family:var(--ui);
-  font-size:14px;
-  letter-spacing:.10em;
-  text-transform:uppercase;
-  color:rgba(214,178,94,.95);
-}
-
-.mapImg{
-  width:100%;
-  height:auto;
-  display:block;
-  border-radius: 18px;
-  border: 1px solid rgba(214,178,94,.45);
-}
-
-.mapHint{
-  padding:12px 16px 16px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.rightCol{display:flex; flex-direction:column; gap:18px}
-.grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px}
-
-.stack{padding:14px 16px 16px; display:flex; flex-direction:column; gap:14px}
-.row{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  justify-content:space-between;
-
-  border:1px solid rgba(214,178,94,.35);
-  border-radius:16px;
-  padding:12px 12px;
-
-  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.05));
-}
-
-/* Row variant that contains its own list content */
-.row--stack{
-  flex-direction: column;
-  align-items: stretch;
-}
-.rowTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-
-.label{font-size:12px; color:var(--muted)}
-.value{font-size:22px; font-weight:800; margin-top:2px}
-.small{font-size:12px}
-.muted{color:rgba(210,199,184,.85)}
-.actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-
-.pill{
-  font-size:12px;
-  padding:6px 10px;
-  border-radius:999px;
-
-  border:1px solid rgba(214,178,94,.75);
-  color: rgba(214,178,94,.95);
-  background: rgba(0,0,0,.35);
-
-  letter-spacing:.06em;
-  text-transform:uppercase;
-}
-
-.list{display:flex; flex-direction:column; gap:8px}
-.item{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:10px 10px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-}
-.item__name{font-size:13px}
-.item__meta{font-size:12px; color:var(--muted); font-family:var(--mono)}
-.item__btn{
-  border:1px solid var(--line);
-  background:transparent;
-  color:var(--muted);
-  border-radius:10px;
-  padding:6px 8px;
-  cursor:pointer;
-}
-.item__btn:hover{color:var(--text)}
-
-.eventBox{
-  padding:14px 16px 16px;
-  min-height:140px;
-  line-height:1.35;
-}
-.eventBox b{color:var(--text)}
-.eventBox .evTitle{font-weight:800; margin-bottom:6px}
-.eventBox .evRoll{font-family:var(--mono); color:var(--muted); margin-bottom:10px}
-.eventBox ul{margin:8px 0 0 18px; padding:0}
-.eventBox li{margin:4px 0}
-
-.facilities{
-  padding: 14px 16px 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 14px;
-  align-items: start;
-}
-
-.fac{
-  border: 1px solid rgba(214,178,94,.35);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.06));
-  padding: 12px;
-  overflow: hidden; /* stops spill */
-}
-
-.facImgWrap{
-  width: 100%;
-  height: 110px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(214,178,94,.35);
-  margin-bottom: 10px;
-  background: rgba(0,0,0,.25);
-}
-.facImg{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: saturate(1.05) contrast(1.05);
-}
-
-.facTop{
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
   gap: 10px;
-  margin-bottom: 10px;
-}
-
-.facName{
-  font-family: var(--ui);
-  font-weight: 800;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-
-.facFns{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Prevent long dropdown text blowing up layout */
-.fac select{
-  width: 100%;
-  max-width: 100%;
-}
-
-.fac{
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:12px;
-  background:rgba(255,255,255,.02);
-}
-.facTop{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
-.facName{font-weight:900; letter-spacing:.02em}
-.facMeta{display:flex; gap:6px; align-items:center; flex-wrap:wrap}
-.tag{
-  font-size:11px;
-  padding:4px 8px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  color:var(--muted);
-}
-.tag--locked{border-color:rgba(255,122,122,.35); color:rgba(255,122,122,.9)}
-.tag--ok{border-color:rgba(70,230,179,.25); color:rgba(70,230,179,.95)}
-.facFns{margin-top:10px; display:flex; flex-direction:column; gap:8px}
-.fnRow{display:grid; grid-template-columns: 1fr; gap:6px; padding:10px; border:1px dashed rgba(255,255,255,.14); border-radius:14px}
-.fnRow select, .fnRow input{
-  padding:10px 10px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.03);
-  color:var(--text);
-}
-.fnHeader{display:flex; align-items:center; justify-content:space-between; gap:10px}
-.fnName{font-size:13px; font-weight:800}
-.fnCost{font-size:12px; color:var(--muted); font-family:var(--mono)}
-.fnNotes{font-size:12px; color:var(--muted); line-height:1.3}
-
-.log{
-  padding:14px 16px 16px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.logEntry{
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:10px 10px;
-  background:rgba(255,255,255,.02);
-}
-.logEntry__top{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap}
-.logEntry__title{font-weight:800}
-.logEntry__time{font-family:var(--mono); color:var(--muted); font-size:12px}
-.logEntry__body{margin-top:6px; color:var(--muted); font-size:12px; line-height:1.35}
-
-.footer{
-  max-width:1320px;
-  margin:0 auto;
-  padding:0 18px 22px;
-}
-
-@media (max-width: 1100px){
-  .layout{grid-template-columns:1fr}
-  .grid2{grid-template-columns:1fr}
-  .facilities{grid-template-columns:1fr}
-  .field input,.field select{width:140px}
-}
-
-@media (max-width: 1200px){
-  .layout{
-    grid-template-columns: 1fr;
-  }
-  .card--tall{
-    min-height: unset;
-  }
-  .log--tall{
-    max-height: 260px;
-  }
-}
-
-/* ---------------- Warehouse Table UI ---------------- */
-
-.warehouseSub{
-  padding: 0 16px 6px;
-}
-
-.warehouseWrap{
-  padding: 12px 16px 16px;
-}
-
-.warehouseHead{
-  display: grid;
-  grid-template-columns: 2.2fr .6fr .7fr 2fr .8fr;
-  gap: 12px;
-  padding: 10px 8px;
-  color: rgba(214,178,94,.95);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  font-weight: 800;
-  border-bottom: 1px solid rgba(214,178,94,.35);
-}
-
-.warehouseBody{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 12px;
-
-  /* Fixed height: roughly first 5 entries visible, then scroll */
-  max-height: 420px;
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
-/* Make the scroll bar visible and on-brand (optional but nice) */
-.warehouseBody::-webkit-scrollbar{ width: 10px; }
-.warehouseBody::-webkit-scrollbar-thumb{
-  background: rgba(214,178,94,.35);
-  border-radius: 999px;
-  border: 2px solid rgba(0,0,0,.35);
-}
-.warehouseBody::-webkit-scrollbar-track{ background: rgba(0,0,0,.25); border-radius: 999px; }
-
-.whRow{
-  display: grid;
-  grid-template-columns: 2.2fr .6fr .7fr 2fr .8fr;
-  gap: 12px;
-  align-items: center;
-
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 18px;
-  padding: 10px 10px;
-
-  background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.06));
-}
-
-.whRow input{
-  width: 100%;
-  border: 1px solid rgba(214,178,94,.40);
-  background: rgba(0,0,0,.45);
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: 14px;
-  outline: none;
-  font-family: var(--ui);
-}
-
-.whRow input:focus{
-  border-color: rgba(214,178,94,.95);
-  box-shadow: 0 0 0 3px rgba(214,178,94,.18);
-}
-
-.whBtn{
-  justify-self: start;
-}
-
-.warehouseActions{
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding-top: 12px;
-}
-
-/* Responsive: stack warehouse columns on narrow screens */
-@media (max-width: 900px){
-  .warehouseHead{
-    display:none;
-  }
-  .whRow{
-    grid-template-columns: 1fr;
-  }
-}
-
-.facBuild{
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(214,178,94,.25);
-}
-
-.facBuildTop{
-  display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom: 10px;
-}
-
-.slotList{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.slotRow{
-  display:grid;
-  grid-template-columns: 1fr auto;
-  gap:10px;
-  align-items:center;
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 16px;
-  padding: 10px;
-  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.05));
-}
-
-.pendingWrap{
-  padding: 12px 16px 8px;
-  border-bottom: 1px solid rgba(214,178,94,.25);
-}
-
-/* ---------------- Management 3-column layout ---------------- */
-
-.mgmtGrid{
-  padding: 14px 16px 16px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 14px;
-}
-
-.mgmtBox{
-  border:1px solid rgba(214,178,94,.35);
-  border-radius:16px;
-  padding:12px;
-  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.05));
-  min-height: 170px;
-}
-
-@media (max-width: 1100px){
-  .mgmtGrid{ grid-template-columns: 1fr; }
-}
-
-.slotLocked{
-  padding: 6px 4px;
-}
-.slotLocked__name{
-  font-weight: 800;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: rgba(214,178,94,.95);
-}
-
-/* Warehouse + Artisan Tools row layout */
-.whRow2{
-  display:grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 18px;
-}
-
-.toolGrid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.toolGrid .field select{
-  width: 100%;
-}
-
-@media (max-width: 1100px){
-  .whRow2{ grid-template-columns: 1fr; }
-  .toolGrid{ grid-template-columns: 1fr; }
-}
-
-/* Full-width rows inside the 3-column layout */
-.fullRow{
-  grid-column: 1 / -1;
-}
-
-/* Make sure the card inside fills that row */
-.fullRow > .card{
-  width: 100%;
-}
-
-/* ================================
-   Panel background images (faint)
-   ================================ */
-
-/* Ensure mgmt panels can host a background layer */
-.mgmtBox,
-.whRow2 > .card {
-  position: relative;
-  overflow: hidden;
-}
-
-/* The faint image layer */
-.mgmtBox::before,
-.whRow2 > .card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.14; /* adjust 0.10–0.18 if you want */
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Keep real content above the image layer */
-.mgmtBox > *,
-.whRow2 > .card > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* ---- Specific images per panel ---- */
-
-/* Defenders panel = first mgmt column */
-.mgmtGrid .mgmtCol:nth-child(1) .mgmtBox::before {
-  background-image: url("assets/bastion_defenders.png");
-}
-
-/* Treasury panel = second mgmt column */
-.mgmtGrid .mgmtCol:nth-child(2) .mgmtBox::before {
-  background-image: url("assets/treasury.png");
-}
-
-/* Military panel = third mgmt column */
-.mgmtGrid .mgmtCol:nth-child(3) .mgmtBox::before {
-  background-image: url("assets/military.png");
-}
-
-/* Warehouse + Artisan Tools cards are inside .whRow2:
-   1st = Warehouse, 2nd = Artisan Tools */
-.whRow2 > .card:nth-child(1)::before {
-  background-image: url("assets/warehouse.png");
-}
-.whRow2 > .card:nth-child(2)::before {
-  background-image: url("assets/artisan_tools.png");
-}
-/* =========================
-   Favour of The Gods (fixed)
-   ========================= */
-.favourPanel{
-  position: fixed;
-  left: 18px;
-  top: 92px;        /* pinned under top bar */
-  width: 300px;
-  max-height: calc(100vh - 120px);  /* keeps it contained */
-  overflow: auto;   /* future panels can scroll inside */
-  z-index: 20;
-
-  padding: 12px 12px;
-  border-radius: 18px;
-  border: 2px solid rgba(214,178,94,.65);
-  background: linear-gradient(180deg, rgba(58,18,25,.92), rgba(27,10,13,.92));
-  box-shadow: var(--shadow);
-}
-
-@media (max-width: 1100px){
-  .favourPanel{
-    position: static;
-    width: auto;
-    margin: 0 18px 12px 18px;
-  }
-}
-
-.favourTitle{
-  font-family: var(--ui);
-  font-weight: 900;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: rgba(214,178,94,.95);
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-
-.favourRow{
-  display: grid;
-  grid-template-columns: 80px 1fr 44px auto;
-  gap: 8px;
-  align-items: center;
-  padding: 8px 8px;
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.06));
-  margin-bottom: 8px;
-}
-
-.favourName{ font-size: 12px; opacity: .9; }
-.favourPct{ font-size: 12px; text-align: right; opacity: .8; font-family: var(--mono); }
-
-.favourBar{
-  height: 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(214,178,94,.35);
-  background: rgba(0,0,0,.35);
-  overflow: hidden;
-}
-
-.favourFill{
-  height: 100%;
-  width: 0%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(214,178,94,.55), rgba(177,18,42,.65));
-}
-
-.favourHint{ margin-top: 6px; font-size: 12px; }
-
-/* =========================
-   Artisan tools tooltip
-   ========================= */
-.artisanTooltip{
-  position: fixed;
-  z-index: 50;
-  max-width: 420px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(214,178,94,.55);
-  background: rgba(0,0,0,.90);
-  color: var(--text);
-  box-shadow: 0 18px 40px rgba(0,0,0,.55);
-  font-size: 12px;
-  line-height: 1.35;
-}
-.artisanTooltip .ttTitle{
-  font-weight: 900;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: rgba(214,178,94,.95);
-  margin-bottom: 6px;
-}
-.artisanTooltip ul{ margin: 6px 0 0 18px; padding: 0; }
-.artisanTooltip li{ margin: 2px 0; }
-
-/* SVG God Icons */
-/* =========================
-   SVG God Icons (real icons)
-   ========================= */
-.favourName{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.godIconSvg{
-  width: 16px;
-  height: 16px;
-  display:block;
-  color: rgba(214,178,94,.95); /* default fallback */
-}
-
-/* Force the path to use the SVG's currentColor */
-.godIconSvg path{
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* Per-god colours */
-.godIconSvg.godIcon--telluria{ color: #37c85f; filter: drop-shadow(0 0 4px rgba(55,200,95,.6)); }
-.godIconSvg.godIcon--aurush{  color: #eb3737; filter: drop-shadow(0 0 4px rgba(235,55,55,.6)); }
-.godIconSvg.godIcon--pelagos{ color: #3c91ff; filter: drop-shadow(0 0 4px rgba(60,145,255,.6)); }
-
-.godIcon--telluria{
-  stroke: #37c85f;
-}
-.godIcon--telluria{ filter: drop-shadow(0 0 4px rgba(55,200,95,.6)); }
-
-.godIcon--aurush{
-  stroke: #eb3737;
-}
-.godIcon--aurush{ filter: drop-shadow(0 0 4px rgba(235,55,55,.6)); }
-
-.godIcon--pelagos{
-  stroke: #3c91ff;
-}
-.godIcon--pelagos{ filter: drop-shadow(0 0 4px rgba(60,145,255,.6)); }
-
-/* ---------------- Diplomacy & Trade layout ---------------- */
-
-#diplomacyPanel{
-  position: relative;
-  background-image: url("assets/facilities/hall_of_emissaries.png");
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-  padding-left: 18px;
-  padding-right: 18px;
-}
-  #diplomacyPanel::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.86);
-  z-index: 0;
-}
-
-.dipGrid{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 16px;
-  align-items: stretch;
-  min-height: 520px;
-  position: relative;
-  z-index: 1;
-}
-.dipRight{
-  border-left: 1px solid rgba(255,255,255,0.12);
-  padding-left: 24px;
-}
-
-.dipLeft{ min-width: 0; }
-.dipRight{ min-width: 0; }
-
-.dipBoxes{
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.dipBox{
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 12px;
-  padding: 10px 12px;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-
-}
-
-.dipBoxTitle{
-  font-weight: 800;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  opacity: 0.75;
-}
-
-.dipRow{ padding: 6px 0; border-top: 1px dashed rgba(255,255,255,0.10); }
-.dipRow:first-of-type{ border-top: 0; padding-top: 0; }
-.dipRowName{ font-weight: 700; }
-.dipRowMeta{ font-size: 12px; opacity: 0.8; margin-top: 2px; }
-
-.dipFoot{ margin-top: 14px; display:flex; justify-content:flex-start; }
-
-/* Hall card on right */
-.hallCard{
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  padding: 0 14px 14px 14px;
-  background: rgba(0,0,0,0.20);
-  backdrop-filter: blur(4px);
-  height: 100%;
-}
-
-.hallNameRow{
-  display:flex;
-  align-items:center;
-  gap: 12px;
   flex-wrap: wrap;
-  justify-content: space-between;
 }
 
-.hallName{ font-weight: 900; font-size: 18px; letter-spacing: 0.02em; }
-.hallLevel{
-  font-weight: 900;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: linear-gradient(135deg,#3a2b0f,#6b4d18);
-  border: 1px solid rgba(255,215,120,0.4);
-}
+/* =========================
+   Layout
+   ========================= */
 
-.hallHead{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 0 10px 0;
-  margin-top: 2px;
-}
-.hallTop{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 0 10px 0;
-}
-
-.pill{
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-weight: 700;
-  font-size: 11px;
-  border: 1px solid rgba(255,215,120,0.4);
-  background: rgba(120,80,20,0.25);
-  cursor: pointer;
-}
-.pill:hover{
-  background: rgba(120,80,20,0.4);
-}
-
-.hallBody{
-  display: flex;
-  flex-direction: column;
+.grid3{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   margin-top: 14px;
 }
 
-.hallImgWrap{
-  border-radius: 16px;
-  overflow: hidden;
-  height: 140px; /* shorter banner style */
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(0,0,0,0.25);
-}
-.hallImg{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 18%;
-  display:block;
+@media (max-width: 1100px){
+  .grid3{ grid-template-columns: 1fr; }
 }
 
-.hallFns{
-  display: grid;
+.fullRow{ margin-top: 14px; }
+
+.twoCols{
+  display:grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
+}
+@media (max-width: 900px){
+  .twoCols{ grid-template-columns: 1fr; }
 }
 
-.hallFns .fn{
+/* =========================
+   Cards
+   ========================= */
+
+.card{
+  border: 1px solid var(--edge);
+  border-radius: var(--r);
+  background: rgba(0,0,0,.32);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+
+.cardHeader{
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(214,178,94,.16);
+  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.10));
+}
+
+.cardHeader h2{
   margin: 0;
+  font-size: 14px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
 }
 
-/* Diplomacy header split: aligns Hall title with Diplomacy title */
-.dipHead{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  align-items: start;
+/* =========================
+   Buttons / Fields
+   ========================= */
+
+.btn{
+  border: 1px solid rgba(214,178,94,.35);
+  background: rgba(0,0,0,.35);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 800;
+  letter-spacing: .03em;
 }
 
-.dipHeadRight{
-  display: flex;
+.btn:hover{
+  border-color: rgba(214,178,94,.85);
+  box-shadow: 0 0 0 3px rgba(214,178,94,.14);
+}
+
+.btn:disabled{
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.btn--primary{
+  border-color: rgba(214,178,94,.85);
+  background: linear-gradient(180deg, rgba(214,178,94,.25), rgba(177,18,42,.20));
+}
+
+.btn--ghost{
+  background: rgba(255,255,255,.04);
+}
+
+.btn--danger{
+  border-color: rgba(177,18,42,.75);
+  background: rgba(177,18,42,.18);
+}
+
+.field{
+  display:flex;
   flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
-  padding-top: 2px;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(214,178,94,.92);
+}
+.field span{ font-weight: 800; letter-spacing: .05em; }
+
+.field input, .field select{
+  border: 1px solid rgba(214,178,94,.35);
+  background: rgba(0,0,0,.35);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-family: var(--ui);
 }
 
-.hallHeadRow{
-  display: inline-flex;
-  align-items: center;
+.field input:focus, .field select:focus{
+  outline:none;
+  border-color: rgba(214,178,94,.95);
+  box-shadow: 0 0 0 3px rgba(214,178,94,.18);
+}
+
+.field--inline{
+  flex-direction: row;
+  align-items:center;
+  gap: 10px;
+}
+.field--inline span{ min-width: 85px; }
+
+/* =========================
+   Pills / Lists / Items
+   ========================= */
+
+.pill{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(214,178,94,.35);
+  background: rgba(0,0,0,.40);
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+
+.label{
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: rgba(214,178,94,.92);
+  padding: 0 16px;
+  margin-top: 12px;
+}
+
+.list{
+  padding: 12px 16px 16px;
+  display:flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.hallHeadTitle{
-  font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 0.02em;
-}
-
-/* Make sure header elements sit above overlay */
-#diplomacyPanel .card__head{
-  position: relative;
-  z-index: 1;
-}
-
-/* =========================
-   DIPLOMACY PANEL OVERRIDES
-   (keep at bottom of file)
-   ========================= */
-
-#diplomacyPanel{
-  position: relative;
-  overflow: hidden;
-}
-
-/* Background image + strong dimming (your “drastically altered opacity”) */
-#diplomacyPanel::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background-image: url("assets/facilities/hall_of_emissaries.png");
-  background-size: cover;
-  background-position: center;
-  opacity: 0.16;              /* <-- lower = fainter image */
-  transform: scale(1.02);
-  z-index: 0;
-}
-
-/* Dark tint over the image to keep text readable */
-#diplomacyPanel::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: rgba(10, 5, 6, 0.72); /* <-- increase to darken more */
-  z-index: 0;
-}
-
-#diplomacyPanel .card__head,
-#diplomacyPanel .dipGrid,
-#diplomacyPanel .dipFoot{
-  position: relative;
-  z-index: 1;
-}
-
-/* EXACT 50/50 split */
-.dipGrid{
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* center divider */
-  gap: 16px;
-  align-items: start;
-  margin-top: 10px;
-}
-
-/* LEFT: stack all boxes neatly top-to-bottom */
-.dipBoxes{
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* Make each record box a bit tighter and cleaner */
-.dipBox{
-  padding: 12px 14px;
-}
-
-/* RIGHT: Hall card should climb higher */
-.dipRight{
-  padding-top: 0 !important;
-}
-
-.hallCard{
-  margin-top: 0 !important;
-  align-self: start;
-}
-
-/* Hall title alignment: nudge the hall header up so it sits closer to the main title line */
-.hallTop{
-  padding-top: 0 !important;
-  margin-top: -6px; /* small lift; adjust to taste */
-}
-
-/* Hall image crop: raise the “window” so banners show */
-.hallImg{
-  object-fit: cover;
-  object-position: center 20%; /* smaller % = higher crop */
-}
-
-/* If your image wrapper has a fixed height, this helps it feel more premium */
-.hallImgWrap{
-  height: 170px;     /* tweak after you see it */
-  overflow: hidden;
-  border-radius: 14px;
-}
-
-/* === Hall header spacing + size (top right) === */
-.dipHeadRight{
-  padding-top: 8px;      /* pulls it away from the top border */
-  padding-right: 14px;   /* pulls it away from the right border */
-}
-
-.hallHeadRow{
-  gap: 12px;
-}
-
-.hallHeadTitle{
-  font-size: 20px;       /* slightly larger */
-  letter-spacing: 0.03em;
-}
-
-#hallLevelBadge{
-  transform: scale(1.05);
-}
-
-/* === Upgrade pill: make it premium === */
-.pill{
-  padding: 7px 14px;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-
-  border-radius: 999px;
-  border: 1px solid rgba(255, 215, 140, 0.55);
-
-  background: linear-gradient(180deg, rgba(140,95,25,0.55), rgba(70,40,10,0.55));
-  box-shadow:
-    0 6px 18px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.12);
-
-  cursor: pointer;
-}
-
-.pill:hover{
-  filter: brightness(1.08);
-  box-shadow:
-    0 8px 22px rgba(0,0,0,0.42),
-    inset 0 1px 0 rgba(255,255,255,0.14);
-}
-
-.pill:disabled{
-  opacity: 0.45;
-  cursor: not-allowed;
-  filter: none;
-}
-
-/* === Hall image crop: center the crests === */
-.hallImg{
-  object-position: center 38%; /* try 42% first */
-}
-
-/* =========================
-   Scarlett Isles Modal System
-   ========================= */
-
-.siModalOverlay{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.72);
-  display: grid;
-  place-items: center;
-  z-index: 9999;
-  padding: 18px;
-}
-
-.siModal{
-  width: min(640px, 96vw);
-  border-radius: 18px;
-  border: 2px solid rgba(214,178,94,.70);
-  background:
-    linear-gradient(180deg, rgba(58,18,25,.96), rgba(27,10,13,.96));
-  box-shadow: 0 24px 70px rgba(0,0,0,0.65);
-  overflow: hidden;
-}
-
-.siModalHead{
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
+.item{
+  display:flex;
+  align-items:flex-start;
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px solid rgba(214,178,94,.35);
-  background: linear-gradient(180deg, rgba(0,0,0,.32), rgba(0,0,0,0));
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(214,178,94,.18);
+  background: rgba(0,0,0,.18);
 }
 
-.siModalTitle{
-  font-family: var(--ui);
+.item__name{ font-weight: 900; letter-spacing: .03em; }
+.item__meta{ font-size: 12px; color: rgba(242,239,230,.72); margin-top: 3px; }
+.item__btn{
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,178,94,.32);
+  background: rgba(0,0,0,.28);
+  color: var(--text);
+  cursor:pointer;
+  font-weight: 900;
+}
+
+/* =========================
+   Stat blocks
+   ========================= */
+
+.statLine{
+  padding: 12px 16px;
+  display:flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items:center;
+}
+
+.stat__label{
   font-weight: 900;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(214,178,94,.95);
   font-size: 12px;
+  color: rgba(214,178,94,.92);
+}
+.stat__value{ font-size: 34px; font-weight: 1000; margin-top: 4px; }
+.stat__meta{ font-size: 12px; color: rgba(242,239,230,.68); margin-top: 2px; }
+
+.statActions{
+  display:flex;
+  gap: 10px;
 }
 
-.siModalX{
-  border: 1px solid rgba(214,178,94,.35);
-  background: rgba(0,0,0,.25);
-  color: rgba(214,178,94,.95);
-  border-radius: 12px;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-.siModalX:hover{ filter: brightness(1.10); }
+/* =========================
+   Event box
+   ========================= */
 
-.siModalBody{
-  padding: 14px 16px 6px;
-  color: var(--text);
-}
-
-.siModalFoot{
-  padding: 12px 16px 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Dice modal variant */
-.siModal--dice .siModalBody{
-  padding-bottom: 18px;
-  text-align: center;
-}
-
-.siDiceMeta{
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.siDiceChip{
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(214,178,94,.35);
-  background: rgba(0,0,0,.25);
-  color: rgba(214,178,94,.95);
-}
-
-.siDiceNumber{
-  font-family: var(--mono);
-  font-size: 64px;
-  font-weight: 900;
-  letter-spacing: .02em;
-  color: rgba(255,255,255,.95);
-  text-shadow: 0 12px 34px rgba(0,0,0,0.55);
-  margin-top: 10px;
-}
-
-/* Resolution styling */
-.siResTop{ margin-bottom: 10px; }
-.siResAction{ font-weight: 900; font-size: 16px; }
-.siResTarget{ opacity: .9; margin-top: 2px; }
-
-.siResRoll{
-  margin-top: 10px;
-  padding: 10px 12px;
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 14px;
-  background: rgba(0,0,0,.22);
-  font-family: var(--mono);
-  font-size: 12px;
+.eventBox{
+  padding: 14px 16px 16px;
   line-height: 1.35;
 }
 
-.siResSummary{
-  margin-top: 12px;
+/* =========================
+   Facilities grid
+   ========================= */
+
+.facGrid{
+  padding: 12px 16px 16px;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 520px){
+  .facGrid{ grid-template-columns: 1fr; }
+}
+
+.facCard{
+  border: 1px solid rgba(214,178,94,.18);
+  border-radius: 16px;
+  background: rgba(0,0,0,.18);
+  overflow:hidden;
+}
+.facCard__head{
   padding: 10px 12px;
-  border-left: 3px solid rgba(214,178,94,.65);
-  background: rgba(255,255,255,.03);
-  border-radius: 12px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid rgba(214,178,94,.12);
+  background: rgba(0,0,0,.18);
+}
+.facCard__name{ font-weight: 1000; letter-spacing: .04em; }
+.facCard__meta{ font-size: 12px; color: rgba(242,239,230,.66); }
+
+.facCard__body{
+  padding: 10px 12px 12px;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.siResChanges{ margin-top: 12px; }
-.siResChangesTitle{
-  font-weight: 800;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  font-size: 11px;
-  opacity: .8;
-  margin-bottom: 6px;
-}
-
-.siResList{
-  margin: 0;
-  padding-left: 18px;
-}
-.siResList li{
-  margin: 6px 0;
+.actions{
+  padding: 0 16px 16px;
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 /* =========================
-   Political Capital (Clans)
+   Artisan grid
    ========================= */
 
-.pcTitle{
-  font-family: var(--ui);
-  font-weight: 900;
+.artisanGrid{
+  padding: 12px 16px 0;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 980px){
+  .artisanGrid{ grid-template-columns: 1fr; }
+}
+
+/* =========================
+   Warehouse
+   ========================= */
+
+.warehouseWrap{ padding: 12px 16px 16px; }
+
+.table{
+  width: 100%;
+  border-collapse: collapse;
+  overflow:hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(214,178,94,.18);
+}
+.table th, .table td{
+  padding: 10px 10px;
+  border-bottom: 1px solid rgba(214,178,94,.14);
+}
+.table thead th{
+  text-align:left;
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(214,178,94,.92);
+  background: rgba(0,0,0,.25);
+}
+.table input{
+  width: 100%;
+  border: 1px solid rgba(214,178,94,.25);
+  background: rgba(0,0,0,.35);
+  color: var(--text);
+  padding: 10px 10px;
+  border-radius: 12px;
+}
+
+/* =========================
+   SI Modal styling hooks
+   ========================= */
+
+.siModal{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.66);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 18px;
+  z-index: 90;
+}
+
+.siModal__inner{
+  width: min(720px, 100%);
+  border: 1px solid rgba(214,178,94,.25);
+  background: rgba(0,0,0,.55);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+
+.siModal__head{
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(214,178,94,.16);
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items:center;
+}
+.siModal__title{
+  font-weight: 1000;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(214,178,94,.95);
-  font-size: 12px;
+  font-size: 13px;
+}
+
+.siModal__body{
+  padding: 14px 16px 16px;
+}
+
+.siModal__foot{
+  padding: 0 16px 16px;
+  display:flex;
+  gap: 10px;
+  justify-content:flex-end;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Banner & War Council (NEW)
+   ========================= */
+
+.orgWarGrid{
+  padding: 14px 16px 16px;
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 14px;
+}
+
+@media (max-width: 1100px){
+  .orgWarGrid{ grid-template-columns: 1fr; }
+}
+
+.orgCol{
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 18px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.06));
+}
+
+.orgTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
   margin-bottom: 10px;
 }
 
-.pcRow{
-  display: grid;
-  grid-template-columns: 92px 1fr 44px auto;
-  gap: 8px;
-  align-items: center;
-  padding: 8px 8px;
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.06));
-  margin-bottom: 8px;
+.orgSummary{ line-height: 1.35; margin-bottom: 12px; }
+
+.orgChoiceRow{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items:center;
+  margin-bottom: 12px;
 }
 
-.pcName{ font-size: 12px; opacity: .92; }
-.pcVal{ font-size: 12px; text-align: right; opacity: .85; font-family: var(--mono); }
+.orgForm{
+  border: 1px dashed rgba(214,178,94,.22);
+  border-radius: 16px;
+  padding: 12px;
+  background: rgba(0,0,0,.18);
+  margin-bottom: 12px;
+}
 
-.pcBar{
-  position: relative;
+.orgForm .field{ margin-top: 10px; }
+.orgForm .field:first-child{ margin-top: 0; }
+
+.orgTrackers{ margin-top: 6px; }
+
+.orgTrackHead{
+  display:flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.orgClanTable, .orgClientTable{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orgRow{
+  display: grid;
+  grid-template-columns: 120px 1fr 78px auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(214,178,94,.18);
+  background: rgba(0,0,0,.16);
+}
+
+.orgRow .orgName{ font-weight: 800; letter-spacing: .04em; }
+.orgRow .orgMeta{ font-family: var(--mono); font-size: 12px; color: rgba(214,178,94,.92); text-align: right; }
+
+.orgRow input{
+  width: 100%;
+  border: 1px solid rgba(214,178,94,.35);
+  background: rgba(0,0,0,.35);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-family: var(--ui);
+}
+.orgRow input:focus{
+  border-color: rgba(214,178,94,.95);
+  box-shadow: 0 0 0 3px rgba(214,178,94,.18);
+}
+
+.orgBar{
   height: 10px;
   border-radius: 999px;
-  border: 1px solid rgba(214,178,94,.35);
+  border: 1px solid rgba(214,178,94,.30);
   background: rgba(0,0,0,.35);
   overflow: hidden;
 }
-
-/* Center “neutral” marker line */
-.pcBar::after{
-  content:"";
-  position:absolute;
-  left: 50%;
-  top: -2px;
-  bottom: -2px;
-  width: 2px;
-  background: rgba(214,178,94,.55);
-  filter: drop-shadow(0 0 3px rgba(214,178,94,.25));
-}
-
-.pcFill{
-  position: absolute;
-  top: 0;
+.orgFill{
   height: 100%;
   width: 0%;
-  left: 50%;
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(214,178,94,.45), rgba(177,18,42,.70));
 }
 
-/* Hint text */
-.pcHint{ margin-top: 6px; font-size: 12px; }
-
-/* =========================
-   Hall Modal Background Skin
-   (hall_inner.png)
-   ========================= */
-
-.siModal.siModal--hall{
-  position: relative;
-
-  /* Bigger impact */
-  width: min(1280px, 98vw);
-  max-height: 92vh;
-
-  background:
-    linear-gradient(180deg, rgba(58,18,25,.70), rgba(27,10,13,.86)),
-    url("assets/facilities/hall_inner.png");
-  background-size: cover;
-  background-position: center;
-
-  /* Slightly more “grand hall” spacing */
-  border-radius: 22px;
-}
-
-/* Scale typography and spacing inside Hall modals */
-.siModal.siModal--hall .siModalHead{ padding: 18px 20px; }
-.siModal.siModal--hall .siModalBody{ padding: 18px 20px 10px; font-size: 18px; }
-.siModal.siModal--hall .siModalFoot{ padding: 14px 20px 20px; }
-
-.siModal.siModal--hall .siModalTitle{ font-size: 16px; }
-.siModal.siModal--hall .siModalFoot .btn{ font-size: 16px; padding: 12px 18px; }
-
-.siModal.siModal--hall .siDiceNumber{ font-size: 104px; }
-
-/* Dice number bigger for Hall */
-.siModal.siModal--hall .siDiceNumber{ font-size: 86px; }
-
-.siModal.siModal--hall::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: rgba(0,0,0,.45);
-  pointer-events:none;
-}
-
-.siModal.siModal--hall .siModalHead,
-.siModal.siModal--hall .siModalBody,
-.siModal.siModal--hall .siModalFoot{
-  position: relative;
-  z-index: 1;
-}
-
-/* =========================
-   Diplomatic Assets
-   ========================= */
-
-.daRow{
-  display: grid;
-  grid-template-columns: 120px 1fr auto;
+.warGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
-  align-items: center;
-  padding: 10px 10px;
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.06));
-  margin-bottom: 8px;
-}
-
-.daName{ font-size: 12px; opacity: .92; }
-.daDesc{ margin: 0; }
-
-.daPill{
-  min-width: 44px;
-  text-align: center;
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(214,178,94,.35);
-  background: rgba(0,0,0,.25);
-  color: rgba(214,178,94,.95);
-}
-
-/* =========================
-   Trade Map Modal
-   ========================= */
-
-.tradeMapWrap{
-  position: relative;
-  width: 100%;
-  border-radius: 18px;
-  overflow: auto;                 /* <-- enables scrolling */
-  border: 1px solid rgba(214,178,94,.25);
-  background: rgba(0,0,0,.25);
-
-  /* Make it a fixed “map viewport” inside the modal */
-  max-height: 62vh;               /* adjust if you want taller/shorter */
-}
-
-.tradeMapImg{
-  width: 100%;
-  height: auto;
-  display: block;
-
-  /* Keep it crisp and readable */
-  filter: contrast(1.05) saturate(1.05);
-}
-
-.tradeMapSvg{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.tradeRouteLine{
-  fill: none;
-  stroke: rgba(214,178,94,.95);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 10 10;
-  filter: drop-shadow(0 0 6px rgba(214,178,94,.25));
-  opacity: .92;
-}
-
-.tradeRouteDot{
-  fill: rgba(214,178,94,.95);
-  opacity: .95;
-}
-
-/* =========================
-   Trade Network Panel bits
-   ========================= */
-
-.tnGrid{
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
   margin-top: 10px;
 }
 
-.tnStat{
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 14px;
-  padding: 10px 12px;
-  background: rgba(0,0,0,.18);
+@media (max-width: 560px){
+  .warGrid{ grid-template-columns: 1fr; }
 }
 
-.tnStatLabel{ font-size: 12px; opacity: .75; }
-.tnStatVal{ font-family: var(--mono); font-size: 14px; margin-top: 4px; color: rgba(214,178,94,.95); }
-
-.tnRoutes{
+.warActions{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
   margin-top: 12px;
-  display: grid;
-  gap: 8px;
 }
 
-.tnRoute{
-  border: 1px solid rgba(214,178,94,.22);
-  border-radius: 14px;
+.warInfo{
+  margin-top: 12px;
   padding: 10px 12px;
-  background: rgba(0,0,0,.14);
+  border-radius: 14px;
+  border-left: 3px solid rgba(214,178,94,.65);
+  background: rgba(255,255,255,.03);
 }
 
-.tnRouteTop{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:center;
-}
-
-.tnRouteName{ font-weight: 800; letter-spacing:.02em; }
-.tnRouteMeta{ font-size: 12px; opacity: .85; }
-
-.tnRouteBtns{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-  flex-wrap:wrap;
-}
-
-.tradeMapWrap::-webkit-scrollbar{
-  width: 10px;
-  height: 10px;
-}
-.tradeMapWrap::-webkit-scrollbar-thumb{
-  background: rgba(214,178,94,.28);
-  border-radius: 10px;
-}
-.tradeMapWrap::-webkit-scrollbar-track{
-  background: rgba(0,0,0,.18);
+.warHistory{
+  margin-top: 14px;
 }
