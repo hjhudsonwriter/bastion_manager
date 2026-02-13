@@ -1463,13 +1463,26 @@ select option{
   position: relative;
   width: 100%;
   border-radius: 18px;
-  overflow: auto;                 /* <-- enables scrolling */
+  overflow: auto;                 /* scroll lives here */
   border: 1px solid rgba(214,178,94,.25);
   background: rgba(0,0,0,.25);
-
-  /* Make it a fixed “map viewport” inside the modal */
-  max-height: 62vh;               /* adjust if you want taller/shorter */
+  max-height: 62vh;
 }
+
+/* Inner canvas that sizes itself to the image */
+.tradeMapCanvas{
+  position: relative;
+  width: 100%;
+}
+
+/* Base map */
+.tradeMapImg{
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: contrast(1.05) saturate(1.05);
+}
+
 
 .tradeMapImg{
   width: 100%;
@@ -1580,18 +1593,38 @@ select option{
 .tradeRouteOverlay{
   position: absolute;
   inset: 0;
+
+  /* THIS is the key: overlays match the image box */
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  opacity: .95;
-  mix-blend-mode: screen;
+  object-fit: cover;
 
-  /* Gold glow */
+  pointer-events: none;
+
+  /* Make it visible */
+  opacity: 1;
+  mix-blend-mode: normal;
+
+  /* Stronger gold glow */
   filter:
-    drop-shadow(0 0 6px rgba(214,178,94,.55))
-    drop-shadow(0 0 16px rgba(214,178,94,.35));
-  
-  animation: tradeRouteSwell 2.6s ease-in-out infinite;
+    drop-shadow(0 0 10px rgba(214,178,94,.85))
+    drop-shadow(0 0 24px rgba(214,178,94,.55))
+    drop-shadow(0 0 44px rgba(214,178,94,.35));
+
+  animation: tradeRouteSwell 2.2s ease-in-out infinite;
+}
+
+.tradeRouteOverlay--strong{
+  filter:
+    drop-shadow(0 0 12px rgba(214,178,94,.95))
+    drop-shadow(0 0 30px rgba(214,178,94,.65))
+    drop-shadow(0 0 56px rgba(214,178,94,.42));
+}
+
+@keyframes tradeRouteSwell{
+  0%   { opacity: .85; }
+  50%  { opacity: 1.00; }
+  100% { opacity: .85; }
 }
 
 /* A slightly stronger glow when multiple overlays stack */
