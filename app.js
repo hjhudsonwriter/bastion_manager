@@ -2008,23 +2008,20 @@ async function openTradeMapModal(){
     title: "Sea Trade Routes",
     bodyHtml: `
       <div class="tradeMapWrap">
-        <img class="tradeMapImg"
-             src="assets/ui/clan_trading_locations.png?v=3"
-             alt="Clan Trading Locations" />
-        <img id="tradeRouteBase"
-     class="tradeRouteOverlay tradeRouteOverlayBase"
-     src="assets/ui/all_trade_routes.png?v=3"
-     alt="All trade routes overlay" />
-     class="tradeRouteOverlay"
-     src="assets/ui/all_trade_routes.png?v=2"
-     alt="All trade routes overlay" />
+  <div class="tradeMapCanvas">
+    <img class="tradeMapImg"
+         src="assets/ui/clan_trading_locations.png?v=6"
+         alt="Clan Trading Locations" />
 
-<canvas id="tradeRouteHighlight"
-        class="tradeRouteOverlay tradeRouteOverlayHi"></canvas>
-        class="tradeRouteOverlay tradeRouteOverlay--strong"></canvas>
-     src="assets/ui/all_trade_routes.png?v=1"
-     alt="All trade routes overlay" />
-      </div>
+    <img id="tradeRouteBase"
+         class="tradeRouteOverlay tradeRouteOverlayBase"
+         src="assets/ui/all_trade_routes.png?v=6"
+         alt="All trade routes overlay" />
+
+    <canvas id="tradeRouteHighlight"
+            class="tradeRouteOverlay tradeRouteOverlayHi"></canvas>
+  </div>
+</div>
 
       <div class="small muted" style="margin-top:10px">
         Showing routes for: <b>${escapeHtml(shownText)}</b>
