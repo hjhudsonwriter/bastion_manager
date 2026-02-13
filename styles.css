@@ -1590,31 +1590,41 @@ select option{
 }
 
 /* Each route overlay is a transparent SVG sitting on top of the map */
+/* Base rules shared by both the base overlay image + highlight canvas */
 .tradeRouteOverlay{
   position: absolute;
   inset: 0;
-
-  /* THIS is the key: overlays match the image box */
   width: 100%;
   height: 100%;
-  object-fit: cover;
+
+  /* IMPORTANT: do NOT crop. Keep same scaling as the map image */
+  object-fit: contain;
 
   pointer-events: none;
+}
 
-  /* Make it visible */
+/* The faint "all routes" layer */
+.tradeRouteOverlayBase{
+  opacity: .35;               /* faint by default */
+  mix-blend-mode: screen;     /* makes it feel like ink on parchment */
+  filter: none;
+}
+
+/* The highlighted active routes layer */
+.tradeRouteOverlayHi{
   opacity: 1;
   mix-blend-mode: screen;
-
-  /* Stronger gold glow */
   filter:
-  drop-shadow(0 0 12px rgba(214,178,94,.95))
-  drop-shadow(0 0 30px rgba(214,178,94,.65))
-  drop-shadow(0 0 60px rgba(214,178,94,.35));
-
+    drop-shadow(0 0 10px rgba(214,178,94,.95))
+    drop-shadow(0 0 28px rgba(214,178,94,.60))
+    drop-shadow(0 0 56px rgba(214,178,94,.35));
   animation: tradeRouteSwell 2.2s ease-in-out infinite;
+}
 
-  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--s, 1));
-  transform-origin: top left;
+@keyframes tradeRouteSwell{
+  0%   { opacity: .85; }
+  50%  { opacity: 1.00; }
+  100% { opacity: .85; }
 }
 
 .tradeRouteOverlay--strong{
