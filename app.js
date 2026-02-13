@@ -698,6 +698,33 @@ if(kind === "summit"){
         else if(kind === "consortium") addContract("consortiums", rec);
         else addContract("agreements", rec);
 
+         if(kind === "consortium"){
+  state.tradeNetwork.active = true;
+
+  // If no routes exist yet, seed one starter route for the chosen clan
+  if(!Array.isArray(state.tradeNetwork.routes)) state.tradeNetwork.routes = [];
+  const ck = clanKey(opt);
+  if(ck){
+    const meta = CLAN_TRADE[ck] || { name: opt, commodity: "Goods", risk:"medium" };
+
+    const exists = state.tradeNetwork.routes.some(r => String(r.clan).toLowerCase() === meta.name.toLowerCase());
+    if(!exists){
+      state.tradeNetwork.routes.push({
+        id: uid(),
+        clan: meta.name,
+        commodity: meta.commodity,
+        risk: meta.risk,
+        yieldGP: perTurn,             // uses the consortium income you already rolled
+        stabilityDC: 12,              // base DC, modified by risk/strategy/stability
+        status: "active"              // active | disrupted
+      });
+      changes.push(`Trade Network: Route opened (${meta.name})`);
+    }
+  }
+
+  changes.push(`Market Stability: ${clampInt(state.tradeNetwork.stability ?? 75, 0, 100)}%`);
+}
+
         appendToWarehouse(`${rec.title} Contract`, 1, "", "Hall of Emissaries");
 
         summary =
@@ -1334,6 +1361,20 @@ function clanReactionLine(clanLabel, tier){
     `${clan}'s envoy leaves without finishing their wine.`,
     `A quiet insult lands like a thrown gauntlet. ${clan} remembers.`
   ];
+
+   const CLAN_TRADE = {
+  blackstone: { name:"Blackstone", commodity:"Timber", risk:"low" },
+  bacca:      { name:"Bacca",      commodity:"Weapons", risk:"medium" },
+  slade:      { name:"Slade",      commodity:"Steel", risk:"medium" },
+  rowthorn:   { name:"Rowthorn",   commodity:"Maritime", risk:"low" },
+  karr:       { name:"Karr",       commodity:"Wool & Furs", risk:"high" },
+  molten:     { name:"Molten",     commodity:"Precious Metals", risk:"high" },
+  farmer:     { name:"Farmer",     commodity:"Livestock", risk:"high" },
+};
+
+function clanKey(label){
+  return clanIdFromLabel(label); // you already have this
+}
 
   if(tier === "critical_success" || tier === "great_success") return good[Math.floor(Math.random()*good.length)];
   if(tier === "success") return mid[Math.floor(Math.random()*mid.length)];
@@ -2363,6 +2404,20 @@ function positionTooltip(e, tip){
       karr: 0
     },
 
+       tradeNetwork: {
+    active: false,
+    strategy: "balanced",     // conservative | balanced | aggressive
+    stability: 75,            // 0..100 market stability
+    routes: [],               // [{ id, clan, commodity, risk, yieldGP, stabilityDC, status }]
+    lastResolvedTurn: -1,
+    recruitmentBoostTurns: 0
+  },
+
+  arbitration: {
+    queue: [],                // disputes waiting to resolve
+    lastSpawnTurn: -1
+  },
+
     // turns + events + log
     turn: 1,
     lastEvent: null,
@@ -2412,6 +2467,14 @@ function positionTooltip(e, tip){
         molten:     clampInt(s.politicalCapital?.molten ?? 0, -100, 100),
         rowthorn:   clampInt(s.politicalCapital?.rowthorn ?? 0, -100, 100),
         karr:       clampInt(s.politicalCapital?.karr ?? 0, -100, 100),
+
+                tradeNetwork: s.tradeNetwork && typeof s.tradeNetwork === "object" ? s.tradeNetwork : {
+  active:false, strategy:"balanced", stability:75, routes:[], lastResolvedTurn:-1, recruitmentBoostTurns:0
+},
+arbitration: s.arbitration && typeof s.arbitration === "object" ? s.arbitration : {
+  queue:[], lastSpawnTurn:-1
+},
+
       },
 
       turn: clampInt(s.turn ?? DEFAULT_STATE.turn, 1),
