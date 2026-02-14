@@ -9,55 +9,10 @@
         "label": "Craft Common",
         "options": [
           {
-            "label": "Arcane Focus"
-          },
-          {
-            "label": "Blank Book"
-          },
-          {
             "label": "Bead of Nourishment"
           },
           {
             "label": "Bead of Refreshment"
-          },
-          {
-            "label": "Candle of the Deep"
-          },
-          {
-            "label": "Cloak of Billowing"
-          },
-                    {
-            "label": "Cloak of Many Fashions"
-          },
-          {
-            "label": "Clothes of Mending"
-          },
-          {
-            "label": "Dark Shard Amulet"
-          },
-          {
-            "label": "Enduring Spellbook"
-          },
-          {
-            "label": "Ersatz Eye"
-          },
-          {
-            "label": "Hat of Vermin"
-          },
-          {
-            "label": "Hat of Wizardry"
-          },
-          {
-            "label": "Heward's Handy Spice Pouch"
-          },
-          {
-            "label": "Horn of Silent Alarm"
-          },
-          {
-            "label": "Instrument of Illusions"
-          },
-          {
-            "label": "Instrument of Scribing"
           },
           {
             "label": "Lock of Trickery"
@@ -66,40 +21,10 @@
             "label": "Mystery Key"
           },
           {
-            "label": "Orb of Direction"
-          },
-          {
-            "label": "Orb of Time"
-          },
-          {
-            "label": "Perfume of Bewitching"
-          },
-          {
-            "label": "Pipe of Smoke Monsters"
-          },
-          {
             "label": "Potion of Climbing"
           },
           {
             "label": "Potion of Comprehension"
-          },
-          {
-            "label": "Pot of Awakening"
-          },
-          {
-            "label": "Prosthetic Limb"
-          },
-          {
-            "label": "Rival Coin"
-          },
-          {
-            "label": "Rope of Mending"
-          },
-          {
-            "label": "Ruby of the War Mage"
-          },
-          {
-            "label": "Spell Scroll (cantrip or level 1 spell)"
           },
           {
             "label": "Staff of Adornment"
@@ -109,151 +34,30 @@
           },
           {
             "label": "Staff of Flowers"
-          },
-          {
-            "label": "Talking Doll"
-          },
-          {
-            "label": "Tankard of Sobriety"
-          },
-          {
-            "label": "Wand of Conducting"
-          },
-          {
-            "label": "Wand of Pyrotechnics"
           }
-
         ],
         "costGP": 0,
         "costText": "0",
-                "notes": null
+        "notes": null
       },
       {
         "id": "craft_uncommon",
         "label": "Craft Uncommon",
         "options": [
           {
-            "label": "Amulet of Proof against Detection and Location"
-          },
-          {
-            "label": "Baba Yaga's Dancing Broom"
-          },
-          {
             "label": "Bag of Holding"
-          },
-          {
-            "label": "Bag of Tricks"
-          },
-          {
-            "label": "Brooch of Shielding"
-          },
-          {
-            "label": "Broom of Flying"
           },
           {
             "label": "Cap of Water Breathing"
           },
           {
-            "label": "Circlet of Blasting"
-          },
-          {
             "label": "Cloak of Protection"
-          },
-          {
-            "label": "Cloak of the Manta Ray"
-          },
-          {
-            "label": "Decanter of Endless Water"
-          },
-          {
-            "label": "Deck of Illusions"
-          },
-          {
-            "label": "Driftglobe"
-          },
-          {
-            "label": "Dust of Disappearance"
-          },
-          {
-            "label": "Dust of Dryness"
-          },
-          {
-            "label": "Dust of Sneezing and Choking"
-          },
-          {
-            "label": "Elemental Gem"
-          },
-          {
-            "label": "Enspelled Staff (cantrip or level 1 spell)"
-          },
-          {
-            "label": "Eversmoking Bottle"
-          },
-          {
-            "label": "Eyes of Charming"
-          },
-          {
-            "label": "Eyes of Minute Seeing"
-          },
-          {
-            "label": "Figurine of Wondrous Power (silver raven)"
           },
           {
             "label": "Gem of Brightness"
           },
           {
-            "label": "Hag Eye"
-          },
-          {
             "label": "Hat of Disguise"
-          },
-          {
-            "label": "Headband of Intellect"
-          },
-          {
-            "label": "Helm of Comprehending Languages"
-          },
-          {
-            "label": "Helm of Telepathy"
-          },
-          {
-            "label": "Immovable Rod"
-          },
-          {
-            "label": "Lantern of Revealing"
-          },
-          {
-            "label": "Medallion of Thoughts"
-          },
-          {
-            "label": "Mithral Armor"
-          },
-          {
-            "label": "Necklace of Adaptation"
-          },
-          {
-            "label": "Oil of Slipperiness"
-          },
-          {
-            "label": "Pearl of Power"
-          },
-          {
-            "label": "Periapt of Health"
-          },
-          {
-            "label": "Philter of Love"
-          },
-          {
-            "label": "Potion of Animal Friendship"
-          },
-          {
-            "label": "Potion of Fire Breath"
-          },
-          {
-            "label": "Potion of Giant Strength (hill)"
-          },
-          {
-            "label": "Potion of Growth"
           },
           {
             "label": "Potion of Poison"
@@ -265,58 +69,10 @@
             "label": "Potion of Water Breathing"
           },
           {
-            "label": "Quaal's Feather Token (anchor, fan, or tree)"
-          },
-          {
-            "label": "Ring of Mind Shielding"
-          },
-          {
-            "label": "Robe of Useful Items"
-          },
-          {
-            "label": "Rod of the Pact Keeper"
-          },
-          {
-            "label": "Rope of Climbing"
-          },
-          {
             "label": "Saddle of the Cavalier"
           },
           {
             "label": "Sending Stones"
-          },
-          {
-            "label": "Slippers of Spider Climbing"
-          },
-          {
-            "label": "Spell Scroll (level 2 or level 3 spell)"
-          },
-          {
-            "label": "Staff of the Adder"
-          },
-          {
-            "label": "Staff of the Python"
-          },
-          {
-            "label": "Wand of Magic Detection"
-          },
-          {
-            "label": "Wand of Magic Missiles"
-          },
-          {
-            "label": "Wand of Secrets"
-          },
-          {
-            "label": "Wand of the War Mage, +1"
-          },
-          {
-            "label": "Wand of Web"
-          },
-          {
-            "label": "Wind Fan"
-          },
-          {
-            "label": "Winged Boots"
           }
         ],
         "costGP": 0,
@@ -336,7 +92,7 @@
         "options": [],
         "costGP": 0,
         "costText": "0",
-        "notes": "Outputs/dropdowns for the Craft function will be populated based on the selected toolsets added to the workshop facility (see TOOLS_TABLES sheet):\nSmith\u2019s Tools        \nTinker\u2019s Tools        \nAlchemist\u2019s Supplies        \nWeaver\u2019s Tools        \nJeweler\u2019s Tools        \nLeatherworker\u2019s Tools        \nCarpenter\u2019s Tools        \nMason\u2019s Tools        \nGlassblower\u2019s Tools        \nCobbler\u2019s Tools        \nPotter\u2019s Tools        \nWoodcarver\u2019s Tools        \nPainter\u2019s Supplies        \nCalligrapher\u2019s Supplies"
+        "notes": "Outputs/dropdowns for the Craft function will be populated based on the selected toolsets added to the workshop facility (see TOOLS_TABLES sheet):\nSmith’s Tools\nTinker’s Tools\nAlchemist’s Supplies\nWeaver’s Tools\nLeatherworker’s Tools\nCarpenter’s Tools\nMason’s Tools\nGlassblower’s Tools\nCobbler’s Tools\nThieves’ Tools\nBrewer’s Supplies\nCalligrapher’s Supplies"
       },
       {
         "id": "craft_magic_item",
@@ -352,160 +108,16 @@
             "label": "Boots of False Tracks"
           },
           {
-            "label": "Candle of the Deep"
-          },
-          {
             "label": "Charlatan's Die"
           },
           {
-            "label": "Cloak of Many Fashions"
-          },
-          {
-            "label": "Clockwork Amulet"
-          },
-          {
-            "label": "Ear Horn of Hearing"
-          },
-          {
-            "label": "Ersatz Eye"
-          },
-          {
-            "label": "Heward's Handy Spice Pouch"
-          },
-          {
-            "label": "Horn of Silent Alarm"
-          },
-          {
-            "label": "Instrument of Illusions"
-          },
-          {
-            "label": "Instrument of Scribing"
-          },
-          {
-            "label": "Lock of Trickery"
-          },
-          {
-            "label": "Moon-Touched Sword"
-          },
-          {
-            "label": "Mystery Key"
-          },
-          {
-            "label": "Orb of Direction"
-          },
-          {
-            "label": "Orb of Time"
-          },
-          {
-            "label": "Perfume of Bewitching"
-          },
-          {
-            "label": "Pipe of Smoke Monsters"
-          },
-          {
-            "label": "Pole of Angling"
-          },
-          {
-            "label": "Pole of Collapsing"
-          },
-          {
-            "label": "Potion of Climbing"
-          },
-          {
-            "label": "Potion of Comprehension"
-          },
-          {
-            "label": "Potion of Healing"
-          },
-          {
-            "label": "Prosthetic Limb"
-          },
-          {
-            "label": "Rope of Mending"
-          },
-          {
-            "label": "Staff of Birdcalls"
-          },
-          {
-            "label": "Sylvan Talon"
-          },
-          {
-            "label": "Talking Doll"
-          },
-          {
-            "label": "Tankard of Sobriety"
-          },
-          {
-            "label": "Veteran's Cane"
-          },
-          {
-            "label": "Walloping Ammunition"
-          },
-          {
-            "label": "Wand of Conducting"
-          },
-          {
-            "label": "Wand of Enemy Detection"
-          },
-          {
-            "label": "Wand of Pyrotechnics"
-          },
-          {
-            "label": "Alchemy Jug"
-          },
-          {
-            "label": "Ammunition, +1"
-          },
-          {
             "label": "Bag of Holding"
-          },
-          {
-            "label": "Boots of Elvenkind"
           },
           {
             "label": "Boots of Striding and Springing"
           },
           {
             "label": "Boots of the Winterlands"
-          },
-          {
-            "label": "Broom of Flying"
-          },
-          {
-            "label": "Cap of Water Breathing"
-          },
-          {
-            "label": "Cloak of Elvenkind"
-          },
-          {
-            "label": "Cloak of Protection"
-          },
-          {
-            "label": "Cloak of the Manta Ray"
-          },
-          {
-            "label": "Decanter of Endless Water"
-          },
-          {
-            "label": "Driftglobe"
-          },
-          {
-            "label": "Dust of Disappearance"
-          },
-          {
-            "label": "Dust of Dryness"
-          },
-          {
-            "label": "Dust of Sneezing and Choking"
-          },
-          {
-            "label": "Enspelled Weapon (cantrip or level 1 spell)"
-          },
-          {
-            "label": "Eyes of Minute Seeing"
-          },
-          {
-            "label": "Eyes of the Eagle"
           },
           {
             "label": "Gloves of Missile Snaring"
@@ -517,46 +129,10 @@
             "label": "Gloves of Thievery"
           },
           {
-            "label": "Goggles of Night"
-          },
-          {
-            "label": "Hag Eye"
-          },
-          {
-            "label": "Helm of Comprehending Languages"
-          },
-          {
-            "label": "Immovable Rod"
-          },
-          {
-            "label": "Instrument of the Bards"
-          },
-          {
-            "label": "Lantern of Revealing"
-          },
-          {
-            "label": "Nature's Mantle"
-          },
-          {
-            "label": "Oil of Slipperiness"
-          },
-          {
-            "label": "Pipes of Haunting"
-          },
-          {
-            "label": "Pipes of the Sewers"
-          },
-          {
-            "label": "Potion of Growth"
-          },
-          {
             "label": "Potion of Healing (greater)"
           },
           {
             "label": "Potion of Water Breathing"
-          },
-          {
-            "label": "Quaal's Feather Token (anchor, fan, or tree)"
           },
           {
             "label": "Ring of Jumping"
@@ -568,16 +144,34 @@
             "label": "Ring of Warmth"
           },
           {
-            "label": "Robe of Useful Items"
+            "label": "Moon-Touched Sword"
           },
           {
-            "label": "Rope of Climbing"
+            "label": "Shield of Expression"
           },
           {
-            "label": "Stone of Good Luck"
+            "label": "Smoldering Armor"
           },
           {
-            "label": "Wand of Secrets"
+            "label": "Walloping Ammunition"
+          },
+          {
+            "label": "Saddle of the Cavalier"
+          },
+          {
+            "label": "Sentinel Shield"
+          },
+          {
+            "label": "Shield, +1"
+          },
+          {
+            "label": "Sword of Vengeance"
+          },
+          {
+            "label": "Trident of Fish Command"
+          },
+          {
+            "label": "Wraps of Unarmed Power, +1"
           }
         ],
         "costGP": 0,
@@ -688,28 +282,6 @@
     ]
   },
   {
-    "name": "Sanctuary",
-    "id": "sanctuary",
-    "requiredLevel": 9,
-    "functions": [
-      {
-        "id": "craft",
-        "label": "Craft",
-        "options": [
-          {
-            "label": "Druidic Focus"
-          },
-          {
-            "label": "Holy Symbol"
-          }
-        ],
-        "costGP": 0,
-        "costText": "0",
-        "notes": null
-      }
-    ]
-  },
-  {
     "name": "Garden",
     "id": "garden",
     "requiredLevel": 5,
@@ -751,44 +323,7 @@
         "options": [],
         "costGP": 0,
         "costText": "0",
-        "notes": "AUTO ROLL - 1d100 and based on the roll, add the corresponding GP to the treasury (using AUTO ROLL functions again):\n01-50\n1d6 \u00d7 10 GP\n51-85\n2d6 \u00d7 10 GP\n86-95\n4d6 \u00d7 10 GP\n96-00\n10d6 \u00d7 10 GP"
-      }
-    ]
-  },
-  {
-    "name": "Storehouse",
-    "id": "storehouse",
-    "requiredLevel": 5,
-    "functions": [
-      {
-        "id": "trade",
-        "label": "Trade",
-        "options": [
-          {
-            "label": "Clan Blackstone"
-          },
-          {
-            "label": "Clan Karr"
-          },
-          {
-            "label": "Clan Rowthorn"
-          },
-          {
-            "label": "Clan Bacca"
-          },
-          {
-            "label": "Clan Molten"
-          },
-          {
-            "label": "Clan Farmer"
-          },
-          {
-            "label": "Clan Slade"
-          }
-        ],
-        "costGP": 0,
-        "costText": "0",
-        "notes": null
+        "notes": "AUTO ROLL - 1d100 and based on the roll, add the corresponding GP to the treasury (using AUTO ROLL functions again):\n01-50\n1d6 × 10 GP\n51-85\n2d6 × 10 GP\n86-95\n4d6 × 10 GP\n96-00\n10d6 × 10 GP"
       }
     ]
   },
@@ -838,9 +373,6 @@
             "label": "Spear"
           },
           {
-            "label": "Javelin"
-          },
-          {
             "label": "Trident"
           },
           {
@@ -865,15 +397,6 @@
             "label": "Lance"
           },
           {
-            "label": "Arrowheads"
-          },
-          {
-            "label": "Bolt heads"
-          },
-          {
-            "label": "Ammunition heads"
-          },
-          {
             "label": "Chain shirt"
           },
           {
@@ -881,9 +404,6 @@
           },
           {
             "label": "Chain mail"
-          },
-          {
-            "label": "Splint armor"
           },
           {
             "label": "Plate armor"
@@ -895,76 +415,13 @@
             "label": "Half plate"
           },
           {
-            "label": "Shield (metal)"
-          },
-          {
             "label": "Manacles"
           },
           {
             "label": "Caltrops"
           },
           {
-            "label": "Ball bearings"
-          },
-          {
-            "label": "Crowbar"
-          },
-          {
-            "label": "Pitons"
-          },
-          {
             "label": "Grappling hook"
-          },
-          {
-            "label": "Hunting trap"
-          },
-          {
-            "label": "Iron spikes"
-          },
-          {
-            "label": "Metal hinges"
-          },
-          {
-            "label": "Metal locks (body and components)"
-          },
-          {
-            "label": "Metal door fittings"
-          },
-          {
-            "label": "Metal bars"
-          },
-          {
-            "label": "Horseshoes"
-          },
-          {
-            "label": "Bits"
-          },
-          {
-            "label": "Nails"
-          },
-          {
-            "label": "Chains"
-          },
-          {
-            "label": "Metal brackets"
-          },
-          {
-            "label": "+1 metal weapon (base item)"
-          },
-          {
-            "label": "+2 metal weapon (base item)"
-          },
-          {
-            "label": "+3 metal weapon (base item)"
-          },
-          {
-            "label": "+1 metal armor (base item)"
-          },
-          {
-            "label": "+2 metal armor (base item)"
-          },
-          {
-            "label": "+3 metal armor (base item)"
           }
         ],
         "costGP": null,
@@ -983,19 +440,16 @@
         "label": "Research",
         "options": [
           {
-            "label": "Geographical"
+            "label": "Geographical Scriptures"
           },
           {
-            "label": "Lore"
+            "label": "Religious Scriptures"
           },
           {
-            "label": "History"
+            "label": "Political Scriptures"
           },
           {
-            "label": "Politics"
-          },
-          {
-            "label": "War"
+            "label": "Combat Scriptures"
           }
         ],
         "costGP": 0,
@@ -1026,94 +480,22 @@
             "label": "Acid vial"
           },
           {
-            "label": "Alchemist\u2019s fire"
+            "label": "Alchemist’s fire"
           },
           {
             "label": "Basic poison"
           },
           {
-            "label": "Contact poison (simple)"
-          },
-          {
-            "label": "Ingested poison (simple)"
-          },
-          {
             "label": "Antitoxin"
           },
           {
-            "label": "Smelling salts"
-          },
-          {
-            "label": "Simple antidote"
-          },
-          {
-            "label": "Smokestick"
-          },
-          {
-            "label": "Flash powder"
-          },
-          {
-            "label": "Strong glue"
-          },
-          {
-            "label": "Solvent"
-          },
-          {
-            "label": "Oil (standard)"
-          },
-          {
-            "label": "Oil (special mixture)"
-          },
-          {
-            "label": "Firebomb (reskinned alchemist\u2019s fire)"
+            "label": "Firebomb (reskinned alchemist’s fire)"
           },
           {
             "label": "Frost vial (cold variant)"
           },
           {
             "label": "Sticky bomb (glue grenade)"
-          },
-          {
-            "label": "Grease flask"
-          },
-          {
-            "label": "Contact irritant (itching powder)"
-          },
-          {
-            "label": "Food preservative"
-          },
-          {
-            "label": "Water purifier solution"
-          },
-          {
-            "label": "Potion of healing (common)"
-          },
-          {
-            "label": "Potion of greater healing (base item)"
-          },
-          {
-            "label": "Potion of superior healing (base item)"
-          },
-          {
-            "label": "Potion of supreme healing (base item)"
-          },
-          {
-            "label": "Potion of climbing (base item)"
-          },
-          {
-            "label": "Potion of water breathing (base item)"
-          },
-          {
-            "label": "Potion of resistance (base item)"
-          },
-          {
-            "label": "Darkvision draught (base item)"
-          },
-          {
-            "label": "Stoneskin varnish (base item)"
-          },
-          {
-            "label": "Vitality tonic (base item)"
           }
         ],
         "costGP": 0,
@@ -1149,37 +531,6 @@
         ],
         "costGP": 0,
         "costText": "0",
-        "notes": null
-      }
-    ]
-  },
-  {
-    "name": "Scriptorium",
-    "id": "scriptorium",
-    "requiredLevel": 9,
-    "functions": [
-      {
-        "id": "craft",
-        "label": "Craft",
-        "options": [
-          {
-            "label": "Book Replica",
-            "costGP": 0,
-            "costText": "0GP"
-          },
-          {
-            "label": "Spell Scroll (<L3)",
-            "costGP": 0,
-            "costText": "0GP"
-          },
-          {
-            "label": "Pamphlets",
-            "costGP": 50,
-            "costText": "50GP"
-          }
-        ],
-        "costGP": null,
-        "costText": "0GP\n0GP\n50GP",
         "notes": null
       }
     ]
@@ -1288,116 +639,173 @@
     ]
   },
   {
-  "name": "Hall of Emissaries",
-  "id": "hall_of_emissaries",
-  "requiredLevel": 5,
-  "threshold": "Political / Trade",
-  "description": "A neutral hall for delegations, contracts, arbitration and inter-clan diplomacy.",
-  "functions": [
-    {
-      "id": "upgrade_hall",
-      "label": "Upgrade Hall (Level Up)",
-      "costGP": 0,
-      "special": {
-        "type": "upgrade_facility",
-        "maxLevel": 3,
-        "costByNextLevel": {
-          "2": 600,
-          "3": 1200
+    "name": "Hall of Emissaries",
+    "id": "hall_of_emissaries",
+    "requiredLevel": 5,
+    "threshold": "Political / Trade",
+    "description": "A neutral hall for delegations, contracts, arbitration and inter-clan diplomacy.",
+    "functions": [
+      {
+        "id": "upgrade_hall",
+        "label": "Upgrade Hall (Level Up)",
+        "costGP": 0,
+        "special": {
+          "type": "upgrade_facility",
+          "maxLevel": 3,
+          "costByNextLevel": {
+            "2": 600,
+            "3": 1200
+          }
+        }
+      },
+      {
+        "id": "secure_trade_agreement",
+        "label": "Secure Trade Agreement",
+        "costGP": 250,
+        "requiredFacilityLevel": 1,
+        "options": [
+          {
+            "label": "Clan Blackstone",
+            "value": "Blackstone"
+          },
+          {
+            "label": "Clan Rowthorn",
+            "value": "Rowthorn"
+          },
+          {
+            "label": "Clan Karr",
+            "value": "Karr"
+          },
+          {
+            "label": "Clan Farmer",
+            "value": "Farmer"
+          },
+          {
+            "label": "Clan Slade",
+            "value": "Slade"
+          },
+          {
+            "label": "Clan Bacca",
+            "value": "Bacca"
+          },
+          {
+            "label": "Clan Molten",
+            "value": "Molten"
+          }
+        ],
+        "special": {
+          "type": "emissary_action",
+          "kind": "trade_agreement",
+          "durationTurns": 4,
+          "incomeMin": 60,
+          "incomeMax": 140
+        }
+      },
+      {
+        "id": "host_delegation",
+        "label": "Host Delegation",
+        "costGP": 150,
+        "requiredFacilityLevel": 1,
+        "options": [
+          {
+            "label": "Clan Blackstone",
+            "value": "Blackstone"
+          },
+          {
+            "label": "Clan Rowthorn",
+            "value": "Rowthorn"
+          },
+          {
+            "label": "Clan Karr",
+            "value": "Karr"
+          },
+          {
+            "label": "Clan Farmer",
+            "value": "Farmer"
+          },
+          {
+            "label": "Clan Slade",
+            "value": "Slade"
+          },
+          {
+            "label": "Clan Bacca",
+            "value": "Bacca"
+          },
+          {
+            "label": "Clan Molten",
+            "value": "Molten"
+          }
+        ],
+        "special": {
+          "type": "emissary_action",
+          "kind": "host_delegation",
+          "durationTurns": 2,
+          "oneTimeTreasuryMin": 80,
+          "oneTimeTreasuryMax": 220
+        }
+      },
+      {
+        "id": "inter_clan_summit",
+        "label": "Inter-Clan Summit",
+        "costGP": 450,
+        "requiredFacilityLevel": 2,
+        "options": [
+          {
+            "label": "Blackstone + Rowthorn",
+            "value": "Blackstone/Rowthorn"
+          },
+          {
+            "label": "Blackstone + Karr",
+            "value": "Blackstone/Karr"
+          },
+          {
+            "label": "Rowthorn + Karr",
+            "value": "Rowthorn/Karr"
+          },
+          {
+            "label": "Farmer + Slade",
+            "value": "Farmer/Slade"
+          },
+          {
+            "label": "Bacca + Molten",
+            "value": "Bacca/Molten"
+          }
+        ],
+        "special": {
+          "type": "emissary_action",
+          "kind": "summit",
+          "durationTurns": 3,
+          "costReductionPct": 25
+        }
+      },
+      {
+        "id": "arbitration_authority",
+        "label": "Arbitration Authority",
+        "costGP": 600,
+        "requiredFacilityLevel": 3,
+        "special": {
+          "type": "emissary_action",
+          "kind": "arbitration",
+          "durationTurns": 4,
+          "incomeMin": 90,
+          "incomeMax": 190
+        }
+      },
+      {
+        "id": "trade_consortium",
+        "label": "Trade Consortium",
+        "costGP": 900,
+        "requiredFacilityLevel": 3,
+        "special": {
+          "type": "emissary_action",
+          "kind": "consortium",
+          "durationTurns": 5,
+          "incomeMin": 140,
+          "incomeMax": 260
         }
       }
-    },
-    {
-      "id": "secure_trade_agreement",
-      "label": "Secure Trade Agreement",
-      "costGP": 250,
-      "requiredFacilityLevel": 1,
-      "options": [
-        { "label": "Clan Blackstone", "value": "Blackstone" },
-        { "label": "Clan Rowthorn", "value": "Rowthorn" },
-        { "label": "Clan Karr", "value": "Karr" },
-        { "label": "Clan Farmer", "value": "Farmer" },
-        { "label": "Clan Slade", "value": "Slade" },
-        { "label": "Clan Bacca", "value": "Bacca" },
-        { "label": "Clan Molten", "value": "Molten" }
-      ],
-      "special": {
-        "type": "emissary_action",
-        "kind": "trade_agreement",
-        "durationTurns": 4,
-        "incomeMin": 60,
-        "incomeMax": 140
-      }
-    },
-    {
-      "id": "host_delegation",
-      "label": "Host Delegation",
-      "costGP": 150,
-      "requiredFacilityLevel": 1,
-      "options": [
-        { "label": "Clan Blackstone", "value": "Blackstone" },
-        { "label": "Clan Rowthorn", "value": "Rowthorn" },
-        { "label": "Clan Karr", "value": "Karr" },
-        { "label": "Clan Farmer", "value": "Farmer" },
-        { "label": "Clan Slade", "value": "Slade" },
-        { "label": "Clan Bacca", "value": "Bacca" },
-        { "label": "Clan Molten", "value": "Molten" }
-      ],
-      "special": {
-        "type": "emissary_action",
-        "kind": "host_delegation",
-        "durationTurns": 2,
-        "oneTimeTreasuryMin": 80,
-        "oneTimeTreasuryMax": 220
-      }
-    },
-    {
-      "id": "inter_clan_summit",
-      "label": "Inter-Clan Summit",
-      "costGP": 450,
-      "requiredFacilityLevel": 2,
-      "options": [
-        { "label": "Blackstone + Rowthorn", "value": "Blackstone/Rowthorn" },
-        { "label": "Blackstone + Karr", "value": "Blackstone/Karr" },
-        { "label": "Rowthorn + Karr", "value": "Rowthorn/Karr" },
-        { "label": "Farmer + Slade", "value": "Farmer/Slade" },
-        { "label": "Bacca + Molten", "value": "Bacca/Molten" }
-      ],
-      "special": {
-        "type": "emissary_action",
-        "kind": "summit",
-        "durationTurns": 3,
-        "costReductionPct": 25
-      }
-    },
-    {
-      "id": "arbitration_authority",
-      "label": "Arbitration Authority",
-      "costGP": 600,
-      "requiredFacilityLevel": 3,
-      "special": {
-        "type": "emissary_action",
-        "kind": "arbitration",
-        "durationTurns": 4,
-        "incomeMin": 90,
-        "incomeMax": 190
-      }
-    },
-    {
-      "id": "trade_consortium",
-      "label": "Trade Consortium",
-      "costGP": 900,
-      "requiredFacilityLevel": 3,
-      "special": {
-        "type": "emissary_action",
-        "kind": "consortium",
-        "durationTurns": 5,
-        "incomeMin": 140,
-        "incomeMax": 260
-      }
-    }
-  ]
-},
+    ]
+  },
   {
     "name": "Shrine of Telluria",
     "id": "shrine_telluria",
@@ -1426,15 +834,24 @@
         "options": [
           {
             "label": "Telluria's Guidance",
-            "special": { "type": "oracle_hint", "god": "telluria" }
+            "special": {
+              "type": "oracle_hint",
+              "god": "telluria"
+            }
           },
           {
             "label": "Telluria's Embrace",
-            "special": { "type": "blessing_rest", "god": "telluria" }
+            "special": {
+              "type": "blessing_rest",
+              "god": "telluria"
+            }
           },
           {
             "label": "Telluria's Blessing",
-            "special": { "type": "favour_blessing", "god": "telluria" }
+            "special": {
+              "type": "favour_blessing",
+              "god": "telluria"
+            }
           }
         ],
         "costGP": 0,
@@ -1471,15 +888,24 @@
         "options": [
           {
             "label": "Aurush's Insight",
-            "special": { "type": "oracle_hint", "god": "aurush" }
+            "special": {
+              "type": "oracle_hint",
+              "god": "aurush"
+            }
           },
           {
             "label": "Aurush's Radiance",
-            "special": { "type": "blessing_rest", "god": "aurush" }
+            "special": {
+              "type": "blessing_rest",
+              "god": "aurush"
+            }
           },
           {
             "label": "Aurush's Blessing",
-            "special": { "type": "favour_blessing", "god": "aurush" }
+            "special": {
+              "type": "favour_blessing",
+              "god": "aurush"
+            }
           }
         ],
         "costGP": 0,
@@ -1516,15 +942,24 @@
         "options": [
           {
             "label": "Pelagos's Tidings",
-            "special": { "type": "oracle_hint", "god": "pelagos" }
+            "special": {
+              "type": "oracle_hint",
+              "god": "pelagos"
+            }
           },
           {
             "label": "Pelagos's Deep Rest",
-            "special": { "type": "blessing_rest", "god": "pelagos" }
+            "special": {
+              "type": "blessing_rest",
+              "god": "pelagos"
+            }
           },
           {
             "label": "Pelagos's Blessing",
-            "special": { "type": "favour_blessing", "god": "pelagos" }
+            "special": {
+              "type": "favour_blessing",
+              "god": "pelagos"
+            }
           }
         ],
         "costGP": 0,
