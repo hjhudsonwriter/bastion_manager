@@ -1732,6 +1732,17 @@ select option{
   will-change: opacity, filter;
 }
 
+/* Rowthorn overlay is darker, so screen blend can erase the line. Boost only Rowthorn. */
+.tradeRouteOverlayActive[data-clan="Rowthorn"]{
+  mix-blend-mode: normal !important;
+  filter:
+    brightness(1.35)
+    contrast(1.25)
+    drop-shadow(0 0 10px rgba(255,245,210,0.95))
+    drop-shadow(0 0 26px rgba(214,178,94,0.70))
+    drop-shadow(0 0 60px rgba(214,178,94,0.40)) !important;
+}
+
 @keyframes tradeRoutePulse{
   0%{
     opacity: .78;
