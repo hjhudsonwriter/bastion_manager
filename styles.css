@@ -1480,7 +1480,7 @@ select option{
   width: 100%;
   height: auto;
   display: block;
-  filter: contrast(1.05) saturate(1.05);
+  filter: brightness(.90) contrast(1.06) saturate(1.04);
 }
 
 
@@ -1490,7 +1490,7 @@ select option{
   display: block;
 
   /* Keep it crisp and readable */
-  filter: contrast(1.05) saturate(1.05);
+  filter: brightness(.90) contrast(1.06) saturate(1.04);
 }
 
 .tradeMapSvg{
@@ -1721,17 +1721,40 @@ select option{
   opacity: 1 !important;
   mix-blend-mode: screen;
 
-  /* strong gold glow */
+  /* Brighter, hotter gold core + wider halo */
   filter:
-    drop-shadow(0 0 10px rgba(255,220,150,.95))
-    drop-shadow(0 0 26px rgba(214,178,94,.75))
-    drop-shadow(0 0 60px rgba(214,178,94,.40)) !important;
+    drop-shadow(0 0 8px rgba(255,245,210,1))
+    drop-shadow(0 0 18px rgba(255,220,150,.95))
+    drop-shadow(0 0 36px rgba(214,178,94,.85))
+    drop-shadow(0 0 78px rgba(214,178,94,.55)) !important;
 
-  animation: tradeRoutePulse 2.2s ease-in-out infinite;
+  animation: tradeRoutePulse 1.9s ease-in-out infinite;
+  will-change: opacity, filter;
 }
 
 @keyframes tradeRoutePulse{
-  0%   { opacity: .80; }
-  50%  { opacity: 1.00; }
-  100% { opacity: .80; }
+  0%{
+    opacity: .78;
+    filter:
+      drop-shadow(0 0 6px rgba(255,245,210,.95))
+      drop-shadow(0 0 14px rgba(255,220,150,.85))
+      drop-shadow(0 0 28px rgba(214,178,94,.70))
+      drop-shadow(0 0 60px rgba(214,178,94,.42));
+  }
+  50%{
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 10px rgba(255,245,210,1))
+      drop-shadow(0 0 22px rgba(255,220,150,1))
+      drop-shadow(0 0 44px rgba(214,178,94,.95))
+      drop-shadow(0 0 96px rgba(214,178,94,.65));
+  }
+  100%{
+    opacity: .78;
+    filter:
+      drop-shadow(0 0 6px rgba(255,245,210,.95))
+      drop-shadow(0 0 14px rgba(255,220,150,.85))
+      drop-shadow(0 0 28px rgba(214,178,94,.70))
+      drop-shadow(0 0 60px rgba(214,178,94,.42));
+  }
 }
