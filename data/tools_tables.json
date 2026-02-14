@@ -5,30 +5,18 @@
     "Lock of Trickery",
     "Mystery Key",
     "Potion of Climbing",
-    "Potion of Comprehension",
-    "Staff of Adornment",
-    "Staff of Birdcalls",
-    "Staff of Flowers",
     "Bag of Holding",
     "Cap of Water Breathing",
     "Circlet of Blasting",
     "Cloak of Protection",
-    "Decanter of Endless Water",
     "Gem of Brightness",
     "Hat of Disguise",
-    "Potion of Animal Friendship",
-    "Potion of Fire Breath",
-    "Potion of Giant Strength (hill)",
-    "Potion of Growth",
-    "Potion of Poison",
     "Potion of Resistance",
     "Potion of Water Breathing",
     "Saddle of the Cavalier",
     "Sending Stones"
   ],
   "Armaments Table": [
-    "Armor of Gleaming",
-    "Cast-Off Armor",
     "Dread Helm",
     "Moon-Touched Sword",
     "Shield of Expression",
@@ -38,30 +26,22 @@
     "Sentinel Shield",
     "Shield, +1",
     "Sword of Vengeance",
-    "Trident of Fish Command",
     "Wraps of Unarmed Power, +1"
   ],
   "Magic Items (Implements) Table": [
     "Bead of Nourishment",
     "Bead of Refreshment",
-    "Boots of False Tracks",
     "Charlatan's Die",
-    "Staff of Birdcalls",
     "Bag of Holding",
     "Boots of Striding and Springing",
     "Boots of the Winterlands",
-    "Gloves of Missile Snaring",
     "Gloves of Swimming and Climbing",
     "Gloves of Thievery",
-    "Goggles of Night",
-    "Potion of Growth",
     "Potion of Healing (greater)",
     "Potion of Water Breathing",
     "Ring of Jumping",
     "Ring of Swimming",
     "Ring of Warmth",
-    "Robe of Useful Items",
-    "Rope of Climbing",
     "Stone of Good Luck"
   ],
   "Smith’s Tools": [
@@ -96,23 +76,10 @@
     "Caltrops",
     "Grappling hook"
   ],
-  "Tinker’s Tools": [
-    "Clock",
-    "Timer",
-    "Mechanical lock",
-    "Mechanical trap (needle)",
-    "Mechanical trap (dart)",
-    "Mechanical trap (snare)",
-    "Automatic grappling hook winch",
-    "Pulley device",
-    "Folding ladder"
-  ],
   "Alchemist’s Supplies": [
     "Acid vial",
     "Alchemist’s fire",
     "Basic poison",
-    "Contact poison (simple)",
-    "Ingested poison (simple)",
     "Antitoxin",
     "Firebomb (reskinned alchemist’s fire)",
     "Frost vial (cold variant)",
@@ -147,17 +114,8 @@
     "Tellurian Priest Disguise",
     "Blanket",
     "Bedroll",
-    "Backpack",
-    "Net",
-    "Sling (cloth/cord)",
-    "Rope (hempen)",
-    "Rope (silk)",
-    "Tent",
-    "Padded armor",
-    "Gambeson",
-    "Heraldic surcoat"
+    "Backpack"
   ],
-  "Jeweler’s Tools": [],
   "Leatherworker’s Tools": [
     "Leather armor",
     "Studded leather armor",
@@ -208,10 +166,7 @@
     "Cabin (wooden structure)",
     "Interior wall (wood)",
     "Wooden floor section",
-    "Bridge (wood)",
-    "Stockade",
-    "Magical door housing (wood)",
-    "Magical chest housing (wood)"
+    "Bridge (wood)"
   ],
   "Mason’s Tools": [
     "Stone wall section",
@@ -241,25 +196,6 @@
     "Window pane",
     "Stained glass window"
   ],
-  "Cobbler’s Tools": [
-    "Common shoes",
-    "Fine shoes",
-    "Repair kit for footwear",
-    "Snowshoes",
-    "Climbing shoes",
-    "Saddle bags strap repair",
-    "Harness strap repair"
-  ],
-  "Thieves’ Tools": [
-    "Lockpick",
-    "Window latch tools",
-    "Trap disarming tools",
-    "Tripwire hooks",
-    "Fishhook and line"
-  ],
-  "Navigator’s Tools": [],
-  "Potter’s Tools": [],
-  "Woodcarver’s Tools": [],
   "Brewer’s Supplies": [
     "Fermented ale",
     "Fermented beer",
@@ -275,7 +211,6 @@
     "Bottle of spirits",
     "Brewing yeast culture"
   ],
-  "Painter’s Supplies": [],
   "Calligrapher’s Supplies": [
     "Spell scroll (mundane script)",
     "Certificate or deed",
