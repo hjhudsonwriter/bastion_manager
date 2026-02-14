@@ -22,18 +22,6 @@
           },
           {
             "label": "Potion of Climbing"
-          },
-          {
-            "label": "Potion of Comprehension"
-          },
-          {
-            "label": "Staff of Adornment"
-          },
-          {
-            "label": "Staff of Birdcalls"
-          },
-          {
-            "label": "Staff of Flowers"
           }
         ],
         "costGP": 0,
@@ -111,9 +99,6 @@
             "label": "Charlatan's Die"
           },
           {
-            "label": "Staff of Birdcalls"
-          },
-          {
             "label": "Bag of Holding"
           },
           {
@@ -153,9 +138,6 @@
             "label": "Shield of Expression"
           },
           {
-            "label": "Smoldering Armor"
-          },
-          {
             "label": "Walloping Ammunition"
           },
           {
@@ -169,9 +151,6 @@
           },
           {
             "label": "Sword of Vengeance"
-          },
-          {
-            "label": "Trident of Fish Command"
           },
           {
             "label": "Wraps of Unarmed Power, +1"
@@ -443,19 +422,16 @@
         "label": "Research",
         "options": [
           {
-            "label": "Geographical"
+            "label": "Geographical Scriptures"
           },
           {
-            "label": "Lore"
+            "label": "Religious Scriptures"
           },
           {
-            "label": "History"
+            "label": "Combat Scriptures"
           },
           {
-            "label": "Politics"
-          },
-          {
-            "label": "War"
+            "label": "Political scriptures"
           }
         ],
         "costGP": 0,
