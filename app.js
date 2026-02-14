@@ -2366,160 +2366,129 @@ async function openArbitrationAuthorityModal(){
   const dc = 14;
   const mod = diplomacyModForHall();
 
-  // Option payloads
   const options = [
-    {
-      id: "rule_a",
-      title: `Rule for ${a}`,
-      preview: `Political Capital: ${a} +8, ${b} -6. May restore ${a}'s disrupted route.`,
-      effects: { a:+8, b:-6, restoreClan:a, stability:+1 }
-    },
-    {
-      id: "rule_b",
-      title: `Rule for ${b}`,
-      preview: `Political Capital: ${b} +8, ${a} -6. May restore ${a}'s disrupted route under new tariffs.`,
-      effects: { a:-6, b:+8, restoreClan:a, stability:0 }
-    },
-    {
-      id: "split",
-      title: `Split the Claims`,
-      preview: `Political Capital: ${a} +2, ${b} +2. Market Stability +3. Partial restoration likely.`,
-      effects: { a:+2, b:+2, restoreClan:a, stability:+3 }
-    }
+    { id:"rule_a", label:`Rule for ${a}`, preview:`${a} +8, ${b} -6 • May restore ${a} route • Stability +1`, effects:{ a:+8, b:-6, restoreClan:a, stability:+1 } },
+    { id:"rule_b", label:`Rule for ${b}`, preview:`${b} +8, ${a} -6 • May restore ${a} route • Stability +0`, effects:{ a:-6, b:+8, restoreClan:a, stability:0 } },
+    { id:"split",  label:`Split the Claims`, preview:`${a} +2, ${b} +2 • Stability +3 • Partial restoration likely`, effects:{ a:+2, b:+2, restoreClan:a, stability:+3 } }
   ];
 
-  // Step 1: Choose ruling
-  const choiceHtml = `
+  const bodyHtml = `
     <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
       <img src="assets/ui/wax_stamp.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
       <div>
         <div class="siResSummary"><b>Dispute:</b> ${escapeHtml(a)} vs ${escapeHtml(b)}</div>
         <div class="small muted" style="margin-top:6px">${escapeHtml(reason)}</div>
-        <div class="small muted" style="margin-top:6px">The Council waits. Ink is poured. Seals are warmed.</div>
+        <div class="small muted" style="margin-top:6px">Choose a ruling. The Council will not speak twice.</div>
       </div>
     </div>
 
-    <div class="tnRoutes">
-      ${options.map(o => `
-        <div class="tnRoute">
-          <div class="tnRouteTop">
-            <div>
-              <div class="tnRouteName">${escapeHtml(o.title)}</div>
-              <div class="tnRouteMeta">${escapeHtml(o.preview)}</div>
-            </div>
-            <button class="pill" data-arb="${escapeHtml(o.id)}">Choose</button>
-          </div>
-        </div>
-      `).join("")}
+    <div class="field">
+      <div>Ruling</div>
+      <select id="arbRulingSel">
+        ${options.map(o=>`<option value="${escapeHtml(o.id)}">${escapeHtml(o.label)}</option>`).join("")}
+      </select>
+      <div class="small muted" style="margin-top:8px" id="arbPreview">${escapeHtml(options[0].preview)}</div>
     </div>
   `;
 
-  await openSIModal({
+  // Open choice modal (interactive)
+  const res = await openSIModalChoice({
     title: "Arbitration Authority",
-    bodyHtml: choiceHtml,
-    primaryText: "Close",
+    bodyHtml,
+    primaryText: "Proceed to Authority Roll",
+    secondaryText: "Close",
+    modalClass: "siModal--hall",
+    collectIds: ["arbRulingSel"]
+  });
+
+  if(res.action !== "ok") return;
+
+  const chosenId = String(res.values.arbRulingSel || options[0].id);
+  const chosen = options.find(o => o.id === chosenId) || options[0];
+
+  // Authority roll (manual)
+  const roll = await rollD20Manual({
+    title: `Council Verdict: ${chosen.label}`,
+    mod,
+    dc,
+    modalClass: "siModal--hall"
+  });
+  if(!roll) return;
+
+  const tier = tierFromRoll(roll.d20, roll.total, dc);
+  const strong = (tier === "critical_success" || tier === "great_success");
+  const success = (tier === "success" || strong);
+  const fail = (tier === "failure");
+  const critFail = (!success && !fail);
+
+  let verdictText = "";
+  let extra = "";
+
+  // Apply outcome
+  if(success){
+    addPoliticalCapital(a, chosen.effects.a);
+    addPoliticalCapital(b, chosen.effects.b);
+
+    if(typeof chosen.effects.stability === "number"){
+      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + chosen.effects.stability, 0, 100);
+    }
+
+    // Restore the disrupted route for restoreClan (if any)
+    const routes = state.tradeNetwork?.routes || [];
+    const rr = routes.find(r => String(r.clan).toLowerCase() === String(chosen.effects.restoreClan).toLowerCase()) || null;
+    if(rr && rr.status === "disrupted"){
+      rr.status = "active";
+      extra = `A sealed writ orders the harbormasters to reopen ${chosen.effects.restoreClan}'s lanes under the Council’s terms.`;
+    }
+
+    if(strong){
+      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + 2, 0, 100);
+      verdictText = `The Council speaks with unshakable clarity. The wax cools, and so do tempers.`;
+    }else{
+      verdictText = `A measured ruling, delivered with clipped ceremony and iron politeness.`;
+    }
+
+    tryPlaySealSound();
+  }
+  else if(fail){
+    addPoliticalCapital(a, -2);
+    addPoliticalCapital(b, -2);
+    state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 2, 0, 100);
+    verdictText = `The verdict lands poorly. Envoys depart with thin smiles and thicker grudges.`;
+  }
+  else if(critFail){
+    addPoliticalCapital(a, -6);
+    addPoliticalCapital(b, -6);
+    state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 6, 0, 100);
+    verdictText = `The ruling fractures the chamber. Scribes blot ink in panic. Accusations echo down marble halls.`;
+  }
+
+  // Remove dispute from queue
+  state.arbitration.queue.shift();
+
+  saveState();
+  render();
+
+  await openSIModal({
+    title: "Council Verdict",
+    bodyHtml: `
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
+        <img src="assets/ui/wax_stamp.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
+        <div>
+          <div class="siResSummary"><b>Verdict:</b> ${escapeHtml(chosen.label)}</div>
+          <div class="small muted" style="margin-top:6px">${escapeHtml(verdictText)}</div>
+        </div>
+      </div>
+      ${extra ? `<div class="tnStat" style="margin-top:10px">${escapeHtml(extra)}</div>` : ``}
+      <div class="small muted" style="margin-top:12px">
+        Market Stability now: <b>${escapeHtml(String(state.tradeNetwork.stability ?? 75))}%</b>
+      </div>
+    `,
+    primaryText: "Continue",
     modalClass: "siModal--hall"
   });
 
-  // Hook choice buttons inside the open modal
-  const root = document.querySelector(".siModal");
-  if(!root) return;
-
-  const btns = root.querySelectorAll("[data-arb]");
-  if(!btns.length) return;
-
-  let chosen = null;
-  btns.forEach(bn => {
-    bn.addEventListener("click", async () => {
-      const id = bn.getAttribute("data-arb");
-      chosen = options.find(x => x.id === id) || null;
-      if(!chosen) return;
-
-      // Step 2: Authority roll
-      const roll = await rollD20Manual({
-        title: `Council Verdict: ${chosen.title}`,
-        mod,
-        dc,
-        modalClass: "siModal--hall"
-      });
-      if(!roll) return;
-
-      // Determine outcome tier
-      const tier = tierFromRoll(roll.d20, roll.total, dc);
-      const strong = (tier === "critical_success" || tier === "great_success");
-      const success = (tier === "success" || strong);
-      const fail = (tier === "failure");
-      const critFail = (!success && !fail);
-
-      // Apply results
-      let verdictText = "";
-      let extra = "";
-
-      if(success){
-        addPoliticalCapital(a, chosen.effects.a);
-        addPoliticalCapital(b, chosen.effects.b);
-
-        if(typeof chosen.effects.stability === "number"){
-          state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + chosen.effects.stability, 0, 100);
-        }
-
-        // Restore route if disrupted
-        const rr = routeByClan(chosen.effects.restoreClan);
-        if(rr && rr.status === "disrupted"){
-          rr.status = "active";
-          extra = `A sealed writ orders the harbormasters to reopen ${chosen.effects.restoreClan}'s lanes under the Council’s terms.`;
-        }
-
-        if(strong){
-          state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + 2, 0, 100);
-          verdictText = `The Council speaks with unshakable clarity. The chamber falls silent as the wax cools.`;
-        }else{
-          verdictText = `A measured ruling, delivered with clipped ceremony and iron politeness.`;
-        }
-
-        tryPlaySealSound();
-      } else if(fail){
-        // Soft failure: backlash
-        addPoliticalCapital(a, -2);
-        addPoliticalCapital(b, -2);
-        state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 2, 0, 100);
-        verdictText = `The verdict lands poorly. Envoys depart with thin smiles and thicker grudges.`;
-      } else if(critFail){
-        // Critical failure: scandal
-        addPoliticalCapital(a, -6);
-        addPoliticalCapital(b, -6);
-        state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 6, 0, 100);
-        verdictText = `The Council’s ruling fractures the room. Scribes blot ink in panic. Accusations echo down marble halls.`;
-      }
-
-      // Remove dispute from queue
-      state.arbitration.queue.shift();
-
-      saveState();
-      render();
-
-      await openSIModal({
-        title: "Council Verdict",
-        bodyHtml: `
-          <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
-            <img src="assets/ui/wax_stamp.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
-            <div>
-              <div class="siResSummary"><b>Verdict:</b> ${escapeHtml(chosen.title)}</div>
-              <div class="small muted" style="margin-top:6px">${escapeHtml(verdictText)}</div>
-            </div>
-          </div>
-          ${extra ? `<div class="tnStat" style="margin-top:10px">${escapeHtml(extra)}</div>` : ``}
-          <div class="small muted" style="margin-top:12px">
-            Market Stability now: <b>${escapeHtml(String(state.tradeNetwork.stability ?? 75))}%</b>
-          </div>
-        `,
-        primaryText: "Continue",
-        modalClass: "siModal--hall"
-      });
-
-      log("Arbitration", `Council verdict issued: ${chosen.title}.`);
-    });
-  });
+  log("Arbitration", `Council verdict issued: ${chosen.label}.`);
 }
 
    function allBuiltFacilityIds(){
