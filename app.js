@@ -272,6 +272,10 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
   state.turn += 1;
        
          tickDiplomacyOnAdvanceTurn(); // ✅ add this line
+       // Auto-resolve Ironbow Trade Network routes once per Bastion Turn
+if(state.tradeNetwork?.active && state.tradeNetwork.lastResolvedTurn !== state.turn){
+  await resolveTradeRoutesModal();
+}
        ui.treasuryInput.value = String(state.treasuryGP);
 
        tickConstruction();
@@ -372,6 +376,12 @@ ui.importFileInput?.addEventListener("change", async () => {
   }
 
    async function completeOrderAsync(o){
+  // Custom completion branch: Ironbow Trade Network upgrades
+  if(o && o.facId === "trade_network"){
+    await completeTradeNetworkOrder(o);
+    return;
+  }
+
   const fac = DATA.facilities.find(f => f.id === o.facId);
   if(!fac){
     completeOrder(o);
@@ -392,6 +402,115 @@ ui.importFileInput?.addEventListener("change", async () => {
 
   // Everything else stays synchronous and untouched
   completeOrder(o);
+}
+
+   function issueTradeNetworkUpgrade(kind){
+  if(!state.tradeNetwork?.active){
+    alert("No active Trade Consortium. Establish the Trade Network first.");
+    return;
+  }
+
+  // One TN upgrade at a time
+  if(state.pendingOrders.some(o => o.facId === "trade_network")){
+    alert("A Trade Network upgrade is already pending.");
+    return;
+  }
+
+  let costGP = 0;
+  let label = "";
+  let meta = { kind };
+
+  if(kind === "stability"){
+    costGP = 75;
+    label = "Ironbow Trade Network: Stability Investment";
+  } else if(kind === "yield"){
+    costGP = 90;
+    label = "Ironbow Trade Network: Yield Investment";
+  } else if(kind === "toggle_high_risk"){
+    costGP = 0;
+    label = "Ironbow Trade Network: Routing Doctrine Change";
+  } else {
+    alert("Unknown upgrade type.");
+    return;
+  }
+
+  if(costGP > state.treasuryGP){
+    alert(`Not enough gp. Need ${costGP}gp, you have ${state.treasuryGP}gp.`);
+    return;
+  }
+
+  state.treasuryGP -= costGP;
+
+  state.pendingOrders.push({
+    id: uid(),
+    facId: "trade_network",
+    fnId: "upgrade",
+    chosen: null,
+    optionLabel: null,
+    label,
+    costGP,
+    issuedTurn: state.turn,
+    completeTurn: state.turn + 1,
+    meta
+  });
+
+  saveState();
+  log("Order Issued", label);
+  render();
+}
+
+async function completeTradeNetworkOrder(o){
+  const tn = state.tradeNetwork || (state.tradeNetwork = { active:false, strategy:"balanced", stability:75, routes:[], lastResolvedTurn:-1, yieldBonusPct:0, highRiskRouting:false });
+  const kind = o?.meta?.kind;
+
+  let lines = [];
+  let title = "Consortium Resolution";
+
+  if(kind === "stability"){
+    const before = clampInt(tn.stability ?? 75, 0, 100);
+    tn.stability = clampInt(before + 8, 0, 100);
+    lines.push(`Coin changes hands under closed doors. Inspectors are paid. Bribes are… politely renamed.`);
+    lines.push(`Market Stability rises from ${before}% to ${tn.stability}%.`);
+    title = "Stability Investment Sealed";
+  }
+  else if(kind === "yield"){
+    const before = clampInt(tn.yieldBonusPct ?? 0, 0, 200);
+    tn.yieldBonusPct = clampInt(before + 5, 0, 200);
+    lines.push(`New contracts are drafted with sharper margins and stricter ledgers.`);
+    lines.push(`Network yield improves from +${before}% to +${tn.yieldBonusPct}%.`);
+    title = "Yield Investment Sealed";
+  }
+  else if(kind === "toggle_high_risk"){
+    tn.highRiskRouting = !tn.highRiskRouting;
+    lines.push(`A doctrine memorandum is circulated: routes will be ${tn.highRiskRouting ? "pushed harder" : "kept conservative"}.`);
+    lines.push(`High-Risk Routing is now ${tn.highRiskRouting ? "Enabled" : "Disabled"}.`);
+    title = "Routing Doctrine Issued";
+  }
+  else{
+    lines.push(`The Council archives a motion with no clear effect.`);
+  }
+
+  saveState();
+  render();
+
+  await openSIModal({
+    title,
+    bodyHtml: `
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
+        <img src="assets/ui/trade_signing.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
+        <div>
+          <div class="small muted">Parchment. Quill-scratch. A final breath held. Then the seal.</div>
+        </div>
+      </div>
+      <ul class="siResList">
+        ${lines.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}
+      </ul>
+    `,
+    primaryText: "Continue",
+    modalClass: "siModal--hall"
+  });
+
+  log("Trade Network", `${o.label || "Trade Network upgrade"} resolved.`);
 }
 
    async function completeOrder(o){
@@ -1574,6 +1693,7 @@ function ensureDiplomacyPanel(){
           <button class="pill" id="hallUpgradePill" title="Upgrade Hall">Upgrade</button>
           <button class="pill" id="btnViewTradeRoutes" title="View active sea trade routes">Routes</button>
 <button class="pill" id="btnResolveTradeRoutes" title="Resolve this turn's trade routes">Resolve</button>
+<button class="pill" id="btnArbitration" title="Hear the next dispute before the Arbitration Authority">Arbitrate</button>
         </div>
         <div class="small muted" id="hallHeadSub">Diplomatic actions take 1 Bastion Turn.</div>
       </div>
@@ -1606,6 +1726,9 @@ function ensureDiplomacyPanel(){
   panel.querySelector("#btnResolveTradeRoutes")?.addEventListener("click", () => {
     resolveTradeRoutesModal();
   });
+   panel.querySelector("#btnArbitration")?.addEventListener("click", async () => {
+  await openArbitrationAuthorityModal();
+});
 
    panel.querySelector("#clearDiplomacyBtn").addEventListener("click", () => {
     if(!confirm("Clear Diplomacy & Trade records? (Does not undo gold already gained.)")) return;
@@ -1735,6 +1858,8 @@ hallUpgradePill.onclick = () => {
     <div class="hallFns">
       ${fnHtml}
     </div>
+
+    ${renderIronbowTradeNetworkSection()}
   </div>
 `;
 
@@ -1760,9 +1885,93 @@ hallUpgradePill.onclick = () => {
   issueOrder(facId, fnId);
 });
   });
+   // Ironbow Trade Network upgrade buttons (consume Bastion Turn via pending order)
+hallCard.querySelector("#tnInvestStability")?.addEventListener("click", () => {
+  issueTradeNetworkUpgrade("stability");
+});
+hallCard.querySelector("#tnInvestYield")?.addEventListener("click", () => {
+  issueTradeNetworkUpgrade("yield");
+});
+hallCard.querySelector("#tnToggleHighRisk")?.addEventListener("click", () => {
+  issueTradeNetworkUpgrade("toggle_high_risk");
+});
 }
 
-function tickDiplomacyOnAdvanceTurn(){
+function renderIronbowTradeNetworkSection(){
+  const tn = state.tradeNetwork || { active:false, stability:75, routes:[], yieldBonusPct:0, highRiskRouting:false };
+  const routes = (tn.routes || []).filter(r => r && r.status !== "removed");
+  const activeRoutes = routes.filter(r => r.status !== "disrupted");
+  const disrupted = routes.filter(r => r.status === "disrupted");
+
+  const incomePerTurn = activeRoutes.reduce((a,r)=>{
+    // predicted baseline (success payout)
+    return a + routePayout(r, "success");
+  }, 0);
+
+  const activeLabel = tn.active ? "Active" : "Inactive";
+
+  const routeRows = routes.length ? routes.map(r => {
+    const risk = String(r.risk || "low");
+    const status = String(r.status || "active");
+    const riskLabel = risk.charAt(0).toUpperCase() + risk.slice(1);
+    const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+    const est = (status === "disrupted") ? 0 : routePayout(r, "success");
+
+    return `
+      <div class="tnRoute">
+        <div class="tnRouteTop">
+          <div>
+            <div class="tnRouteName">${escapeHtml(r.clan)} <span class="small muted">(${escapeHtml(r.commodity || "goods")})</span></div>
+            <div class="tnRouteMeta">Risk: <b>${escapeHtml(riskLabel)}</b> • Status: <b>${escapeHtml(statusLabel)}</b> • Est. yield: <b>${escapeHtml(String(est))} gp</b></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("") : `<div class="small muted">No routes recorded yet.</div>`;
+
+  const queueCount = Array.isArray(state.arbitration?.queue) ? state.arbitration.queue.length : 0;
+
+  return `
+    <div class="divider" style="margin:14px 0"></div>
+
+    <div class="hallName" style="margin-bottom:6px">Ironbow Trade Network</div>
+    <div class="small muted">Consortium status: <b>${escapeHtml(activeLabel)}</b> • Disrupted: <b>${disrupted.length}</b> • Disputes awaiting judgement: <b>${queueCount}</b></div>
+
+    <div class="tnGrid">
+      <div class="tnStat">
+        <div class="tnStatLabel">Market Stability</div>
+        <div class="tnStatVal">${escapeHtml(String(tn.stability ?? 75))}%</div>
+      </div>
+      <div class="tnStat">
+        <div class="tnStatLabel">Expected Income / Turn</div>
+        <div class="tnStatVal">${escapeHtml(String(incomePerTurn))} gp</div>
+      </div>
+    </div>
+
+    <div class="tnGrid">
+      <div class="tnStat">
+        <div class="tnStatLabel">Yield Upgrades</div>
+        <div class="tnStatVal">+${escapeHtml(String(tn.yieldBonusPct ?? 0))}%</div>
+      </div>
+      <div class="tnStat">
+        <div class="tnStatLabel">High-Risk Routing</div>
+        <div class="tnStatVal">${tn.highRiskRouting ? "Enabled" : "Disabled"}</div>
+      </div>
+    </div>
+
+    <div class="tnRouteBtns" style="margin-top:12px">
+      <button class="pill" id="tnInvestStability">Invest: Stability</button>
+      <button class="pill" id="tnInvestYield">Invest: Yield</button>
+      <button class="pill" id="tnToggleHighRisk">${tn.highRiskRouting ? "Disable" : "Enable"} High-Risk Routing</button>
+    </div>
+
+    <div class="tnRoutes">
+      ${routeRows}
+    </div>
+  `;
+}
+
+   function tickDiplomacyOnAdvanceTurn(){
   const d = state.diplomacy;
   if(!d) return;
 
@@ -1822,16 +2031,25 @@ function routeDC(route){
     strat === "aggressive" ? +2 :
     0;
 
-  return clampInt(base + stabMod + riskMod + stratMod, 6, 20);
+  // Network toggle: higher DC, higher income
+  const hr = state.tradeNetwork?.highRiskRouting ? +2 : 0;
+
+  return clampInt(base + stabMod + riskMod + stratMod + hr, 6, 20);
 }
 
-function routePayout(route, tier){
-  const y = clampInt(route.yieldGP ?? 0, 0, 999999);
-  if(tier === "critical_success") return clampInt(Math.floor(y * 1.25), 0, 999999);
-  if(tier === "great_success")    return clampInt(Math.floor(y * 1.10), 0, 999999);
-  if(tier === "success")          return y;
-  if(tier === "failure")          return clampInt(Math.floor(y * 0.50), 0, 999999);
-  return 0; // bad_failure / critical_failure
+function routePayout(route, outcome){
+  const baseYield = clampInt(route.yieldGP ?? 0, 0, 999999);
+
+  const yieldBonusPct = clampInt(state.tradeNetwork?.yieldBonusPct ?? 0, 0, 200);
+  const hrBonusPct = state.tradeNetwork?.highRiskRouting ? 20 : 0;
+
+  const boosted = Math.floor(baseYield * (100 + yieldBonusPct + hrBonusPct) / 100);
+
+  if(outcome === "strong_success") return clampInt(Math.floor(boosted * 1.20), 0, 999999);
+  if(outcome === "success")        return clampInt(boosted, 0, 999999);
+
+  // Failure paths pay nothing (route is disrupted in resolver)
+  return 0;
 }
 
 async function resolveTradeRoutesModal(){
@@ -1839,6 +2057,17 @@ async function resolveTradeRoutesModal(){
     await openSIModal({
       title: "Ironbow Trade Network",
       bodyHtml: `<div class="small muted">No active Trade Consortium. Establish a Trade Consortium to open routes.</div>`,
+      primaryText: "Close",
+      modalClass: "siModal--hall"
+    });
+    return;
+  }
+
+  // Prevent double-resolving in the same Bastion Turn
+  if(state.tradeNetwork.lastResolvedTurn === state.turn){
+    await openSIModal({
+      title: "Ironbow Trade Network",
+      bodyHtml: `<div class="small muted">Routes have already been resolved for this Bastion Turn.</div>`,
       primaryText: "Close",
       modalClass: "siModal--hall"
     });
@@ -1859,12 +2088,39 @@ async function resolveTradeRoutesModal(){
   let totalGained = 0;
   const narrativeLines = [];
 
+  // Helper: maps your existing tierFromRoll() output into the four route outcomes
+  function routeOutcomeFromTier(tier){
+    if(tier === "critical_success" || tier === "great_success") return "strong_success";
+    if(tier === "success") return "success";
+    if(tier === "failure") return "failure";
+    return "critical_failure"; // bad_failure / critical_failure
+  }
+
+  // Resolve each route
   for(const r of routes){
     if(r.status === "disrupted"){
-      narrativeLines.push(`${r.clan} route remains disrupted.`);
+      narrativeLines.push(`${r.clan}: disrupted. Dockmasters report no confirmed arrivals.`);
       continue;
     }
 
+    const highRiskMode = !!state.tradeNetwork.highRiskRouting;
+    const isHighRiskRoute = String(r.risk || "low") === "high";
+    const requiresRoll = isHighRiskRoute || highRiskMode;
+
+    // If no roll required (low/medium risk, and high-risk routing is OFF), auto-success
+    if(!requiresRoll){
+      const payout = routePayout(r, "success");
+      if(payout > 0){
+        state.treasuryGP += payout;
+        totalGained += payout;
+        narrativeLines.push(`${r.clan} caravans arrive on schedule, holds sealed and accounted. Treasury increases by ${payout} gp.`);
+      } else {
+        narrativeLines.push(`${r.clan} reports routine movement, but no taxable yield was recorded.`);
+      }
+      continue;
+    }
+
+    // Rolled resolution (manual input)
     const dc = routeDC(r);
     const mod = 0;
 
@@ -1874,6 +2130,7 @@ async function resolveTradeRoutesModal(){
       dc,
       modalClass: "siModal--hall"
     });
+
     if(!roll){
       log("Trade Network", "Route resolution cancelled.");
       saveState();
@@ -1882,19 +2139,38 @@ async function resolveTradeRoutesModal(){
     }
 
     const tier = tierFromRoll(roll.d20, roll.total, dc);
-    const payout = routePayout(r, tier);
+    const outcome = routeOutcomeFromTier(tier);
 
-    if(payout > 0){
+    if(outcome === "success" || outcome === "strong_success"){
+      const payout = routePayout(r, outcome);
       state.treasuryGP += payout;
       totalGained += payout;
-      narrativeLines.push(`${r.clan} convoy makes port. +${payout} gp.`);
+
+      if(outcome === "strong_success"){
+        narrativeLines.push(`${r.clan} convoys arrive early with double-stamped manifests. Treasury increases by ${payout} gp.`);
+      } else {
+        narrativeLines.push(`${r.clan} convoys arrive after a tense crossing. Treasury increases by ${payout} gp.`);
+      }
+      continue;
+    }
+
+    // Failure outcomes: disruption (and possibly arbitration + stability hit)
+    r.status = "disrupted";
+
+    if(outcome === "failure"){
+      narrativeLines.push(`${r.clan} route collapses into delays and seized cargo. Status: Disrupted. No income collected.`);
     } else {
-      r.status = "disrupted";
-      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - (r.risk === "high" ? 8 : 5), 0, 100);
-      narrativeLines.push(`${r.clan} route falters. Ships delayed. Stability drops.`);
-      enqueueArbitrationDispute(r.clan, "Trade disruption and disputed tariffs.");
+      // Critical failure: disruption + stability drop + arbitration dispute
+      const drop = String(r.risk || "low") === "high" ? 10 : 6;
+      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - drop, 0, 100);
+
+      narrativeLines.push(`${r.clan} suffers a catastrophic loss at sea. Status: Disrupted. Market Stability falls by ${drop}%.`);
+      enqueueArbitrationDispute(r.clan, "Cargo claims and retaliatory tariffs after a route collapse.");
     }
   }
+
+  // Mark as resolved this Bastion Turn
+  state.tradeNetwork.lastResolvedTurn = state.turn;
 
   saveState();
   render();
@@ -1905,7 +2181,7 @@ async function resolveTradeRoutesModal(){
       <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
         <img src="assets/ui/trade_signing.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
         <div>
-          <div class="siResSummary"><b>Total Earned:</b> ${escapeHtml(String(totalGained))} gp</div>
+          <div class="siResSummary"><b>Total Collected:</b> ${escapeHtml(String(totalGained))} gp</div>
           <div class="siResSummary" style="margin-top:8px"><b>Market Stability:</b> ${escapeHtml(String(state.tradeNetwork.stability ?? 75))}%</div>
         </div>
       </div>
@@ -1917,7 +2193,7 @@ async function resolveTradeRoutesModal(){
     modalClass: "siModal--hall"
   });
 
-  log("Trade Network", `Routes resolved. +${totalGained} gp. Stability ${state.tradeNetwork.stability ?? 75}%.`);
+  log("Trade Network", `Routes resolved. +${totalGained} gp. Market Stability ${state.tradeNetwork.stability ?? 75}%.`);
 }
 
    // Per-clan overlay tweaks (to correct Canva SVG origin offsets).
@@ -2054,6 +2330,196 @@ function enqueueArbitrationDispute(clanA, reason){
   });
 
   saveState();
+}
+   function tryPlaySealSound(){
+  try{
+    const a = new Audio(withBase("assets/sfx/wax_seal.mp3"));
+    a.volume = 0.55;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+
+function routeByClan(clanLabel){
+  const routes = state.tradeNetwork?.routes || [];
+  return routes.find(r => String(r.clan).toLowerCase() === String(clanLabel).toLowerCase()) || null;
+}
+
+async function openArbitrationAuthorityModal(){
+  if(!state.arbitration || typeof state.arbitration !== "object") state.arbitration = { queue: [], lastSpawnTurn: -1 };
+  if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
+
+  if(state.arbitration.queue.length === 0){
+    await openSIModal({
+      title: "Arbitration Authority",
+      bodyHtml: `<div class="small muted">No disputes await judgement.</div>`,
+      primaryText: "Close",
+      modalClass: "siModal--hall"
+    });
+    return;
+  }
+
+  const dispute = state.arbitration.queue[0];
+  const a = dispute.a || "Unknown";
+  const b = dispute.b || "Unknown";
+  const reason = dispute.reason || "A dispute over tariffs and cargo claims.";
+
+  const dc = 14;
+  const mod = diplomacyModForHall();
+
+  // Option payloads
+  const options = [
+    {
+      id: "rule_a",
+      title: `Rule for ${a}`,
+      preview: `Political Capital: ${a} +8, ${b} -6. May restore ${a}'s disrupted route.`,
+      effects: { a:+8, b:-6, restoreClan:a, stability:+1 }
+    },
+    {
+      id: "rule_b",
+      title: `Rule for ${b}`,
+      preview: `Political Capital: ${b} +8, ${a} -6. May restore ${a}'s disrupted route under new tariffs.`,
+      effects: { a:-6, b:+8, restoreClan:a, stability:0 }
+    },
+    {
+      id: "split",
+      title: `Split the Claims`,
+      preview: `Political Capital: ${a} +2, ${b} +2. Market Stability +3. Partial restoration likely.`,
+      effects: { a:+2, b:+2, restoreClan:a, stability:+3 }
+    }
+  ];
+
+  // Step 1: Choose ruling
+  const choiceHtml = `
+    <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
+      <img src="assets/ui/wax_stamp.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
+      <div>
+        <div class="siResSummary"><b>Dispute:</b> ${escapeHtml(a)} vs ${escapeHtml(b)}</div>
+        <div class="small muted" style="margin-top:6px">${escapeHtml(reason)}</div>
+        <div class="small muted" style="margin-top:6px">The Council waits. Ink is poured. Seals are warmed.</div>
+      </div>
+    </div>
+
+    <div class="tnRoutes">
+      ${options.map(o => `
+        <div class="tnRoute">
+          <div class="tnRouteTop">
+            <div>
+              <div class="tnRouteName">${escapeHtml(o.title)}</div>
+              <div class="tnRouteMeta">${escapeHtml(o.preview)}</div>
+            </div>
+            <button class="pill" data-arb="${escapeHtml(o.id)}">Choose</button>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+
+  await openSIModal({
+    title: "Arbitration Authority",
+    bodyHtml: choiceHtml,
+    primaryText: "Close",
+    modalClass: "siModal--hall"
+  });
+
+  // Hook choice buttons inside the open modal
+  const root = document.querySelector(".siModal");
+  if(!root) return;
+
+  const btns = root.querySelectorAll("[data-arb]");
+  if(!btns.length) return;
+
+  let chosen = null;
+  btns.forEach(bn => {
+    bn.addEventListener("click", async () => {
+      const id = bn.getAttribute("data-arb");
+      chosen = options.find(x => x.id === id) || null;
+      if(!chosen) return;
+
+      // Step 2: Authority roll
+      const roll = await rollD20Manual({
+        title: `Council Verdict: ${chosen.title}`,
+        mod,
+        dc,
+        modalClass: "siModal--hall"
+      });
+      if(!roll) return;
+
+      // Determine outcome tier
+      const tier = tierFromRoll(roll.d20, roll.total, dc);
+      const strong = (tier === "critical_success" || tier === "great_success");
+      const success = (tier === "success" || strong);
+      const fail = (tier === "failure");
+      const critFail = (!success && !fail);
+
+      // Apply results
+      let verdictText = "";
+      let extra = "";
+
+      if(success){
+        addPoliticalCapital(a, chosen.effects.a);
+        addPoliticalCapital(b, chosen.effects.b);
+
+        if(typeof chosen.effects.stability === "number"){
+          state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + chosen.effects.stability, 0, 100);
+        }
+
+        // Restore route if disrupted
+        const rr = routeByClan(chosen.effects.restoreClan);
+        if(rr && rr.status === "disrupted"){
+          rr.status = "active";
+          extra = `A sealed writ orders the harbormasters to reopen ${chosen.effects.restoreClan}'s lanes under the Council’s terms.`;
+        }
+
+        if(strong){
+          state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + 2, 0, 100);
+          verdictText = `The Council speaks with unshakable clarity. The chamber falls silent as the wax cools.`;
+        }else{
+          verdictText = `A measured ruling, delivered with clipped ceremony and iron politeness.`;
+        }
+
+        tryPlaySealSound();
+      } else if(fail){
+        // Soft failure: backlash
+        addPoliticalCapital(a, -2);
+        addPoliticalCapital(b, -2);
+        state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 2, 0, 100);
+        verdictText = `The verdict lands poorly. Envoys depart with thin smiles and thicker grudges.`;
+      } else if(critFail){
+        // Critical failure: scandal
+        addPoliticalCapital(a, -6);
+        addPoliticalCapital(b, -6);
+        state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 6, 0, 100);
+        verdictText = `The Council’s ruling fractures the room. Scribes blot ink in panic. Accusations echo down marble halls.`;
+      }
+
+      // Remove dispute from queue
+      state.arbitration.queue.shift();
+
+      saveState();
+      render();
+
+      await openSIModal({
+        title: "Council Verdict",
+        bodyHtml: `
+          <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
+            <img src="assets/ui/wax_stamp.png" style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
+            <div>
+              <div class="siResSummary"><b>Verdict:</b> ${escapeHtml(chosen.title)}</div>
+              <div class="small muted" style="margin-top:6px">${escapeHtml(verdictText)}</div>
+            </div>
+          </div>
+          ${extra ? `<div class="tnStat" style="margin-top:10px">${escapeHtml(extra)}</div>` : ``}
+          <div class="small muted" style="margin-top:12px">
+            Market Stability now: <b>${escapeHtml(String(state.tradeNetwork.stability ?? 75))}%</b>
+          </div>
+        `,
+        primaryText: "Continue",
+        modalClass: "siModal--hall"
+      });
+
+      log("Arbitration", `Council verdict issued: ${chosen.title}.`);
+    });
+  });
 }
 
    function allBuiltFacilityIds(){
@@ -2814,8 +3280,18 @@ function positionTooltip(e, tip){
       },
 
       tradeNetwork: (s.tradeNetwork && typeof s.tradeNetwork === "object") ? s.tradeNetwork : {
-        active:false, strategy:"balanced", stability:75, routes:[], lastResolvedTurn:-1, recruitmentBoostTurns:0
-      },
+  active:false,
+  strategy:"balanced",
+  stability:75,
+  routes:[],
+  lastResolvedTurn:-1,
+  recruitmentBoostTurns:0,
+
+  // NEW (backwards compatible defaults)
+  yieldBonusPct: 0,          // +% income on all routes
+  highRiskRouting: false     // raises DC, raises income
+}
+
 
       arbitration: (s.arbitration && typeof s.arbitration === "object") ? s.arbitration : {
         queue:[], lastSpawnTurn:-1
