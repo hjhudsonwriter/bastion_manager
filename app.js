@@ -2260,7 +2260,8 @@ async function openTradeMapModal(){
     const strong = overlayImgs.length > 1 ? " tradeRouteOverlay--strong" : "";
     // cache-bust helps when swapping svg files
    return `<img class="tradeRouteOverlay tradeRouteOverlayActive"
-             src="${x.file}?v=1"
+             data-clan="${escapeHtml(x.clan)}"
+             src="${x.file}?v=2"
              alt="${escapeHtml(x.clan)} trade route" />`;
   }).join("");
 
