@@ -57,25 +57,10 @@
             "label": "Cloak of Protection"
           },
           {
-            "label": "Decanter of Endless Water"
-          },
-          {
             "label": "Gem of Brightness"
           },
           {
             "label": "Hat of Disguise"
-          },
-          {
-            "label": "Potion of Animal Friendship"
-          },
-          {
-            "label": "Potion of Fire Breath"
-          },
-          {
-            "label": "Potion of Giant Strength (hill)"
-          },
-          {
-            "label": "Potion of Growth"
           },
           {
             "label": "Potion of Poison"
@@ -123,9 +108,6 @@
             "label": "Bead of Refreshment"
           },
           {
-            "label": "Boots of False Tracks"
-          },
-          {
             "label": "Charlatan's Die"
           },
           {
@@ -141,19 +123,10 @@
             "label": "Boots of the Winterlands"
           },
           {
-            "label": "Gloves of Missile Snaring"
-          },
-          {
             "label": "Gloves of Swimming and Climbing"
           },
           {
             "label": "Gloves of Thievery"
-          },
-          {
-            "label": "Goggles of Night"
-          },
-          {
-            "label": "Potion of Growth"
           },
           {
             "label": "Potion of Healing (greater)"
@@ -171,25 +144,10 @@
             "label": "Ring of Warmth"
           },
           {
-            "label": "Robe of Useful Items"
-          },
-          {
             "label": "Rope of Climbing"
           },
           {
             "label": "Stone of Good Luck"
-          },
-          {
-            "label": "Armor of Gleaming"
-          },
-          {
-            "label": "Cast-Off Armor"
-          },
-          {
-            "label": "Dread Helm"
-          },
-          {
-            "label": "Moon-Touched Sword"
           },
           {
             "label": "Shield of Expression"
@@ -418,9 +376,6 @@
             "label": "Spear"
           },
           {
-            "label": "Javelin"
-          },
-          {
             "label": "Trident"
           },
           {
@@ -537,37 +492,7 @@
             "label": "Basic poison"
           },
           {
-            "label": "Contact poison (simple)"
-          },
-          {
-            "label": "Ingested poison (simple)"
-          },
-          {
             "label": "Antitoxin"
-          },
-          {
-            "label": "Smelling salts"
-          },
-          {
-            "label": "Simple antidote"
-          },
-          {
-            "label": "Smokestick"
-          },
-          {
-            "label": "Flash powder"
-          },
-          {
-            "label": "Strong glue"
-          },
-          {
-            "label": "Solvent"
-          },
-          {
-            "label": "Oil (standard)"
-          },
-          {
-            "label": "Oil (special mixture)"
           },
           {
             "label": "Firebomb (reskinned alchemist’s fire)"
@@ -577,18 +502,6 @@
           },
           {
             "label": "Sticky bomb (glue grenade)"
-          },
-          {
-            "label": "Grease flask"
-          },
-          {
-            "label": "Contact irritant (itching powder)"
-          },
-          {
-            "label": "Food preservative"
-          },
-          {
-            "label": "Water purifier solution"
           },
           {
             "label": "Potion of healing (common)"
