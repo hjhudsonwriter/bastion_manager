@@ -3217,6 +3217,7 @@ function positionTooltip(e, tip){
 
       builtFacilities: Array.isArray(s.builtFacilities) ? s.builtFacilities : DEFAULT_STATE.builtFacilities,
       builtExtras: Array.isArray(s.builtExtras) ? s.builtExtras : DEFAULT_STATE.builtExtras,
+      facilityLevels: (s.facilityLevels && typeof s.facilityLevels === "object") ? s.facilityLevels : (DEFAULT_STATE.facilityLevels || {}),
 
       pendingOrders: Array.isArray(s.pendingOrders) ? s.pendingOrders : DEFAULT_STATE.pendingOrders,
 
