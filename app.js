@@ -148,7 +148,6 @@ function tickConstruction(){
   smithy: "smithy.png",
   garden: "garden.png",
   menagerie: "menagerie.png",
-  scriptorium: "scriptorium.png",
 
   // Your two missing ones (THIS is the fix)
   laboratory: "laboratory.png",
@@ -156,7 +155,6 @@ function tickConstruction(){
 
   // The rest
   gaming_hall: "gambling_hall.png",
-  storehouse: "storehouse.png",
   greenhouse: "greenhouse.png",
   guildhall: "guildhall.png",
   shrine_telluria: "shrine_of_telluria.png",
@@ -2679,7 +2677,7 @@ function positionTooltip(e, tip){
     }
 
     // Craft / Harvest / Trade -> warehouse
-    if(["arcane_study","sanctuary","garden","greenhouse","laboratory","scriptorium","library","smithy","storehouse","gaming_hall","workshop"].includes(fac.id)){
+    if(["arcane_study","garden","greenhouse","laboratory","library","smithy","gaming_hall","workshop"].includes(fac.id)){
       if(fac.id==="workshop" && fn.id==="craft" && chosen && chosen.toolTable){
         // pick an item from that tool table at random
         const list = DATA.tools[chosen.toolTable] || [];
