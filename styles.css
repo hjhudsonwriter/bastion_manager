@@ -1711,3 +1711,27 @@ select option{
 .tradeMapCanvas .tradeMapImg{
   filter: brightness(0.92) contrast(1.05) saturate(1.04) !important;
 }
+
+/* =========================
+   Active route highlight (PNG per-clan)
+   SAFE: does not affect placement/sizing
+   ========================= */
+
+.tradeRouteOverlayActive{
+  opacity: 1 !important;
+  mix-blend-mode: screen;
+
+  /* strong gold glow */
+  filter:
+    drop-shadow(0 0 10px rgba(255,220,150,.95))
+    drop-shadow(0 0 26px rgba(214,178,94,.75))
+    drop-shadow(0 0 60px rgba(214,178,94,.40)) !important;
+
+  animation: tradeRoutePulse 2.2s ease-in-out infinite;
+}
+
+@keyframes tradeRoutePulse{
+  0%   { opacity: .80; }
+  50%  { opacity: 1.00; }
+  100% { opacity: .80; }
+}
