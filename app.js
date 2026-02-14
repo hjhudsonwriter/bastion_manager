@@ -2006,19 +2006,13 @@ async function openTradeMapModal(){
       <div class="tradeMapWrap">
   <div class="tradeMapCanvas">
     <img id="tradeMapImg"
-     class="tradeMapImg"
-     src="assets/ui/clan_trading_locations.png?v=6"
-     alt="Clan Trading Locations" />
-
-    <img id="tradeRouteBase"
-         class="tradeRouteOverlay tradeRouteOverlayBase"
-         src="assets/ui/all_trade_routes.png?v=6"
-         alt="All trade routes overlay" />
-
-    <canvas id="tradeRouteHighlight"
-            class="tradeRouteOverlay tradeRouteOverlayHi"></canvas>
+         class="tradeMapImg"
+         src="assets/ui/clan_trading_locations.png?v=6"
+         alt="Clan Trading Locations" />
+    ${overlaysHtml}
   </div>
 </div>
+
 
       <div class="small muted" style="margin-top:10px">
         Showing routes for: <b>${escapeHtml(shownText)}</b>
@@ -2032,42 +2026,6 @@ async function openTradeMapModal(){
     primaryText: "Close",
     modalClass: "siModal--hall"
   });
- // After modal renders, wait for images, then sync overlay sizing + draw highlights
-setTimeout(() => {
-  const mapImg  = document.getElementById("tradeMapImg");
-  const baseImg = document.getElementById("tradeRouteBase");
-
-  if(!mapImg || !baseImg) return;
-
-  const ready = (img) => img.complete && img.naturalWidth > 0;
-
-  const run = () => {
-    syncTradeMapOverlaysToMap();
-    renderActiveRouteHighlights();
-  };
-
-  // If both already loaded, run immediately
-  if(ready(mapImg) && ready(baseImg)){
-    run();
-    return;
-  }
-
-  // Otherwise wait until both have loaded
-  let done = false;
-  const tryRun = () => {
-    if(done) return;
-    if(ready(mapImg) && ready(baseImg)){
-      done = true;
-      run();
-    }
-  };
-
-  mapImg.addEventListener("load", tryRun, { once: true });
-  baseImg.addEventListener("load", tryRun, { once: true });
-
-  // Also try a moment later in case cached images don’t fire load
-  setTimeout(tryRun, 80);
-}, 0);
 }
 
 // =========================
