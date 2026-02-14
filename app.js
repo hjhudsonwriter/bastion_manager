@@ -1943,14 +1943,13 @@ function overlayStyleForClan(clan){
    function tradeRouteOverlayFileForClan(clanName){
   const n = String(clanName || "").trim().toLowerCase();
 
-  // normalize common cases
-  if(n === "blackstone") return "assets/ui/blackstone_trade_route.svg";
-  if(n === "karr") return "assets/ui/karr_trade_route.svg";
-  if(n === "bacca") return "assets/ui/bacca_trade_route.svg";
-  if(n === "farmer") return "assets/ui/farmer_trade_route.svg";
-  if(n === "molten") return "assets/ui/molten_trade_route.svg";
-  if(n === "slade") return "assets/ui/slade_trade_route.svg";
-  if(n === "rowthorn") return "assets/ui/rowthorn_trade_route.svg";
+  if(n === "blackstone") return "assets/ui/blackstone_trade_route.png";
+  if(n === "karr")       return "assets/ui/karr_trade_route.png";
+  if(n === "bacca")      return "assets/ui/bacca_trade_route.png";
+  if(n === "farmer")     return "assets/ui/farmer_trade_route.png";
+  if(n === "molten")     return "assets/ui/molten_trade_route.png";
+  if(n === "slade")      return "assets/ui/slade_trade_route.png";
+  if(n === "rowthorn")   return "assets/ui/rowthorn_trade_route.png";
 
   return null;
 }
@@ -1984,10 +1983,9 @@ async function openTradeMapModal(){
   const overlaysHtml = overlayImgs.map((x, i) => {
     const strong = overlayImgs.length > 1 ? " tradeRouteOverlay--strong" : "";
     // cache-bust helps when swapping svg files
-    return `<img class="tradeRouteOverlay${strong}" data-clan="${escapeHtml(x.clan)}"
-             style="${overlayStyleForClan(x.clan)}"
-             src="${x.file}?v=2"
-             alt="${escapeHtml(x.clan)} route overlay" />`;
+   return `<img class="tradeRouteOverlay tradeRouteOverlayActive"
+             src="${x.file}?v=1"
+             alt="${escapeHtml(x.clan)} trade route" />`;
   }).join("");
 
   const activeList = routes.length
