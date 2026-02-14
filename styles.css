@@ -1758,3 +1758,14 @@ select option{
       drop-shadow(0 0 60px rgba(214,178,94,.42));
   }
 }
+/* =========================
+   Arbitration polish (safe additions)
+   ========================= */
+
+.siModal--hall img{
+  image-rendering: auto;
+}
+
+.siResSummary b{
+  color: rgba(214,178,94,.95);
+}
