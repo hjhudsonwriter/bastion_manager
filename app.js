@@ -3290,7 +3290,7 @@ function positionTooltip(e, tip){
   // NEW (backwards compatible defaults)
   yieldBonusPct: 0,          // +% income on all routes
   highRiskRouting: false     // raises DC, raises income
-}
+},
 
 
       arbitration: (s.arbitration && typeof s.arbitration === "object") ? s.arbitration : {
