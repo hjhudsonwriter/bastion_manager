@@ -51,13 +51,31 @@
             "label": "Cap of Water Breathing"
           },
           {
+            "label": "Circlet of Blasting"
+          },
+          {
             "label": "Cloak of Protection"
+          },
+          {
+            "label": "Decanter of Endless Water"
           },
           {
             "label": "Gem of Brightness"
           },
           {
             "label": "Hat of Disguise"
+          },
+          {
+            "label": "Potion of Animal Friendship"
+          },
+          {
+            "label": "Potion of Fire Breath"
+          },
+          {
+            "label": "Potion of Giant Strength (hill)"
+          },
+          {
+            "label": "Potion of Growth"
           },
           {
             "label": "Potion of Poison"
@@ -111,6 +129,9 @@
             "label": "Charlatan's Die"
           },
           {
+            "label": "Staff of Birdcalls"
+          },
+          {
             "label": "Bag of Holding"
           },
           {
@@ -129,6 +150,12 @@
             "label": "Gloves of Thievery"
           },
           {
+            "label": "Goggles of Night"
+          },
+          {
+            "label": "Potion of Growth"
+          },
+          {
             "label": "Potion of Healing (greater)"
           },
           {
@@ -142,6 +169,24 @@
           },
           {
             "label": "Ring of Warmth"
+          },
+          {
+            "label": "Robe of Useful Items"
+          },
+          {
+            "label": "Rope of Climbing"
+          },
+          {
+            "label": "Stone of Good Luck"
+          },
+          {
+            "label": "Armor of Gleaming"
+          },
+          {
+            "label": "Cast-Off Armor"
+          },
+          {
+            "label": "Dread Helm"
           },
           {
             "label": "Moon-Touched Sword"
@@ -373,6 +418,9 @@
             "label": "Spear"
           },
           {
+            "label": "Javelin"
+          },
+          {
             "label": "Trident"
           },
           {
@@ -440,16 +488,19 @@
         "label": "Research",
         "options": [
           {
-            "label": "Geographical Scriptures"
+            "label": "Geographical"
           },
           {
-            "label": "Religious Scriptures"
+            "label": "Lore"
           },
           {
-            "label": "Political Scriptures"
+            "label": "History"
           },
           {
-            "label": "Combat Scriptures"
+            "label": "Politics"
+          },
+          {
+            "label": "War"
           }
         ],
         "costGP": 0,
@@ -486,7 +537,37 @@
             "label": "Basic poison"
           },
           {
+            "label": "Contact poison (simple)"
+          },
+          {
+            "label": "Ingested poison (simple)"
+          },
+          {
             "label": "Antitoxin"
+          },
+          {
+            "label": "Smelling salts"
+          },
+          {
+            "label": "Simple antidote"
+          },
+          {
+            "label": "Smokestick"
+          },
+          {
+            "label": "Flash powder"
+          },
+          {
+            "label": "Strong glue"
+          },
+          {
+            "label": "Solvent"
+          },
+          {
+            "label": "Oil (standard)"
+          },
+          {
+            "label": "Oil (special mixture)"
           },
           {
             "label": "Firebomb (reskinned alchemist’s fire)"
@@ -496,6 +577,48 @@
           },
           {
             "label": "Sticky bomb (glue grenade)"
+          },
+          {
+            "label": "Grease flask"
+          },
+          {
+            "label": "Contact irritant (itching powder)"
+          },
+          {
+            "label": "Food preservative"
+          },
+          {
+            "label": "Water purifier solution"
+          },
+          {
+            "label": "Potion of healing (common)"
+          },
+          {
+            "label": "Potion of greater healing (base item)"
+          },
+          {
+            "label": "Potion of superior healing (base item)"
+          },
+          {
+            "label": "Potion of supreme healing (base item)"
+          },
+          {
+            "label": "Potion of climbing (base item)"
+          },
+          {
+            "label": "Potion of water breathing (base item)"
+          },
+          {
+            "label": "Potion of resistance (base item)"
+          },
+          {
+            "label": "Darkvision draught (base item)"
+          },
+          {
+            "label": "Stoneskin varnish (base item)"
+          },
+          {
+            "label": "Vitality tonic (base item)"
           }
         ],
         "costGP": 0,
