@@ -3112,12 +3112,35 @@ function positionTooltip(e, tip){
       }
 
       if(optionLabel){
-        appendToWarehouse(optionLabel, 1, "", fac.name);
-        log(label, `Added to warehouse: ${optionLabel}.`);
-      }else{
-        log(label, "Completed.");
-      }
-      saveState(); render(); return;
+
+  // --- Library scripture auto-notes ---
+  if(fac.id === "library" && fn.id === "research"){
+    const scriptureNotesMap = {
+      "Geographical": "Adv. on Survival checks once per long rest.",
+      // Treating Lore + History as your “Religious Scriptures”
+      "Lore": "Adv. on Religion checks once per long rest.",
+      "History": "Adv. on Religion checks once per long rest.",
+      // Politics = Political Scriptures
+      "Politics": "Adv. on 1 check when interacting with Clan members, once per long rest.",
+      // War = Combat Scriptures
+      "War": "Adv. on Athletics checks once per long rest."
+    };
+
+    const scriptureNotes = scriptureNotesMap[String(optionLabel).trim()] || "";
+
+    // Add to warehouse with renamed item + auto notes
+    appendToWarehouse(`${optionLabel} Scriptures`, 1, "", scriptureNotes || "Library");
+    log(label, `Added to warehouse: ${optionLabel} Scriptures.`);
+  } else {
+    // Normal behaviour for every other facility
+    appendToWarehouse(optionLabel, 1, "", fac.name);
+    log(label, `Added to warehouse: ${optionLabel}.`);
+  }
+
+}else{
+  log(label, "Completed.");
+}
+saveState(); render(); return;
     }
 
     // Default
