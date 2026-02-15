@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "items": {
+    "Bag of Holding": {
+      "type": "Wondrous item (Uncommon)",
+      "attunement": "No",
+      "summary": "A bag whose inside is much larger than its outside. Holds up to 500 lb (64 cubic feet). Retrieving an item typically takes an action. If overloaded or torn, it’s destroyed and spills contents into the Astral Plane.",
+      "source": "https://roll20.net/compendium/dnd5e/Bag%20of%20Holding"
+    },
+
+    "Cloak of Protection": {
+      "type": "Wondrous item (Uncommon)",
+      "attunement": "Yes",
+      "summary": "While wearing this cloak, you gain +1 bonus to AC and +1 bonus to saving throws.",
+      "source": "https://roll20.net/compendium/dnd5e/Cloak%20of%20Protection"
+    }
+  }
+}
