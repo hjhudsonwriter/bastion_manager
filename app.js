@@ -3512,7 +3512,6 @@ function autoCompendiumDetail(itemName){
       if(src) openImageViewer(src);
     });
   });
-});
   };
 
   renderList("");
