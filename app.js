@@ -3101,7 +3101,21 @@ function roll20UrlFor(item){
   return `https://roll20.net/compendium/dnd5e/${encodeURIComponent(String(item || "").trim())}`;
 }
 
-async function fetchJsonSafe(url){
+function compendiumImagePath(item){
+  const clean = String(item || "").trim();
+  return `data/compendium_cards/${clean}.png`;
+}
+
+function imageExists(url){
+  return new Promise(resolve=>{
+    const img = new Image();
+    img.onload = ()=> resolve(true);
+    img.onerror = ()=> resolve(false);
+    img.src = url;
+  });
+}
+
+   async function fetchJsonSafe(url){
   try{
     const r = await fetch(url, { cache: "no-store" });
     if(!r.ok) return null;
@@ -3445,55 +3459,60 @@ function autoCompendiumDetail(itemName){
     `).join("");
 
     listEl.querySelectorAll("[data-item]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const item = btn.getAttribute("data-item") || "";
-        const links = comp.itemToFacilities.get(item) || [];
+      btn.addEventListener("click", async ()=>{
+  const item = btn.getAttribute("data-item") || "";
+  const links = comp.itemToFacilities.get(item) || [];
+  const info = (DATA.compendium && DATA.compendium[item]) ? DATA.compendium[item] : null;
 
-                const key = compendiumKey(item);
-        const info = (DATA.compendium && DATA.compendium[key]) ? DATA.compendium[key] : (autoCompendiumDetail(key) || null);
+  const rollLink = (info && info.roll20) ? info.roll20 : roll20UrlFor(item);
+  const imgPath = compendiumImagePath(item);
+  const hasImage = await imageExists(imgPath);
 
-        const craftedAtHtml = links.length
-          ? `
-            <div class="small muted">Craftable at:</div>
-            <div class="compendiumPills">
-              ${links.map(l => `<span class="compendiumPill">${escapeHtml(l.facName)}${l.fnLabel ? ` • ${escapeHtml(l.fnLabel)}` : ""}</span>`).join("")}
-            </div>
-          `
-          : `<div class="small muted">Craftable at: (not mapped)</div>`;
+  const craftedAtHtml = links.length
+    ? `
+      <div class="small muted">Craftable at:</div>
+      <div class="compendiumPills">
+        ${links.map(l => `<span class="compendiumPill">${escapeHtml(l.facName)}${l.fnLabel ? ` • ${escapeHtml(l.fnLabel)}` : ""}</span>`).join("")}
+      </div>
+    `
+    : `<div class="small muted">Craftable at: (not mapped)</div>`;
 
-        if(!info){
-          detailEl.innerHTML = `
-            <div class="compendiumDetailTitle">${escapeHtml(item)}</div>
-            ${craftedAtHtml}
-            <div class="small muted">No description entry yet for this item.</div>
-          `;
-          return;
-        }
+  detailEl.innerHTML = `
+    <div class="compendiumDetailTitle">${escapeHtml(item)}</div>
 
-        detailEl.innerHTML = `
-          <div class="compendiumDetailTitle">${escapeHtml(item)}</div>
+    ${info && info.type ? `
+      <div class="compendiumPills">
+        <span class="compendiumPill">${escapeHtml(info.type)}</span>
+        ${info.attunement ? `<span class="compendiumPill">Attunement: ${escapeHtml(info.attunement)}</span>` : ""}
+      </div>
+    ` : ""}
 
-          <div class="compendiumPills">
-            ${info.type ? `<span class="compendiumPill">${escapeHtml(info.type)}</span>` : ""}
-            ${info.attunement ? `<span class="compendiumPill">Attunement: ${escapeHtml(info.attunement)}</span>` : ""}
-          </div>
+    ${info && info.summary ? `
+      <div style="margin: 10px 0;">
+        ${escapeHtml(info.summary)}
+      </div>
+    ` : ""}
 
-          <div style="margin: 10px 0;">
-            ${escapeHtml(info.summary || "")}
-          </div>
+    ${hasImage ? `
+      <div class="compendiumCard" data-img="${escapeHtml(imgPath)}">
+        <img src="${escapeHtml(imgPath)}" alt="${escapeHtml(item)} card" />
+      </div>
+    ` : ""}
 
-          ${craftedAtHtml}
+    ${craftedAtHtml}
 
-          ${info.source ? `<div class="small muted" style="margin-top:10px;">Source: <a href="${escapeHtml(info.source)}" target="_blank" rel="noopener">Open reference</a></div>` : ""}
-          ${(() => {
-  const q = encodeURIComponent(item);
-  return `<div class="small muted" style="margin-top:10px;">
-    Roll20 lookup: <a href="https://roll20.net/compendium/dnd5e/${q}" target="_blank" rel="noopener">Open on Roll20</a>
-  </div>`;
-})()}
-        `;
-      });
+    <div class="small muted" style="margin-top:10px;">
+      <a href="${rollLink}" target="_blank" rel="noopener">Open on Roll20</a>
+    </div>
+  `;
+
+  detailEl.querySelectorAll("[data-img]").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const src = el.getAttribute("data-img");
+      if(src) openImageViewer(src);
     });
+  });
+});
   };
 
   renderList("");
