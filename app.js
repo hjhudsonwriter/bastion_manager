@@ -931,7 +931,11 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
 
   // Generic craft/harvest/trade → warehouse (if option chosen)
   if(optionLabel){
-    appendToWarehouse(optionLabel, 1, "", fac.name);
+    const combinedNotes = (o && o.notes)
+      ? `${fac.name} • ${String(o.notes)}`
+      : fac.name;
+
+    appendToWarehouse(optionLabel, 1, "", combinedNotes);
     log("Order Completed", `${label} → Added to Warehouse.`);
     return;
   }
@@ -2563,6 +2567,28 @@ async function openArbitrationAuthorityModal(){
   optionLabel = picked;
 }
 
+       // --- Auto notes for Library scriptures ---
+  let orderNotes = "";
+
+  if(facId === "library"){
+    // If your function id in facilities.json is not "research", change it here.
+    if(fnId === "research"){
+      const scriptureNotesMap = {
+        "Geographical": "Adv. on Survival checks once per long rest.",
+        // treating Lore/History as “Religious” scriptures (adjust if you want different)
+        "Lore": "Adv. on Religion checks once per long rest.",
+        "History": "Adv. on Religion checks once per long rest.",
+        "Politics": "Adv. on 1 check when interacting with Clan members, once per long rest.",
+        // treating War as “Combat” scriptures (adjust label if your dropdown says Combat)
+        "War": "Adv. on Athletics checks once per long rest.",
+        "Combat": "Adv. on Athletics checks once per long rest.",
+        "Religious": "Adv. on Religion checks once per long rest.",
+        "Political": "Adv. on 1 check when interacting with Clan members, once per long rest."
+      };
+
+      orderNotes = scriptureNotesMap[String(optionLabel || "").trim()] || "";
+    }
+  }
       let { costGP } = computeFnCost(fac, fn, chosen);
 
 // Summit discount applies to Hall of Emissaries actions (except upgrades)
@@ -2591,6 +2617,7 @@ if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
     fnId,
     chosen,
     optionLabel,
+    notes: orderNotes,
     label,
     costGP,
     issuedTurn: state.turn,
@@ -2658,6 +2685,7 @@ if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
     fnId,
     chosen,
     optionLabel,
+    notes: orderNotes,
     label,
     costGP,
     issuedTurn: state.turn,
