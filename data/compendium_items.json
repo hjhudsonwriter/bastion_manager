@@ -1,18 +1,1860 @@
 {
   "version": 1,
   "items": {
+    "Acid vial": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Acid%20vial"
+    },
+    "Agent of Aurush Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Agent%20of%20Aurush%20Disguise"
+    },
+    "Alchemist’s fire": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Alchemist%E2%80%99s%20fire"
+    },
+    "Antitoxin": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Antitoxin"
+    },
+    "Antitoxin (2 vials)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Antitoxin%20(2%20vials)"
+    },
+    "Ape": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Ape"
+    },
+    "Arcane focus (crystal)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Arcane%20focus%20(crystal)"
+    },
+    "Arcane focus (orb)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Arcane%20focus%20(orb)"
+    },
+    "Assassin's Blood": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Assassin's%20Blood"
+    },
+    "Aurush Ember Charm": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Aurush%20Ember%20Charm"
+    },
+    "Aurush Sun Charm": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Aurush%20Sun%20Charm"
+    },
+    "Aurush's Blessing": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Aurush's%20Blessing"
+    },
+    "Aurush's Insight": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Aurush's%20Insight"
+    },
+    "Aurush's Radiance": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Aurush's%20Radiance"
+    },
+    "Bacca + Molten": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bacca%20%2B%20Molten"
+    },
+    "Backpack": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "Adventuring Gear • Weight: 5 lb • Cost: 2 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/backpack",
+      "roll20": "https://roll20.net/compendium/dnd5e/Backpack"
+    },
     "Bag of Holding": {
       "type": "Wondrous item (Uncommon)",
       "attunement": "No",
       "summary": "A bag whose inside is much larger than its outside. Holds up to 500 lb (64 cubic feet). Retrieving an item typically takes an action. If overloaded or torn, it’s destroyed and spills contents into the Astral Plane.",
-      "source": "https://roll20.net/compendium/dnd5e/Bag%20of%20Holding"
+      "source": "https://roll20.net/compendium/dnd5e/Bag%20of%20Holding",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bag%20of%20Holding"
     },
-
+    "Barricade": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Barricade"
+    },
+    "Basic Poison": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Basic%20Poison"
+    },
+    "Basic poison": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Basic%20poison"
+    },
+    "Battleaxe": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d8 Slashing • Weight: 4 lb • Cost: 10 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/battleaxe",
+      "roll20": "https://roll20.net/compendium/dnd5e/Battleaxe"
+    },
+    "Bead of Nourishment": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bead%20of%20Nourishment"
+    },
+    "Bead of Refreshment": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bead%20of%20Refreshment"
+    },
+    "Bedroll": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "Adventuring Gear • Weight: 7 lb • Cost: 1 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/bedroll",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bedroll"
+    },
+    "Bedroll straps": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bedroll%20straps"
+    },
+    "Belt (magic item base)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Belt%20(magic%20item%20base)"
+    },
+    "Black Bear": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Black%20Bear"
+    },
+    "Blackstone + Karr": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Blackstone%20%2B%20Karr"
+    },
+    "Blackstone + Rowthorn": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Blackstone%20%2B%20Rowthorn"
+    },
+    "Blanket": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "Adventuring Gear • Weight: 3 lb • Cost: 5 sp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/blanket",
+      "roll20": "https://roll20.net/compendium/dnd5e/Blanket"
+    },
+    "Boots": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Boots"
+    },
+    "Boots (magic item base)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Boots%20(magic%20item%20base)"
+    },
+    "Boots of Striding and Springing": {
+      "type": "Wondrous Items",
+      "attunement": "No",
+      "summary": "Wondrous item, uncommon (requires attunement) While you wear these boots, your walking speed becomes 30 feet, unless your walking speed is higher, and your speed isn't reduced if you are encumbered or wearing heavy armor. In addition, you can jump three times the normal distance, though you can't jump farther than your remaining movement would allow.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/boots-of-striding-and-springing",
+      "roll20": "https://roll20.net/compendium/dnd5e/Boots%20of%20Striding%20and%20Springing"
+    },
+    "Boots of the Winterlands": {
+      "type": "Wondrous Items",
+      "attunement": "No",
+      "summary": "Wondrous item, uncommon (requires attunement) These furred boots are snug and feel quite warm. While you wear them, you gain the following benefits: * You have resistance to cold damage. * You ignore difficult terrain created by ice or snow. * You can tolerate temperatures as low as -50 degrees Fahrenheit without any additional protection. If you wear heavy clothes, you can tolerate temperatures as low as -100 deg…",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/boots-of-the-winterlands",
+      "roll20": "https://roll20.net/compendium/dnd5e/Boots%20of%20the%20Winterlands"
+    },
+    "Bottle of spirits": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bottle%20of%20spirits"
+    },
+    "Bottle of wine": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bottle%20of%20wine"
+    },
+    "Bottle, glass": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "Adventuring Gear • Weight: 2 lb • Cost: 2 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/bottle-glass",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bottle%2C%20glass"
+    },
+    "Bracers": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bracers"
+    },
+    "Bracers (magic item base)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bracers%20(magic%20item%20base)"
+    },
+    "Brewing yeast culture": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Brewing%20yeast%20culture"
+    },
+    "Brick chimney": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Brick%20chimney"
+    },
+    "Brick fireplace": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Brick%20fireplace"
+    },
+    "Brick wall section": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Brick%20wall%20section"
+    },
+    "Bridge (wood)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Bridge%20(wood)"
+    },
+    "Brig": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Brig"
+    },
+    "Brown Bear": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Brown%20Bear"
+    },
+    "Burnt Othur Fumes (Poison)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Burnt%20Othur%20Fumes%20(Poison)"
+    },
+    "Cabin (wooden structure)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cabin%20(wooden%20structure)"
+    },
+    "Caltrops": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "As an action, you can spread a bag of caltrops to cover a square area that is 5 feet on a side. Any creature that enters the area must succeed on a DC 15 Dexterity saving throw or stop moving this turn and take 1 piercing damage. Taking this damage reduces the creature's walking speed by 10 feet until the creature regains at least 1 hit point. A creature moving through the area at half speed doesn't need to make t…",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/caltrops",
+      "roll20": "https://roll20.net/compendium/dnd5e/Caltrops"
+    },
+    "Cap of Water Breathing": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cap%20of%20Water%20Breathing"
+    },
+    "Cask of wine": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cask%20of%20wine"
+    },
+    "Cellar (stone)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cellar%20(stone)"
+    },
+    "Certificate or deed": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Certificate%20or%20deed"
+    },
+    "Chain mail": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 16 • Stealth: Disadvantage • STR min: 13 • Weight: 55 lb • Cost: 75 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/chain-mail",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chain%20mail"
+    },
+    "Chain shirt": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 13 • Weight: 20 lb • Cost: 50 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/chain-shirt",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chain%20shirt"
+    },
+    "Charlatan's Die": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Charlatan's%20Die"
+    },
+    "Chart of Eastern Province": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20Eastern%20Province"
+    },
+    "Chart of Midland Province": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20Midland%20Province"
+    },
+    "Chart of Northern Province": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20Northern%20Province"
+    },
+    "Chart of Southern Province": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20Southern%20Province"
+    },
+    "Chart of The Bolt Isle": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20The%20Bolt%20Isle"
+    },
+    "Chart of The East Isle": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20The%20East%20Isle"
+    },
+    "Chart of the Great Sea Road": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20the%20Great%20Sea%20Road"
+    },
+    "Chart of The North Isle": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20The%20North%20Isle"
+    },
+    "Chart of Western Province": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chart%20of%20Western%20Province"
+    },
+    "Chest (wooden)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Chest%20(wooden)"
+    },
+    "Circlet of Blasting": {
+      "type": "Wondrous Items",
+      "attunement": "No",
+      "summary": "Wondrous item, uncommon While wearing this circlet, you can use an action to cast the scorching ray spell with it. When you make the spell's attacks, you do so with an attack bonus of +5. The circlet can't be used this way again until the next dawn.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/circlet-of-blasting",
+      "roll20": "https://roll20.net/compendium/dnd5e/Circlet%20of%20Blasting"
+    },
+    "Clan Bacca": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Bacca"
+    },
+    "Clan Bacca Warrior Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Bacca%20Warrior%20Disguise"
+    },
+    "Clan Blackstone": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Blackstone"
+    },
+    "Clan Blackstone Warden Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Blackstone%20Warden%20Disguise"
+    },
+    "Clan Farmer": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Farmer"
+    },
+    "Clan Farmer Warrior Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Farmer%20Warrior%20Disguise"
+    },
+    "Clan Karr": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Karr"
+    },
+    "Clan Karr Warrior Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Karr%20Warrior%20Disguise"
+    },
+    "Clan Molten": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Molten"
+    },
+    "Clan Molten Warrior Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Molten%20Warrior%20Disguise"
+    },
+    "Clan Rowthorn": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Rowthorn"
+    },
+    "Clan Rowthorn Warrior Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Rowthorn%20Warrior%20Disguise"
+    },
+    "Clan Slade": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Slade"
+    },
+    "Clan Slade Warrior Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Clan%20Slade%20Warrior%20Disguise"
+    },
+    "Cloak": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cloak"
+    },
+    "Cloak (magic item base)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cloak%20(magic%20item%20base)"
+    },
     "Cloak of Protection": {
       "type": "Wondrous item (Uncommon)",
       "attunement": "Yes",
       "summary": "While wearing this cloak, you gain +1 bonus to AC and +1 bonus to saving throws.",
-      "source": "https://roll20.net/compendium/dnd5e/Cloak%20of%20Protection"
+      "source": "https://roll20.net/compendium/dnd5e/Cloak%20of%20Protection",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cloak%20of%20Protection"
+    },
+    "Coffer (wooden)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Coffer%20(wooden)"
+    },
+    "Combat Scriptures": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Combat%20Scriptures"
+    },
+    "Common clothes": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Common%20clothes"
+    },
+    "Constrictor Snake": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Constrictor%20Snake"
+    },
+    "Costume clothes": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Costume%20clothes"
+    },
+    "Crocodile": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Crocodile"
+    },
+    "Cutter": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Cutter"
+    },
+    "Dagger": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Simple • Melee • Damage: 1d4 Piercing • Weight: 1 lb • Cost: 2 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/dagger",
+      "roll20": "https://roll20.net/compendium/dnd5e/Dagger"
+    },
+    "Darkvision draught (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Darkvision%20draught%20(base%20item)"
+    },
+    "Dire Wolf": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Dire%20Wolf"
+    },
+    "Door frame": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Door%20frame"
+    },
+    "Dread Helm": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Dread%20Helm"
+    },
+    "Essence of Ether (Poison)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Essence%20of%20Ether%20(Poison)"
+    },
+    "Farmer + Slade": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Farmer%20%2B%20Slade"
+    },
+    "Fermented ale": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Fermented%20ale"
+    },
+    "Fermented beer": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Fermented%20beer"
+    },
+    "Fermented cider": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Fermented%20cider"
+    },
+    "Fermented mead": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Fermented%20mead"
+    },
+    "Fermented wine (table)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Fermented%20wine%20(table)"
+    },
+    "Fine clothes": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Fine%20clothes"
+    },
+    "Firebomb (reskinned alchemist’s fire)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Firebomb%20(reskinned%20alchemist%E2%80%99s%20fire)"
+    },
+    "Flagstone floor": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Flagstone%20floor"
+    },
+    "Flail": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d8 Bludgeoning • Weight: 2 lb • Cost: 10 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/flail",
+      "roll20": "https://roll20.net/compendium/dnd5e/Flail"
+    },
+    "Foundation (stone)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Foundation%20(stone)"
+    },
+    "Frost vial (cold variant)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Frost%20vial%20(cold%20variant)"
+    },
+    "Galleon": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Galleon"
+    },
+    "Galley": {
+      "type": "Mounts and Vehicles",
+      "attunement": "No",
+      "summary": "Mounts and Vehicles • Cost: 30000 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/galley",
+      "roll20": "https://roll20.net/compendium/dnd5e/Galley"
+    },
+    "Gate frame": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Gate%20frame"
+    },
+    "Gem of Brightness": {
+      "type": "Wondrous Items",
+      "attunement": "No",
+      "summary": "Wondrous item, uncommon This prism has 50 charges. While you are holding it, you can use an action to speak one of three command words to cause one of the following effects: The first command word causes the gem to shed bright light in a 30-foot radius and dim light for an additional 30 feet. This effect doesn't expend a charge. It lasts until you use a bonus action to repeat the command word or until you use anot…",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/gem-of-brightness",
+      "roll20": "https://roll20.net/compendium/dnd5e/Gem%20of%20Brightness"
+    },
+    "Geographical Scriptures": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Geographical%20Scriptures"
+    },
+    "Giant Vulture": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Giant%20Vulture"
+    },
+    "Glaive": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d10 Slashing • Weight: 6 lb • Cost: 20 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/glaive",
+      "roll20": "https://roll20.net/compendium/dnd5e/Glaive"
+    },
+    "Gloves": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Gloves"
+    },
+    "Gloves of Swimming and Climbing": {
+      "type": "Wondrous Items",
+      "attunement": "No",
+      "summary": "Wondrous item, uncommon (requires attunement) While wearing these gloves, climbing and swimming don't cost you extra movement, and you gain a +5 bonus to Strength (Athletics) checks made to climb or swim.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/gloves-of-swimming-and-climbing",
+      "roll20": "https://roll20.net/compendium/dnd5e/Gloves%20of%20Swimming%20and%20Climbing"
+    },
+    "Gloves of Thievery": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Gloves%20of%20Thievery"
+    },
+    "Grappling hook": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "Adventuring Gear • Weight: 4 lb • Cost: 2 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/grappling-hook",
+      "roll20": "https://roll20.net/compendium/dnd5e/Grappling%20hook"
+    },
+    "Greataxe": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d12 Slashing • Weight: 7 lb • Cost: 30 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/greataxe",
+      "roll20": "https://roll20.net/compendium/dnd5e/Greataxe"
+    },
+    "Greater Potion of Healing": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Greater%20Potion%20of%20Healing"
+    },
+    "Greatsword": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 2d6 Slashing • Weight: 6 lb • Cost: 50 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/greatsword",
+      "roll20": "https://roll20.net/compendium/dnd5e/Greatsword"
+    },
+    "Halberd": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d10 Slashing • Weight: 6 lb • Cost: 20 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/halberd",
+      "roll20": "https://roll20.net/compendium/dnd5e/Halberd"
+    },
+    "Half plate": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Half%20plate"
+    },
+    "Handaxe": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Simple • Melee • Damage: 1d6 Slashing • Weight: 2 lb • Cost: 5 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/handaxe",
+      "roll20": "https://roll20.net/compendium/dnd5e/Handaxe"
+    },
+    "Hat of Disguise": {
+      "type": "Wondrous Items",
+      "attunement": "No",
+      "summary": "Wondrous item, uncommon (requires attunement) While wearing this hat, you can use an action to cast the disguise self spell from it at will. The spell ends if the hat is removed.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/hat-of-disguise",
+      "roll20": "https://roll20.net/compendium/dnd5e/Hat%20of%20Disguise"
+    },
+    "Healer's Kit": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "This kit is a leather pouch containing bandages, salves, and splints. The kit has ten uses. As an action, you can expend one use of the kit to stabilize a creature that has 0 hit points, without needing to make a Wisdom (Medicine) check.",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/healers-kit",
+      "roll20": "https://roll20.net/compendium/dnd5e/Healer's%20Kit"
+    },
+    "Hide armor": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 12 • Weight: 12 lb • Cost: 10 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/hide-armor",
+      "roll20": "https://roll20.net/compendium/dnd5e/Hide%20armor"
+    },
+    "Hyena": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Hyena"
+    },
+    "Interior wall (wood)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Interior%20wall%20(wood)"
+    },
+    "Jackal": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Jackal"
+    },
+    "Javelin": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Simple • Melee • Damage: 1d6 Piercing • Weight: 2 lb • Cost: 5 sp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/javelin",
+      "roll20": "https://roll20.net/compendium/dnd5e/Javelin"
+    },
+    "Keelboat": {
+      "type": "Mounts and Vehicles",
+      "attunement": "No",
+      "summary": "Keelboats and rowboats are used on lakes and rivers. If going downstream, add the speed of the current (typically 3 miles per hour) to the speed of the vehicle. These vehicles can't be rowed against any significant current, but they can be pulled upstream by draft animals on the shores. A rowboat weighs 100 pounds, in case adventurers carry it over land.",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/keelboat",
+      "roll20": "https://roll20.net/compendium/dnd5e/Keelboat"
+    },
+    "Keep (stone)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Keep%20(stone)"
+    },
+    "Keg of ale": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Keg%20of%20ale"
+    },
+    "Keg of beer": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Keg%20of%20beer"
+    },
+    "Ladder": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Ladder"
+    },
+    "Lance": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d12 Piercing • Weight: 6 lb • Cost: 10 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/lance",
+      "roll20": "https://roll20.net/compendium/dnd5e/Lance"
+    },
+    "Leather armor": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 11 • Weight: 10 lb • Cost: 10 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/leather-armor",
+      "roll20": "https://roll20.net/compendium/dnd5e/Leather%20armor"
+    },
+    "Leather coat": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Leather%20coat"
+    },
+    "Leather scabbard": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Leather%20scabbard"
+    },
+    "Leather sheath": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Leather%20sheath"
+    },
+    "Leather shield cover": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Leather%20shield%20cover"
+    },
+    "Leather shield straps": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Leather%20shield%20straps"
+    },
+    "Lieutenant (1)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Lieutenant%20(1)"
+    },
+    "Lion": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Lion"
+    },
+    "Lock of Trickery": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Lock%20of%20Trickery"
+    },
+    "Lockbox (wooden body)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Lockbox%20(wooden%20body)"
+    },
+    "Longship": {
+      "type": "Mounts and Vehicles",
+      "attunement": "No",
+      "summary": "Mounts and Vehicles • Cost: 10000 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/longship",
+      "roll20": "https://roll20.net/compendium/dnd5e/Longship"
+    },
+    "Longsword": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d8 Slashing • Weight: 3 lb • Cost: 15 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/longsword",
+      "roll20": "https://roll20.net/compendium/dnd5e/Longsword"
+    },
+    "Mace": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Simple • Melee • Damage: 1d6 Bludgeoning • Weight: 4 lb • Cost: 5 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/mace",
+      "roll20": "https://roll20.net/compendium/dnd5e/Mace"
+    },
+    "Malice": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Malice"
+    },
+    "Manacles": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "These metal restraints can bind a Small or Medium creature. Escaping the manacles requires a successful DC 20 Dexterity check. Breaking them requires a successful DC 20 Strength check. Each set of manacles comes with one key. Without the key, a creature proficient with thieves' tools can pick the manacles' lock with a successful DC 15 Dexterity check. Manacles have 15 hit points.",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/manacles",
+      "roll20": "https://roll20.net/compendium/dnd5e/Manacles"
+    },
+    "Map case (leather)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Map%20case%20(leather)"
+    },
+    "Moat lining (stone)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Moat%20lining%20(stone)"
+    },
+    "Moon-Touched Sword": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Moon-Touched%20Sword"
+    },
+    "Morningstar": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d8 Piercing • Weight: 4 lb • Cost: 15 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/morningstar",
+      "roll20": "https://roll20.net/compendium/dnd5e/Morningstar"
+    },
+    "Mystery Key": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Mystery%20Key"
+    },
+    "Official seal script": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Official%20seal%20script"
+    },
+    "Owlbear": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Owlbear"
+    },
+    "Pale Tincture": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pale%20Tincture"
+    },
+    "Palisade section": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Palisade%20section"
+    },
+    "Panther": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Panther"
+    },
+    "Pelagos Current Charm": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pelagos%20Current%20Charm"
+    },
+    "Pelagos Tide Charm": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pelagos%20Tide%20Charm"
+    },
+    "Pelagos's Blessing": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pelagos's%20Blessing"
+    },
+    "Pelagos's Deep Rest": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pelagos's%20Deep%20Rest"
+    },
+    "Pelagos's Tidings": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pelagos's%20Tidings"
+    },
+    "Pelagosi Tide-Preacher Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pelagosi%20Tide-Preacher%20Disguise"
+    },
+    "Pike": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d10 Piercing • Weight: 18 lb • Cost: 5 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/pike",
+      "roll20": "https://roll20.net/compendium/dnd5e/Pike"
+    },
+    "Plate armor": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 18 • Stealth: Disadvantage • STR min: 15 • Weight: 65 lb • Cost: 1500 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/plate-armor",
+      "roll20": "https://roll20.net/compendium/dnd5e/Plate%20armor"
+    },
+    "Platform": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Platform"
+    },
+    "Political scriptures": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Political%20scriptures"
+    },
+    "Portcullis frame": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Portcullis%20frame"
+    },
+    "Potion of Climbing": {
+      "type": "Potion",
+      "attunement": "No",
+      "summary": "Potion, common When you drink this potion, you gain a climbing speed equal to your walking speed for 1 hour. During this time, you have advantage on Strength (Athletics) checks you make to climb. The potion is separated into brown, silver, and gray layers resembling bands of stone. Shaking the bottle fails to mix the colors.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/potion-of-climbing",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20Climbing"
+    },
+    "Potion of climbing (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20climbing%20(base%20item)"
+    },
+    "Potion of greater healing (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20greater%20healing%20(base%20item)"
+    },
+    "Potion of Healing": {
+      "type": "Potion",
+      "attunement": "No",
+      "summary": "Potion, common You regain 2d4 + 2 hit points when you drink this potion. The potion's red liquid glimmers when agitated.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/potion-of-healing-common",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20Healing"
+    },
+    "Potion of healing (common)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20healing%20(common)"
+    },
+    "Potion of Healing (greater)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20Healing%20(greater)"
+    },
+    "Potion of Poison": {
+      "type": "Potion",
+      "attunement": "No",
+      "summary": "Potion, uncommon This concoction looks, smells, and tastes like a potion of healing or other beneficial potion. However, it is actually poison masked by illusion magic. An identify spell reveals its true nature. If you drink it, you take 3d6 poison damage, and you must succeed on a DC 13 Constitution saving throw or be poisoned. At the start of each of your turns while you are poisoned in this way, you take 3d6 po…",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/potion-of-poison",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20Poison"
+    },
+    "Potion of Resistance": {
+      "type": "Potion",
+      "attunement": "No",
+      "summary": "Potion, uncommon When you drink this potion, you gain resistance to one type of damage for 1 hour. The GM chooses the type or determines it randomly from the options below. | d10 | Damage Type | |---|---| | 1 | Acid | | 2 | Cold | | 3 | Fire | | 4 | Force | | 5 | Lightning | | 6 | Necrotic | | 7 | Poison | | 8 | Psychic | | 9 | Radiant | | 10 | Thunder |",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/potion-of-resistance",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20Resistance"
+    },
+    "Potion of resistance (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20resistance%20(base%20item)"
+    },
+    "Potion of superior healing (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20superior%20healing%20(base%20item)"
+    },
+    "Potion of supreme healing (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20supreme%20healing%20(base%20item)"
+    },
+    "Potion of Water Breathing": {
+      "type": "Potion",
+      "attunement": "No",
+      "summary": "Potion, uncommon You can breathe underwater for 1 hour after drinking this potion. Its cloudy green fluid smells of the sea and has a jellyfish-like bubble floating in it.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/potion-of-water-breathing",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20Water%20Breathing"
+    },
+    "Potion of water breathing (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Potion%20of%20water%20breathing%20(base%20item)"
+    },
+    "Quiver": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "A quiver can hold up to 20 arrows.",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/quiver",
+      "roll20": "https://roll20.net/compendium/dnd5e/Quiver"
+    },
+    "Rapier": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d8 Piercing • Weight: 2 lb • Cost: 25 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/rapier",
+      "roll20": "https://roll20.net/compendium/dnd5e/Rapier"
+    },
+    "Rations (100)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Rations%20(100)"
+    },
+    "Regiment (100)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Regiment%20(100)"
+    },
+    "Reinforced cloak": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Reinforced%20cloak"
+    },
+    "Religious Scriptures": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Religious%20Scriptures"
+    },
+    "Ring mail": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 14 • Stealth: Disadvantage • Weight: 40 lb • Cost: 30 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/ring-mail",
+      "roll20": "https://roll20.net/compendium/dnd5e/Ring%20mail"
+    },
+    "Ring of Jumping": {
+      "type": "Ring",
+      "attunement": "No",
+      "summary": "Ring, uncommon (requires attunement) While wearing this ring, you can cast the jump spell from it as a bonus action at will, but can target only yourself when you do so.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/ring-of-jumping",
+      "roll20": "https://roll20.net/compendium/dnd5e/Ring%20of%20Jumping"
+    },
+    "Ring of Swimming": {
+      "type": "Ring",
+      "attunement": "No",
+      "summary": "Ring, uncommon You have a swimming speed of 40 feet while wearing this ring.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/ring-of-swimming",
+      "roll20": "https://roll20.net/compendium/dnd5e/Ring%20of%20Swimming"
+    },
+    "Ring of Warmth": {
+      "type": "Ring",
+      "attunement": "No",
+      "summary": "Ring, uncommon (requires attunement) While wearing this ring, you have resistance to cold damage. In addition, you and everything you wear and carry are unharmed by temperatures as low as -50 degrees Fahrenheit.",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/ring-of-warmth",
+      "roll20": "https://roll20.net/compendium/dnd5e/Ring%20of%20Warmth"
+    },
+    "Robe": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Robe"
+    },
+    "Rope of Climbing": {
+      "type": "Wondrous Items",
+      "attunement": "No",
+      "summary": "Wondrous item, uncommon This 60-foot length of silk rope weighs 3 pounds and can hold up to 3,000 pounds. If you hold one end of the rope and use an action to speak the command word, the rope animates. As a bonus action, you can command the other end to move toward a destination you choose. That end moves 10 feet on your turn when you first command it and 10 feet on each of your turns until reaching its destinatio…",
+      "source": "https://www.dnd5eapi.co/api/2014/magic-items/rope-of-climbing",
+      "roll20": "https://roll20.net/compendium/dnd5e/Rope%20of%20Climbing"
+    },
+    "Rowthorn + Karr": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Rowthorn%20%2B%20Karr"
+    },
+    "Saddle": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Saddle"
+    },
+    "Saddle of the Cavalier": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Saddle%20of%20the%20Cavalier"
+    },
+    "Saddlebags": {
+      "type": "Mounts and Vehicles",
+      "attunement": "No",
+      "summary": "Mounts and Vehicles • Weight: 8 lb • Cost: 4 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/saddlebags",
+      "roll20": "https://roll20.net/compendium/dnd5e/Saddlebags"
+    },
+    "Scaffolding section": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Scaffolding%20section"
+    },
+    "Scale mail": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 14 • Stealth: Disadvantage • Weight: 45 lb • Cost: 50 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/scale-mail",
+      "roll20": "https://roll20.net/compendium/dnd5e/Scale%20mail"
+    },
+    "Scimitar": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d6 Slashing • Weight: 3 lb • Cost: 25 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/scimitar",
+      "roll20": "https://roll20.net/compendium/dnd5e/Scimitar"
+    },
+    "Sending Stones": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Sending%20Stones"
+    },
+    "Sentinel Shield": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Sentinel%20Shield"
+    },
+    "Shield of Expression": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Shield%20of%20Expression"
+    },
+    "Shield, +1": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Shield%2C%20%2B1"
+    },
+    "Shortsword": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d6 Piercing • Weight: 2 lb • Cost: 10 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/shortsword",
+      "roll20": "https://roll20.net/compendium/dnd5e/Shortsword"
+    },
+    "Sling pouch": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Sling%20pouch"
+    },
+    "Sloop": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Sloop"
+    },
+    "Small boat hull (simple)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Small%20boat%20hull%20(simple)"
+    },
+    "Smoldering Armor": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Smoldering%20Armor"
+    },
+    "Spear": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Simple • Melee • Damage: 1d6 Piercing • Weight: 3 lb • Cost: 1 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/spear",
+      "roll20": "https://roll20.net/compendium/dnd5e/Spear"
+    },
+    "Spell scroll (mundane script)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Spell%20scroll%20(mundane%20script)"
+    },
+    "Spyglass": {
+      "type": "Adventuring Gear",
+      "attunement": "No",
+      "summary": "Objects viewed through a spyglass are magnified to twice their size.",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/spyglass",
+      "roll20": "https://roll20.net/compendium/dnd5e/Spyglass"
+    },
+    "Stained glass window": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stained%20glass%20window"
+    },
+    "Stake": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stake"
+    },
+    "Statue": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Statue"
+    },
+    "Sticky bomb (glue grenade)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Sticky%20bomb%20(glue%20grenade)"
+    },
+    "Stone bridge": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20bridge"
+    },
+    "Stone door": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20door"
+    },
+    "Stone of Good Luck": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20of%20Good%20Luck"
+    },
+    "Stone road section": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20road%20section"
+    },
+    "Stone staircase": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20staircase"
+    },
+    "Stone threshold": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20threshold"
+    },
+    "Stone tile": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20tile"
+    },
+    "Stone wall section": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stone%20wall%20section"
+    },
+    "Stoneskin varnish (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Stoneskin%20varnish%20(base%20item)"
+    },
+    "Strong liquor (simple)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Strong%20liquor%20(simple)"
+    },
+    "Studded leather armor": {
+      "type": "Armor",
+      "attunement": "No",
+      "summary": "Armor • AC: 12 • Weight: 13 lb • Cost: 45 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/studded-leather-armor",
+      "roll20": "https://roll20.net/compendium/dnd5e/Studded%20leather%20armor"
+    },
+    "Sword of Vengeance": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Sword%20of%20Vengeance"
+    },
+    "Tack and reins": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Tack%20and%20reins"
+    },
+    "Telluria's Blessing": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Telluria's%20Blessing"
+    },
+    "Telluria's Embrace": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Telluria's%20Embrace"
+    },
+    "Telluria's Guidance": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Telluria's%20Guidance"
+    },
+    "Tellurian Priest Disguise": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Tellurian%20Priest%20Disguise"
+    },
+    "Tellurian Root Charm": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Tellurian%20Root%20Charm"
+    },
+    "Tellurian Stone Charm": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Tellurian%20Stone%20Charm"
+    },
+    "Tent (leather panels)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Tent%20(leather%20panels)"
+    },
+    "Tiger": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Tiger"
+    },
+    "Torpor (Poison)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Torpor%20(Poison)"
+    },
+    "Tower (stone)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Tower%20(stone)"
+    },
+    "Traveler’s clothes": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Traveler%E2%80%99s%20clothes"
+    },
+    "Trident": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d6 Piercing • Weight: 4 lb • Cost: 5 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/trident",
+      "roll20": "https://roll20.net/compendium/dnd5e/Trident"
+    },
+    "Truth Serum": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Truth%20Serum"
+    },
+    "Vial, glass": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Vial%2C%20glass"
+    },
+    "Vitality tonic (base item)": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Vitality%20tonic%20(base%20item)"
+    },
+    "Walloping Ammunition": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Walloping%20Ammunition"
+    },
+    "War pick": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d8 Piercing • Weight: 2 lb • Cost: 5 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/war-pick",
+      "roll20": "https://roll20.net/compendium/dnd5e/War%20pick"
+    },
+    "Warhammer": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d8 Bludgeoning • Weight: 2 lb • Cost: 15 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/warhammer",
+      "roll20": "https://roll20.net/compendium/dnd5e/Warhammer"
+    },
+    "Warship": {
+      "type": "Mounts and Vehicles",
+      "attunement": "No",
+      "summary": "Mounts and Vehicles • Cost: 25000 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/warship",
+      "roll20": "https://roll20.net/compendium/dnd5e/Warship"
+    },
+    "Waterproof cover": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Waterproof%20cover"
+    },
+    "Weak beer / small beer": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Weak%20beer%20%2F%20small%20beer"
+    },
+    "Whip": {
+      "type": "Weapon",
+      "attunement": "No",
+      "summary": "Weapon • Martial • Melee • Damage: 1d4 Slashing • Weight: 3 lb • Cost: 2 gp",
+      "source": "https://www.dnd5eapi.co/api/2014/equipment/whip",
+      "roll20": "https://roll20.net/compendium/dnd5e/Whip"
+    },
+    "Window frame": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Window%20frame"
+    },
+    "Window pane": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Window%20pane"
+    },
+    "Wood‑cored shield": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Wood%E2%80%91cored%20shield"
+    },
+    "Wooden floor section": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Wooden%20floor%20section"
+    },
+    "Wooden laminar armor piece": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Wooden%20laminar%20armor%20piece"
+    },
+    "Wooden shield": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Wooden%20shield"
+    },
+    "Wraps of Unarmed Power, +1": {
+      "type": "",
+      "attunement": "",
+      "summary": "",
+      "source": "",
+      "roll20": "https://roll20.net/compendium/dnd5e/Wraps%20of%20Unarmed%20Power%2C%20%2B1"
     }
   }
 }
