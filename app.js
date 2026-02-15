@@ -3080,7 +3080,207 @@ const COMPENDIUM_DETAILS = {
 function compendiumKey(name){
   return String(name || "").trim();
 }
-   
+   // ---------- Compendium Export helpers ----------
+function normalizeNameForMatch(s){
+  return String(s || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[’‘]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, " ")
+    .replace(/[^\w\s\-\+\(\),']/g, "");
+}
+
+function shortText(t){
+  const s = String(t || "").replace(/\s+/g, " ").trim();
+  if(!s) return "";
+  return s.length > 420 ? (s.slice(0, 417).trim() + "…") : s;
+}
+
+function roll20UrlFor(item){
+  return `https://roll20.net/compendium/dnd5e/${encodeURIComponent(String(item || "").trim())}`;
+}
+
+async function fetchJsonSafe(url){
+  try{
+    const r = await fetch(url, { cache: "no-store" });
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){
+    return null;
+  }
+}
+
+async function buildSrdIndex(){
+  // Fetch SRD lists once, build name->url maps (fast + fewer requests)
+  const base = "https://www.dnd5eapi.co/api/2014";
+
+  const [magicList, equipList] = await Promise.all([
+    fetchJsonSafe(`${base}/magic-items`),
+    fetchJsonSafe(`${base}/equipment`)
+  ]);
+
+  const magicMap = new Map();
+  const equipMap = new Map();
+
+  if(magicList && Array.isArray(magicList.results)){
+    for(const r of magicList.results){
+      magicMap.set(normalizeNameForMatch(r.name), r.url); // url is like "/api/2014/magic-items/..."
+    }
+  }
+
+  if(equipList && Array.isArray(equipList.results)){
+    for(const r of equipList.results){
+      equipMap.set(normalizeNameForMatch(r.name), r.url);
+    }
+  }
+
+  return { base, magicMap, equipMap };
+}
+
+async function srdDetailForItem(itemName, srdIndex){
+  const nameKey = normalizeNameForMatch(itemName);
+  const { base, magicMap, equipMap } = srdIndex;
+
+  // Magic item first
+  if(magicMap.has(nameKey)){
+    const url = magicMap.get(nameKey);
+    const d = await fetchJsonSafe(`https://www.dnd5eapi.co${url}`);
+    if(!d) return null;
+
+    return {
+      type: (d.equipment_category && d.equipment_category.name) ? d.equipment_category.name : "Magic Item",
+      attunement: d.requires_attunement ? "Yes" : "No",
+      summary: shortText(Array.isArray(d.desc) ? d.desc.join(" ") : d.desc),
+      source: `https://www.dnd5eapi.co${url}`,
+      roll20: roll20UrlFor(itemName)
+    };
+  }
+
+  // Equipment (weapons/armor/gear)
+  if(equipMap.has(nameKey)){
+    const url = equipMap.get(nameKey);
+    const d = await fetchJsonSafe(`https://www.dnd5eapi.co${url}`);
+    if(!d) return null;
+
+    // Prefer official desc if present, otherwise construct a compact summary
+    let summary = shortText(Array.isArray(d.desc) ? d.desc.join(" ") : d.desc);
+    if(!summary){
+      const bits = [];
+      const cat = d.equipment_category && d.equipment_category.name;
+      if(cat) bits.push(cat);
+
+      if(d.weapon_category) bits.push(d.weapon_category);
+      if(d.weapon_range) bits.push(d.weapon_range);
+
+      if(d.damage && d.damage.damage_dice){
+        const dt = d.damage.damage_type && d.damage.damage_type.name ? d.damage.damage_type.name : "";
+        bits.push(`Damage: ${d.damage.damage_dice}${dt ? " " + dt : ""}`);
+      }
+
+      if(d.armor_class && typeof d.armor_class.base === "number"){
+        bits.push(`AC: ${d.armor_class.base}`);
+      }
+
+      if(d.stealth_disadvantage === true) bits.push("Stealth: Disadvantage");
+      if(d.str_minimum) bits.push(`STR min: ${d.str_minimum}`);
+      if(d.weight != null) bits.push(`Weight: ${d.weight} lb`);
+
+      if(d.cost && d.cost.quantity != null && d.cost.unit){
+        bits.push(`Cost: ${d.cost.quantity} ${d.cost.unit}`);
+      }
+
+      summary = bits.join(" • ");
+    }
+
+    return {
+      type: (d.equipment_category && d.equipment_category.name) ? d.equipment_category.name : "Equipment",
+      attunement: "No",
+      summary,
+      source: `https://www.dnd5eapi.co${url}`,
+      roll20: roll20UrlFor(itemName)
+    };
+  }
+
+  return null;
+}
+
+function downloadJson(filename, obj){
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(a.href), 250);
+}
+
+async function exportCompendiumJson(setStatus){
+  // Build list
+  const comp = buildCompendiumIndex();
+  const items = comp.items;
+
+  // Preserve existing compendium entries (and homebrew edits)
+  const existing = (DATA.compendium && typeof DATA.compendium === "object") ? DATA.compendium : {};
+  const outItems = { ...existing };
+
+  setStatus(`Preparing SRD index…`);
+  const srdIndex = await buildSrdIndex();
+
+  // If SRD API fails (CORS/network), still export stubs with roll20 links
+  const srdOk = srdIndex && srdIndex.magicMap && srdIndex.equipMap;
+
+  let filled = 0;
+  let stubbed = 0;
+  let kept = 0;
+
+  for(let i=0; i<items.length; i++){
+    const name = items[i];
+    const existingEntry = outItems[name];
+
+    // If you already have a non-empty summary, keep it
+    if(existingEntry && String(existingEntry.summary || "").trim()){
+      // Ensure roll20 is present
+      if(!existingEntry.roll20) existingEntry.roll20 = roll20UrlFor(name);
+      kept++;
+      continue;
+    }
+
+    setStatus(`Filling ${i+1}/${items.length}: ${name}`);
+
+    let entry = null;
+    if(srdOk){
+      entry = await srdDetailForItem(name, srdIndex);
+    }
+
+    if(entry){
+      outItems[name] = entry;
+      filled++;
+    }else{
+      // stub entry (still has roll20 link)
+      outItems[name] = {
+        type: existingEntry?.type || "",
+        attunement: existingEntry?.attunement || "",
+        summary: existingEntry?.summary || "",
+        source: existingEntry?.source || "",
+        roll20: roll20UrlFor(name)
+      };
+      stubbed++;
+    }
+  }
+
+  const finalOut = {
+    version: 1,
+    items: Object.fromEntries(
+      Object.entries(outItems).sort((a,b)=>a[0].localeCompare(b[0], undefined, { sensitivity: "base" }))
+    )
+  };
+
+  setStatus(`Done. Filled: ${filled} • Kept: ${kept} • Stubbed: ${stubbed}. Downloading…`);
+  downloadJson("compendium_items.json", finalOut);
+}
+
    function buildCompendiumIndex(){
   const itemToFacilities = new Map();
 
@@ -3198,8 +3398,10 @@ function autoCompendiumDetail(itemName){
       </div>
 
       <div class="siModalFoot">
-        <button class="btn siModalClose" type="button">Close</button>
-      </div>
+  <div class="small muted" id="compExportStatus" style="flex:1; text-align:left;"> </div>
+  <button class="btn" id="compExportBtn" type="button">Export Compendium JSON</button>
+  <button class="btn siModalClose" type="button">Close</button>
+</div>
     </div>
   `;
   document.body.appendChild(ov);
@@ -3215,6 +3417,22 @@ function autoCompendiumDetail(itemName){
   const listEl = ov.querySelector("#compList");
   const detailEl = ov.querySelector("#compDetail");
   const searchEl = ov.querySelector("#compSearch");
+  const exportBtn = ov.querySelector("#compExportBtn");
+  const exportStatus = ov.querySelector("#compExportStatus");
+
+  const setStatus = (t) => {
+    if(exportStatus) exportStatus.textContent = String(t || "");
+  };
+
+  exportBtn?.addEventListener("click", async ()=>{
+    exportBtn.disabled = true;
+    try{
+      await exportCompendiumJson(setStatus);
+    } finally {
+      exportBtn.disabled = false;
+    }
+  });
+
 
   const renderList = (filterText="") => {
     const ft = String(filterText || "").trim().toLowerCase();
