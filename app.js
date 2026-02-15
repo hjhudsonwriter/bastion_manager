@@ -175,14 +175,21 @@ function tickConstruction(){
     ui.levelSelect.innerHTML = Array.from({length:20}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join("");
 
     // Load data
-    const [facilities, tools, events] = await Promise.all([
-      fetch(withBase("data/facilities.json")).then(r=>r.json()),
-      fetch(withBase("data/tools_tables.json")).then(r=>r.json()),
-      fetch(withBase("data/events.json")).then(r=>r.json()),
-    ]);
-    DATA = { facilities, tools, events };
-     ensureDiplomacyState();
-     ensureDiplomacyPanel();
+const [facilities, tools, events, compendiumRaw] = await Promise.all([
+  fetch(withBase("data/facilities.json")).then(r=>r.json()),
+  fetch(withBase("data/tools_tables.json")).then(r=>r.json()),
+  fetch(withBase("data/events.json")).then(r=>r.json()),
+  fetch(withBase("data/compendium_items.json"))
+    .then(r => r.ok ? r.json() : null)
+    .catch(()=> null)
+]);
+
+DATA = { facilities, tools, events };
+DATA.compendium = (compendiumRaw && compendiumRaw.items) ? compendiumRaw.items : {};
+
+ensureDiplomacyState();
+ensureDiplomacyPanel();
+
 
     // Wire controls
     ui.treasuryInput.value = String(state.treasuryGP);
@@ -3120,7 +3127,52 @@ function compendiumKey(name){
   return { items, itemToFacilities };
 }
 
-function openCompendium(){
+function autoCompendiumDetail(itemName){
+  const n = String(itemName || "").trim();
+
+  // Potions
+  if(/^Potion of /i.test(n)){
+    return {
+      type: "Potion",
+      attunement: "No",
+      summary: "A consumable potion. Drinking it typically takes an action. The exact effect depends on the potion name."
+    };
+  }
+
+  // Poisons
+  if(/\(Poison\)/i.test(n) || /poison/i.test(n)){
+    return {
+      type: "Poison / Alchemical",
+      attunement: "No",
+      summary: "A crafted poison or alchemical compound. Application method and effects depend on the specific item."
+    };
+  }
+
+  // Armor / Shield hints
+  if(/armor/i.test(n) || /mail/i.test(n) || /plate/i.test(n) || /shield/i.test(n)){
+    return {
+      type: "Armor",
+      attunement: "No",
+      summary: "Protective equipment. Use standard rules for armor/shields unless this entry is overridden by a specific compendium description."
+    };
+  }
+
+  // Weapons (basic heuristic)
+  const weaponWords = [
+    "sword","axe","hammer","mace","dagger","spear","pike","glaive","halberd","rapier","scimitar","flail","trident","lance","bow"
+  ];
+  if(weaponWords.some(w => n.toLowerCase().includes(w))){
+    return {
+      type: "Weapon",
+      attunement: "No",
+      summary: "A weapon crafted at the bastion. Use standard weapon rules unless a specific compendium entry overrides it."
+    };
+  }
+
+  return null;
+}
+   
+   function openCompendium(){
   const comp = buildCompendiumIndex();
 
   const ov = document.createElement("div");
@@ -3180,7 +3232,7 @@ function openCompendium(){
         const links = comp.itemToFacilities.get(item) || [];
 
                 const key = compendiumKey(item);
-        const info = COMPENDIUM_DETAILS[key] || null;
+        const info = (DATA.compendium && DATA.compendium[key]) ? DATA.compendium[key] : (autoCompendiumDetail(key) || null);
 
         const craftedAtHtml = links.length
           ? `
@@ -3215,6 +3267,12 @@ function openCompendium(){
           ${craftedAtHtml}
 
           ${info.source ? `<div class="small muted" style="margin-top:10px;">Source: <a href="${escapeHtml(info.source)}" target="_blank" rel="noopener">Open reference</a></div>` : ""}
+          ${(() => {
+  const q = encodeURIComponent(item);
+  return `<div class="small muted" style="margin-top:10px;">
+    Roll20 lookup: <a href="https://roll20.net/compendium/dnd5e/${q}" target="_blank" rel="noopener">Open on Roll20</a>
+  </div>`;
+})()}
         `;
       });
     });
