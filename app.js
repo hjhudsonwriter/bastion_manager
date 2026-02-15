@@ -29,6 +29,7 @@
     treasuryInput: $("treasuryInput"),
     levelSelect: $("levelSelect"),
     rollEventBtn: $("rollEventBtn"),
+    compendiumBtn: $("compendiumBtn"), 
     advanceTurnBtn: $("advanceTurnBtn"),
     resetBtn: $("resetBtn"),
     downloadSaveBtn: $("downloadSaveBtn"),
@@ -268,7 +269,11 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
       render();
     });
 
-    ui.advanceTurnBtn.addEventListener("click", async () => {
+       ui.compendiumBtn?.addEventListener("click", () => {
+      openCompendium();
+    });
+     
+     ui.advanceTurnBtn.addEventListener("click", async () => {
   state.turn += 1;
        
          tickDiplomacyOnAdvanceTurn(); // ✅ add this line
@@ -2782,7 +2787,56 @@ function readArtisanToolsFromUI(){
   }
 }
 
-function positionTooltip(e, tip){
+function bindFacilitySlotTooltips(){
+  const tip = document.getElementById("facilityTooltip");
+  if(!tip) return;
+
+  const selects = Array.from(document.querySelectorAll("#slotList select"));
+  for(const sel of selects){
+    if(sel.dataset.facTtBound === "1") continue;
+    sel.dataset.facTtBound = "1";
+
+    const show = (e) => {
+      const facId = sel.value;
+      if(!facId){
+        tip.hidden = true;
+        return;
+      }
+
+      const fac = (DATA.facilities || []).find(f => f.id === facId);
+      if(!fac){
+        tip.hidden = true;
+        return;
+      }
+
+      const req = Number(fac.requiredLevel || 0);
+      const fns = Array.isArray(fac.functions) ? fac.functions : [];
+      const fnLines = fns.slice(0, 8).map(fn => {
+        const label = fn.label || fn.id || "Action";
+        return `<li>${escapeHtml(label)}</li>`;
+      }).join("");
+
+      tip.innerHTML = `
+        <div class="ttTitle">${escapeHtml(fac.name || fac.id)}</div>
+        ${req ? `<div class="small muted">Unlocks at Party Level ${escapeHtml(String(req))}</div>` : ""}
+        ${fnLines ? `<div class="small muted" style="margin-top:6px">What it does:</div><ul>${fnLines}</ul>` : `<div class="small muted">No actions listed.</div>`}
+      `;
+
+      tip.hidden = false;
+      positionTooltip(e, tip);
+    };
+
+    const move = (e) => positionTooltip(e, tip);
+    const hide = () => { tip.hidden = true; };
+
+    sel.addEventListener("mouseenter", show);
+    sel.addEventListener("mousemove", move);
+    sel.addEventListener("mouseleave", hide);
+    sel.addEventListener("change", show);
+  }
+}
+   
+   function positionTooltip(e, tip){
   const pad = 14;
   const x = (e.clientX || 0) + pad;
   const y = (e.clientY || 0) + pad;
@@ -2795,6 +2849,135 @@ function positionTooltip(e, tip){
   tip.style.top  = `${Math.max(18, Math.min(y, maxY))}px`;
 }
 
+   // =========================
+// Compendium (All craftables)
+// =========================
+function buildCompendiumIndex(){
+  const itemToFacilities = new Map();
+
+  const addLink = (itemLabel, facName, fnLabel) => {
+    const key = String(itemLabel || "").trim();
+    if(!key) return;
+    if(!itemToFacilities.has(key)) itemToFacilities.set(key, []);
+    const arr = itemToFacilities.get(key);
+
+    const sig = `${facName}__${fnLabel || ""}`;
+    if(!arr.some(x => `${x.facName}__${x.fnLabel||""}` === sig)){
+      arr.push({ facName, fnLabel: fnLabel || "" });
+    }
+  };
+
+  // 1) Anything explicitly listed in facility function options
+  for(const fac of (DATA.facilities || [])){
+    const facName = fac.name || fac.id || "Unknown Facility";
+    for(const fn of (fac.functions || [])){
+      const fnLabel = fn.label || fn.id || "";
+      const opts = Array.isArray(fn.options) ? fn.options : [];
+      for(const o of opts){
+        if(o && typeof o === "object" && "label" in o) addLink(o.label, facName, fnLabel);
+        else addLink(String(o), facName, fnLabel);
+      }
+    }
+  }
+
+  // 2) Artisan tool tables (these are “Workshop Craft” sources)
+  // We don’t know which tables the player has selected, so compendium includes ALL possible tables.
+  if(DATA.tools && typeof DATA.tools === "object"){
+    for(const tableName of Object.keys(DATA.tools)){
+      const items = Array.isArray(DATA.tools[tableName]) ? DATA.tools[tableName] : [];
+      for(const item of items){
+        addLink(String(item), "Workshop", "Craft (via Artisan Tools)");
+      }
+    }
+  }
+
+  // Make final sorted list
+  const items = Array.from(itemToFacilities.keys())
+    .sort((a,b)=>a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+  return { items, itemToFacilities };
+}
+
+function openCompendium(){
+  const comp = buildCompendiumIndex();
+
+  const ov = document.createElement("div");
+  ov.className = "siModalOverlay";
+  ov.innerHTML = `
+    <div class="siModal siModal--compendium" role="dialog" aria-modal="true">
+      <div class="siModalHead">
+        <div class="siModalTitle">Compendium</div>
+        <button class="siModalX" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <div class="siModalBody">
+        <div class="compendiumWrap">
+          <div class="compendiumLeft">
+            <input class="compendiumSearch" id="compSearch" type="text" placeholder="Search items…" />
+            <div class="compendiumList" id="compList"></div>
+          </div>
+
+          <div class="compendiumRight" id="compDetail">
+            <div class="small muted">Select an item on the left.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="siModalFoot">
+        <button class="btn siModalClose" type="button">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(ov);
+
+  const close = () => ov.remove();
+  ov.querySelector(".siModalX")?.addEventListener("click", close);
+  ov.querySelector(".siModalClose")?.addEventListener("click", close);
+  ov.addEventListener("click", (e)=> { if(e.target === ov) close(); });
+
+  const onKey = (e) => { if(e.key === "Escape") { document.removeEventListener("keydown", onKey); close(); } };
+  document.addEventListener("keydown", onKey);
+
+  const listEl = ov.querySelector("#compList");
+  const detailEl = ov.querySelector("#compDetail");
+  const searchEl = ov.querySelector("#compSearch");
+
+  const renderList = (filterText="") => {
+    const ft = String(filterText || "").trim().toLowerCase();
+    const shown = ft
+      ? comp.items.filter(x => x.toLowerCase().includes(ft))
+      : comp.items;
+
+    listEl.innerHTML = shown.map(item => `
+      <button class="compendiumItemBtn" type="button" data-item="${escapeHtml(item)}">${escapeHtml(item)}</button>
+    `).join("");
+
+    listEl.querySelectorAll("[data-item]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const item = btn.getAttribute("data-item") || "";
+        const links = comp.itemToFacilities.get(item) || [];
+
+        detailEl.innerHTML = `
+          <div class="compendiumDetailTitle">${escapeHtml(item)}</div>
+
+          <div class="small muted">Craftable at:</div>
+          <div class="compendiumPills">
+            ${links.map(l => `<span class="compendiumPill">${escapeHtml(l.facName)}${l.fnLabel ? ` • ${escapeHtml(l.fnLabel)}` : ""}</span>`).join("")}
+          </div>
+
+          <div class="small muted">
+            Item effects/descriptions can be added next (we can plug in a JSON later).
+            For now this compendium is a clean index + “where to craft it”.
+          </div>
+        `;
+      });
+    });
+  };
+
+  renderList("");
+  searchEl.addEventListener("input", ()=> renderList(searchEl.value));
+}
+   
    function renderFacilities(){
   const lvl = state.partyLevel;
 
@@ -2908,6 +3091,7 @@ function positionTooltip(e, tip){
       saveState();
       render();
     });
+      bindFacilitySlotTooltips();
   });
 
   // --- Pending Orders list ---
