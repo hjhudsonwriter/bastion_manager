@@ -3511,8 +3511,8 @@ function autoCompendiumDetail(itemName){
       const src = el.getAttribute("data-img");
       if(src) openImageViewer(src);
     });
-  });
-  };
+});
+});
 
   renderList("");
   searchEl.addEventListener("input", ()=> renderList(searchEl.value));
