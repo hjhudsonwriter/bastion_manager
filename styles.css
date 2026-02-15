@@ -790,6 +790,87 @@ select option{
 .artisanTooltip ul{ margin: 6px 0 0 18px; padding: 0; }
 .artisanTooltip li{ margin: 2px 0; }
 
+/* =========================
+   Compendium Modal
+   ========================= */
+.siModal--compendium{
+  max-width: 980px;
+}
+
+.compendiumWrap{
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 14px;
+}
+
+.compendiumLeft{
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(0,0,0,.25);
+}
+
+.compendiumRight{
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(0,0,0,.18);
+}
+
+.compendiumSearch{
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,178,94,.25);
+  background: rgba(0,0,0,.35);
+  color: var(--text);
+}
+
+.compendiumList{
+  max-height: 420px;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.compendiumItemBtn{
+  width: 100%;
+  text-align: left;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,178,94,.18);
+  background: rgba(0,0,0,.20);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.compendiumItemBtn:hover{
+  border-color: rgba(214,178,94,.45);
+}
+
+.compendiumDetailTitle{
+  font-weight: 900;
+  letter-spacing: .04em;
+  margin-bottom: 8px;
+}
+
+.compendiumPills{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 12px;
+}
+
+.compendiumPill{
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(214,178,94,.25);
+  background: rgba(0,0,0,.25);
+}
+
 /* SVG God Icons */
 /* =========================
    SVG God Icons (real icons)
