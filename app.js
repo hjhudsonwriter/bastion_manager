@@ -2852,7 +2852,229 @@ function bindFacilitySlotTooltips(){
    // =========================
 // Compendium (All craftables)
 // =========================
-function buildCompendiumIndex(){
+// =========================
+// Compendium item details (Phase 1: magic items / special items)
+// =========================
+const COMPENDIUM_DETAILS = {
+  "Bag of Holding": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "A bag whose inside is much larger than the outside. Holds up to 500 lb / 64 cubic feet; retrieving an item takes an action. Overloading or tearing it destroys it and scatters contents into the Astral Plane.",
+    source: "https://dnd5e.wikidot.com/wondrous-items:bag-of-holding"
+  },
+  "Cloak of Protection": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "Yes",
+    summary: "While wearing it, you gain +1 to AC and +1 to saving throws.",
+    source: "https://dnd5e.wikidot.com/wondrous-items:cloak-of-protection"
+  },
+  "Ring of Warmth": {
+    type: "Ring (Uncommon)",
+    attunement: "Yes",
+    summary: "While wearing it, you have resistance to cold damage and are unharmed by extreme cold temperatures (as described in the item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items:ring-of-warmth"
+  },
+  "Sentinel Shield": {
+    type: "Armor (Shield) (Uncommon)",
+    attunement: "No",
+    summary: "While holding it, you have advantage on initiative rolls and Wisdom (Perception) checks.",
+    source: "https://dnd5e.wikidot.com/wondrous-items:sentinel-shield"
+  },
+  "Dread Helm": {
+    type: "Wondrous item (Common)",
+    attunement: "No",
+    summary: "While wearing it, your eyes glow red.",
+    source: "https://dnd5e.wikidot.com/wondrous-items:dread-helm"
+  },
+  "Moon-Touched Sword": {
+    type: "Weapon (any sword) (Common)",
+    attunement: "No",
+    summary: "In darkness, when unsheathed it sheds bright light in a 15-ft radius and dim light for an additional 15 ft.",
+    source: "https://dnd5e.wikidot.com/wondrous-items:moon-touched-sword"
+  },
+  "Shield of Expression": {
+    type: "Armor (Shield) (Common)",
+    attunement: "No",
+    summary: "While bearing it, you can use a bonus action to change the face on its front to a different expression.",
+    source: "https://roll20.net/compendium/dnd5e/Items%3AShield%20of%20Expression/"
+  },
+  "Wraps of Unarmed Power, +1": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "While wearing them, you gain +1 to attack and damage rolls with unarmed strikes. (2024 rules text also allows choosing Force or normal type for the strike.)",
+    source: "https://roll20.net/compendium/dnd5e/Items%3AWraps%20of%20Unarmed%20Power%20%2B1?expansion=33335"
+  },
+
+  // ===== Fill-outs for the rest of your magic-table set (Phase 1)
+  "Bead of Nourishment": {
+    type: "Wondrous item (Common)",
+    attunement: "No",
+    summary: "Consumable bead that provides nourishment (no food needed for the day).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Bead of Refreshment": {
+    type: "Wondrous item (Common)",
+    attunement: "No",
+    summary: "Consumable bead that provides drink/refreshment (no water needed for the day).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Boots of Striding and Springing": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "Yes",
+    summary: "Improves movement: prevents speed reduction from encumbrance and boosts jump distance (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Boots of the Winterlands": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "Yes",
+    summary: "Cold-weather mobility and survival benefits (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Cap of Water Breathing": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "Wearer can breathe underwater (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Charlatan's Die": {
+    type: "Wondrous item (Common)",
+    attunement: "No",
+    summary: "A trick die that can be controlled to land on a chosen face (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Circlet of Blasting": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "Lets the wearer cast Scorching Ray (limited uses, per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Gloves of Swimming and Climbing": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "Grants a climbing speed and swimming speed (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Gloves of Thievery": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "Boosts Sleight of Hand and lockpicking (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Hat of Disguise": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "Yes",
+    summary: "Lets you cast Disguise Self at will while wearing it.",
+    source: "https://dnd5e.wikidot.com/wondrous-items:hat-of-disguise"
+  },
+  "Lock of Trickery": {
+    type: "Wondrous item (Common)",
+    attunement: "No",
+    summary: "A lock with a magical trick property (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Mystery Key": {
+    type: "Wondrous item (Common)",
+    attunement: "No",
+    summary: "A key that can fit and open an unknown lock once, then becomes mundane (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Potion of Climbing": {
+    type: "Potion (Common)",
+    attunement: "No",
+    summary: "Grants a climbing speed for a limited duration (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Potion of Healing (greater)": {
+    type: "Potion (Uncommon)",
+    attunement: "No",
+    summary: "Heals more than a basic healing potion (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Potion of Poison": {
+    type: "Potion (Uncommon)",
+    attunement: "No",
+    summary: "A trapped/hostile potion that poisons the drinker (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Potion of Resistance": {
+    type: "Potion (Uncommon)",
+    attunement: "No",
+    summary: "Grants resistance to a specific damage type for a limited duration (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Potion of Water Breathing": {
+    type: "Potion (Uncommon)",
+    attunement: "No",
+    summary: "Lets the drinker breathe underwater for a limited duration (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Ring of Jumping": {
+    type: "Ring (Uncommon)",
+    attunement: "Yes",
+    summary: "Boosts jump distance (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Ring of Swimming": {
+    type: "Ring (Uncommon)",
+    attunement: "No",
+    summary: "Grants a swimming speed (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Rope of Climbing": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "A rope that animates to climb, knot, and secure itself (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Saddle of the Cavalier": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "Helps keep you mounted and resists being dismounted (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Sending Stones": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "No",
+    summary: "Paired stones that allow limited Sending-style communication between them (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Shield, +1": {
+    type: "Armor (Shield) (Uncommon)",
+    attunement: "No",
+    summary: "A shield with a +1 bonus to AC beyond a normal shield.",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Smoldering Armor": {
+    type: "Armor (Common)",
+    attunement: "No",
+    summary: "Armor that harmlessly emits smoke/embers for dramatic effect (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Stone of Good Luck": {
+    type: "Wondrous item (Uncommon)",
+    attunement: "Yes",
+    summary: "Also called a Luckstone. Grants a bonus to ability checks and saving throws (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Sword of Vengeance": {
+    type: "Weapon (Rare)",
+    attunement: "Yes",
+    summary: "A cursed sword that drives the wielder to pursue a foe when harmed (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  },
+  "Walloping Ammunition": {
+    type: "Weapon (Ammunition) (Common)",
+    attunement: "No",
+    summary: "Ammunition that can knock a target prone on a hit (per item).",
+    source: "https://dnd5e.wikidot.com/wondrous-items"
+  }
+};
+
+function compendiumKey(name){
+  return String(name || "").trim();
+}
+   
+   function buildCompendiumIndex(){
   const itemToFacilities = new Map();
 
   const addLink = (itemLabel, facName, fnLabel) => {
@@ -2957,18 +3179,42 @@ function openCompendium(){
         const item = btn.getAttribute("data-item") || "";
         const links = comp.itemToFacilities.get(item) || [];
 
+                const key = compendiumKey(item);
+        const info = COMPENDIUM_DETAILS[key] || null;
+
+        const craftedAtHtml = links.length
+          ? `
+            <div class="small muted">Craftable at:</div>
+            <div class="compendiumPills">
+              ${links.map(l => `<span class="compendiumPill">${escapeHtml(l.facName)}${l.fnLabel ? ` • ${escapeHtml(l.fnLabel)}` : ""}</span>`).join("")}
+            </div>
+          `
+          : `<div class="small muted">Craftable at: (not mapped)</div>`;
+
+        if(!info){
+          detailEl.innerHTML = `
+            <div class="compendiumDetailTitle">${escapeHtml(item)}</div>
+            ${craftedAtHtml}
+            <div class="small muted">No description entry yet for this item.</div>
+          `;
+          return;
+        }
+
         detailEl.innerHTML = `
           <div class="compendiumDetailTitle">${escapeHtml(item)}</div>
 
-          <div class="small muted">Craftable at:</div>
           <div class="compendiumPills">
-            ${links.map(l => `<span class="compendiumPill">${escapeHtml(l.facName)}${l.fnLabel ? ` • ${escapeHtml(l.fnLabel)}` : ""}</span>`).join("")}
+            ${info.type ? `<span class="compendiumPill">${escapeHtml(info.type)}</span>` : ""}
+            ${info.attunement ? `<span class="compendiumPill">Attunement: ${escapeHtml(info.attunement)}</span>` : ""}
           </div>
 
-          <div class="small muted">
-            Item effects/descriptions can be added next (we can plug in a JSON later).
-            For now this compendium is a clean index + “where to craft it”.
+          <div style="margin: 10px 0;">
+            ${escapeHtml(info.summary || "")}
           </div>
+
+          ${craftedAtHtml}
+
+          ${info.source ? `<div class="small muted" style="margin-top:10px;">Source: <a href="${escapeHtml(info.source)}" target="_blank" rel="noopener">Open reference</a></div>` : ""}
         `;
       });
     });
