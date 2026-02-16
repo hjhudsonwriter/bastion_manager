@@ -2531,7 +2531,11 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
 
   await openSIModal({
     title: `Council Ledger (${count})`,
-    bodyHtml: `
+   bodyHtml: `
+  <div class="siLedgerWrap">
+    <div class="siLedgerBg"></div>
+    <div class="siLedgerContent">
+
       <div class="small muted">
         Sealed petitions are laid before the council. Wax cracks. Quills hover. Your verdict carries weight.
       </div>
@@ -2543,7 +2547,10 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
       <div class="small muted" style="margin-top:10px">
         (Each ruling will prompt a manual Authority roll.)
       </div>
-    `,
+
+    </div>
+  </div>
+`,
     primaryText: "Close",
     modalClass: "siModal--arbitration"
   });
