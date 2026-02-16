@@ -845,6 +845,7 @@ if(kind === "summit"){
         clan: meta.name,
         commodity: meta.commodity,
         risk: meta.risk,
+        expiresTurn: state.turn + (fn.special?.durationTurns ?? 5),
         yieldGP: perTurn,             // uses the consortium income you already rolled
         stabilityDC: 12,              // base DC, modified by risk/strategy/stability
         status: "active"              // active | disrupted
@@ -1929,7 +1930,7 @@ hallCard.querySelector("#tnToggleHighRisk")?.addEventListener("click", () => {
 
 function renderIronbowTradeNetworkSection(){
   const tn = state.tradeNetwork || { active:false, stability:75, routes:[], yieldBonusPct:0, highRiskRouting:false };
-  const routes = (tn.routes || []).filter(r => r && r.status !== "removed");
+  const routes = state.tradeNetwork.routes.filter(r => r.status !== "expired");
   const activeRoutes = routes.filter(r => r.status !== "disrupted");
   const disrupted = routes.filter(r => r.status === "disrupted");
 
@@ -2033,7 +2034,15 @@ function renderIronbowTradeNetworkSection(){
     }
   }
 
-  saveState();
+  // --- Expire trade routes whose consortium contract has ended ---
+if(state.tradeNetwork && Array.isArray(state.tradeNetwork.routes)){
+  state.tradeNetwork.routes.forEach(r => {
+    if(r.expiresTurn && state.turn > r.expiresTurn){
+      r.status = "expired";
+    }
+  });
+}
+      saveState();
 }
    // =========================
 // Trade Network (Routes)
@@ -2197,14 +2206,15 @@ async function resolveTradeRoutesModal(){
       narrativeLines.push(`${r.clan} suffers a catastrophic loss at sea. Status: Disrupted. Market Stability falls by ${drop}%.`);
       enqueueArbitrationDispute(
   r.clan,
-  "Cargo claims and retaliatory tariffs after a route collapse.",
+  "Trade disruption and disputed tariffs.",
   {
     kind: "trade",
     routeClan: r.clan,
-    commodity: r.commodity || "goods",
-    risk: r.risk || "low",
+    commodity: r.commodity || "Goods",
     disruptedTurn: state.turn,
-    stabilityAtFiling: state.tradeNetwork?.stability ?? 75
+    stabilityAtFiling: clampInt(state.tradeNetwork?.stability ?? 75, 0, 100),
+    risk: r.risk || "medium",
+    b: CONSORTIUM_NAME
   }
 );
     }
@@ -2273,8 +2283,16 @@ function overlayStyleForClan(clan){
 
 async function openTradeMapModal(){
   // Base map (pins removed): assets/ui/clan_trading_locations.png
-  const routes = (state.tradeNetwork?.routes || [])
-    .filter(r => r && r.status !== "removed");
+    const routes = (state.tradeNetwork?.routes || [])
+    .filter(r => r && r.status !== "removed")
+    // Hide expired routes from the map + list
+    .filter(r => {
+      // If you are using expiresTurn, honor it
+      if(r.expiresTurn != null && state.turn > r.expiresTurn) return false;
+      // If you are using explicit status, honor it too
+      if(String(r.status || "").toLowerCase() === "expired") return false;
+      return true;
+    });
 
   // Build list of active clans
   const activeClans = [];
