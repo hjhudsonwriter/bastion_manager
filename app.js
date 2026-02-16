@@ -3506,18 +3506,21 @@ function autoCompendiumDetail(itemName){
     </div>
   `;
 
-  detailEl.querySelectorAll("[data-img]").forEach(el=>{
+    detailEl.querySelectorAll("[data-img]").forEach(el=>{
     el.addEventListener("click", ()=>{
       const src = el.getAttribute("data-img");
       if(src) openImageViewer(src);
     });
-});
-});
+  });
+
+        }); // end: btn click
+      });   // end: listEl button forEach
+    };      // end: renderList
 
   renderList("");
   searchEl.addEventListener("input", ()=> renderList(searchEl.value));
-}
-   
+} // end: openCompendium
+
    function renderFacilities(){
   const lvl = state.partyLevel;
 
