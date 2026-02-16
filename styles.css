@@ -1972,3 +1972,25 @@ select option{
     0 0 26px rgba(214,178,94,0.25);
   border-color: rgba(214,178,94,0.7) !important;
 }
+
+/* Council Ledger background image */
+.siLedgerWrap{
+  position: relative;
+}
+
+.siLedgerBg{
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/ui/trade_disputes.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.18;            /* adjust if you want stronger */
+  filter: saturate(0.9) contrast(1.05);
+  border-radius: 18px;
+  pointer-events: none;
+}
+
+.siLedgerContent{
+  position: relative;
+  z-index: 1;
+}
