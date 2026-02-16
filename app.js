@@ -2025,6 +2025,19 @@ function renderIronbowTradeNetworkSection(){
   d.summits = dec(d.summits);
   d.arbitrations = dec(d.arbitrations);
   d.consortiums = dec(d.consortiums);
+        // Keep Trade Network routes in sync with consortium contracts:
+  // If a consortium ended, its route is no longer active.
+  if(state.tradeNetwork && Array.isArray(state.tradeNetwork.routes)){
+    const activeConsortiumClans = new Set((d.consortiums || []).map(x => String(x.clan || "")));
+    for(const r of state.tradeNetwork.routes){
+      if(!r) continue;
+      const clan = String(r.clan || "");
+      const ended = !activeConsortiumClans.has(clan);
+      if(ended){
+        r.status = "expired";
+      }
+    }
+  }
 
      // NEW: tick diplomacy cooldowns
   if(d.cooldowns && typeof d.cooldowns === "object"){
@@ -2077,6 +2090,7 @@ function routeDC(route){
 }
 
 function routePayout(route, outcome){
+  if(String(route?.status || "").toLowerCase() === "expired") return 0;
   const baseYield = clampInt(route.yieldGP ?? 0, 0, 999999);
 
   const yieldBonusPct = clampInt(state.tradeNetwork?.yieldBonusPct ?? 0, 0, 200);
@@ -2113,7 +2127,14 @@ async function resolveTradeRoutesModal(){
     return;
   }
 
-  const routes = (state.tradeNetwork.routes || []).filter(r => r && r.status !== "removed");
+    const routes = (state.tradeNetwork.routes || [])
+    .filter(r => r && r.status !== "removed")
+    .filter(r => String(r.status || "").toLowerCase() !== "expired")
+    .filter(r => {
+      // If expiresTurn is present, respect it too
+      if(r.expiresTurn != null && state.turn > r.expiresTurn) return false;
+      return true;
+    });
   if(routes.length === 0){
     await openSIModal({
       title: "Ironbow Trade Network",
