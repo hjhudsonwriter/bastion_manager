@@ -2427,17 +2427,17 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
 
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
           <button class="pill"
-            onclick="window.__SI_ARBITRATE('${escapeHtml(String(d.id))}','A')">
+            onclick="window.__SI_ARBITRATE(this,'${escapeHtml(String(d.id))}','A')"
             Rule for ${a}
           </button>
 
           <button class="pill"
-            onclick="window.__SI_ARBITRATE('${escapeHtml(String(d.id))}','S')">
+            onclick="window.__SI_ARBITRATE(this,'${escapeHtml(String(d.id))}','S')"
             Split Claims
           </button>
 
           <button class="pill"
-            onclick="window.__SI_ARBITRATE('${escapeHtml(String(d.id))}','B')">
+            onclick="window.__SI_ARBITRATE(this,'${escapeHtml(String(d.id))}','B')"
             Rule for ${b}
           </button>
         </div>
@@ -2466,12 +2466,15 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
 }
 
 // Bulletproof click handler for modal buttons
-window.__SI_ARBITRATE = async function(disputeId, choice){
+window.__SI_ARBITRATE = async function(btnEl, disputeId, choice){
   if(!state.arbitration || typeof state.arbitration !== "object") return;
   if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
 
   const d = state.arbitration.queue.find(x => String(x.id) === String(disputeId));
   if(!d) return;
+     // Close the current ledger modal (Option 2: we will re-open it refreshed later if needed)
+  const ledgerOv = btnEl && btnEl.closest ? btnEl.closest(".siModalOverlay") : null;
+  if(ledgerOv) ledgerOv.remove();
 
   // Ask for manual roll
   const baseBonus = (state.arbitration.authorityBonusTurns && state.arbitration.authorityBonusTurns > 0) ? 2 : 0;
@@ -2531,6 +2534,54 @@ const total = roll.total; // already includes the mod
 
   log("Arbitration", outcomeLine);
      // Show an explicit verdict popup so the user sees what the roll did
+    // Clean, player-readable verdict text (no systemy outcomeLine)
+  const rulingLabel =
+    choice === "A" ? `Rule for ${clanA}` :
+    choice === "B" ? `Rule for ${clanB}` :
+    `Split the Claims`;
+
+  const verdictText = passed
+    ? `A verdict is issued. The council seals the ruling: ${rulingLabel}.`
+    : `The council deadlocks. No binding verdict is sealed today.`;
+
+  const effects = [];
+
+  // Meaningful consequences (streamlined model)
+  // A = favour the clan (political goodwill, but consortium confidence dips)
+  // S = split (moderate goodwill, stabilising compromise)
+  // B = favour the consortium (stability rises, clan goodwill drops)
+  if(passed){
+    if(choice === "A"){
+      addPoliticalCapital(clanA, +6);
+      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 1, 0, 100);
+      effects.push(`${clanA} gains political leverage (+6 Political Capital).`);
+      effects.push(`Consortium confidence wavers. Market Stability -1%.`);
+    } else if(choice === "S"){
+      addPoliticalCapital(clanA, +2);
+      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + 2, 0, 100);
+      effects.push(`${clanA} accepts a compromise (+2 Political Capital).`);
+      effects.push(`Market Stability +2%.`);
+    } else if(choice === "B"){
+      addPoliticalCapital(clanA, -4);
+      state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) + 4, 0, 100);
+      effects.push(`${clanA} loses face (-4 Political Capital).`);
+      effects.push(`Market Stability +4%.`);
+    }
+
+    if(d.meta && d.meta.routeClan){
+      effects.push(`${d.meta.routeClan} route status: Restored (Active).`);
+    }
+  } else {
+    // On deadlock, small instability and lingering resentment
+    addPoliticalCapital(clanA, -2);
+    state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - 2, 0, 100);
+    effects.push(`${clanA} storms out of chamber (-2 Political Capital).`);
+    effects.push(`Market Stability -2%.`);
+  }
+
+  saveState();
+  render();
+
   await openSIModal({
     title: passed ? "Council Verdict" : "Council Deadlock",
     bodyHtml: `
@@ -2538,25 +2589,31 @@ const total = roll.total; // already includes the mod
         <img src="assets/ui/wax_stamp.png"
              style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
         <div>
-          <div class="small muted">
-            Roll: <b>${escapeHtml(String(roll.d20))}</b>
-            ${baseBonus ? ` + <b>${escapeHtml(String(baseBonus))}</b>` : ``}
-            = <b>${escapeHtml(String(total))}</b>
-            vs DC <b>${escapeHtml(String(dc))}</b>
+          <div class="siResSummary"><b>${escapeHtml(rulingLabel)}</b></div>
+          <div class="small muted" style="margin-top:6px">
+            Roll: <b>${escapeHtml(String(roll.d20))}</b>${baseBonus ? ` + <b>${escapeHtml(String(baseBonus))}</b>` : ``}
+            = <b>${escapeHtml(String(total))}</b> vs DC <b>${escapeHtml(String(dc))}</b>
           </div>
-          <div style="margin-top:8px">${escapeHtml(outcomeLine)}</div>
         </div>
       </div>
 
-      ${passed && d.meta && d.meta.routeClan ? `
-        <div class="tnStat">
-          A sealed writ is dispatched. <b>${escapeHtml(String(d.meta.routeClan))}</b> lanes may reopen under decree.
-        </div>
-      ` : ``}
+      <div style="margin-bottom:10px">${escapeHtml(verdictText)}</div>
+
+      <ul class="siResList">
+        ${effects.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}
+      </ul>
+
+      <div class="small muted" style="margin-top:10px">
+        Market Stability: <b>${escapeHtml(String(state.tradeNetwork.stability ?? 75))}%</b>
+      </div>
     `,
     primaryText: "Continue",
     modalClass: "siModal--arbitration"
   });
+     // Option 2: reopen the ledger refreshed if disputes remain
+  if(state.arbitration && Array.isArray(state.arbitration.queue) && state.arbitration.queue.length > 0){
+    await openDisputeQueueModal();
+  }
 
   // Re-render UI after judgement
   render();
