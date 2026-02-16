@@ -794,13 +794,15 @@ select option{
    Compendium Modal
    ========================= */
 .siModal--compendium{
-  max-width: 980px;
+  max-width: 1180px;
+  width: min(1180px, 94vw);
 }
 
 .compendiumWrap{
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 360px 1fr; /* fixed left list, right gets everything else */
   gap: 14px;
+  align-items: start;
 }
 
 .compendiumLeft{
@@ -815,6 +817,9 @@ select option{
   border-radius: 14px;
   padding: 12px;
   background: rgba(0,0,0,.18);
+
+  max-height: 520px;      /* prevents the image from forcing the modal taller */
+  overflow: auto;         /* scroll inside detail pane */
 }
 
 .compendiumSearch{
