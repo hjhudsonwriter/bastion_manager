@@ -189,6 +189,8 @@ DATA.compendium = (compendiumRaw && compendiumRaw.items) ? compendiumRaw.items :
 
 ensureDiplomacyState();
 ensureDiplomacyPanel();
+document.getElementById("btnHearDisputes")?.addEventListener("click", openDisputeQueueModal);
+normalizeArbitrationQueue();     
 
 
     // Wire controls
@@ -1709,7 +1711,7 @@ function ensureDiplomacyPanel(){
           <button class="pill" id="hallUpgradePill" title="Upgrade Hall">Upgrade</button>
           <button class="pill" id="btnViewTradeRoutes" title="View active sea trade routes">Routes</button>
 <button class="pill" id="btnResolveTradeRoutes" title="Resolve this turn's trade routes">Resolve</button>
-<button class="pill" id="btnArbitration" title="Hear the next dispute before the Arbitration Authority">Arbitrate</button>
+<button class="pill" id="btnHearDisputes" title="Hear the next dispute before the Arbitration Authority">Hear Disputes</button>
         </div>
         <div class="small muted" id="hallHeadSub">Diplomatic actions take 1 Bastion Turn.</div>
       </div>
@@ -2325,11 +2327,62 @@ async function openTradeMapModal(){
 // Arbitration (Dispute Queue)
 // =========================
 
-function pickRandomOtherClan(clanA){
-  const list = ["Blackstone","Bacca","Farmer","Slade","Molten","Rowthorn","Karr"];
-  const a = String(clanA||"").toLowerCase();
-  const others = list.filter(x => x.toLowerCase() !== a);
-  return others[Math.floor(Math.random()*others.length)];
+// =========================
+// Arbitration (Dispute Queue) — STREAMLINED
+// =========================
+
+const CONSORTIUM_NAME = "Ironbow Trade Consortium";
+
+// One-time cleanup for older saves that had random clan-vs-clan disputes
+function normalizeArbitrationQueue(){
+  if(!state.arbitration || typeof state.arbitration !== "object") return;
+  if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
+
+  const clanList = ["Blackstone","Bacca","Farmer","Slade","Molten","Rowthorn","Karr"];
+
+  state.arbitration.queue = state.arbitration.queue.map(d => {
+    if(!d || typeof d !== "object") return d;
+
+    // If it looks like an old “random other clan” dispute, convert it to consortium dispute.
+    // (We keep true inter-clan disputes intact if you ever add them later via meta.kind === "interclan")
+    const kind = (d.meta && d.meta.kind) ? String(d.meta.kind) : "";
+    const b = String(d.b || "");
+    const bIsClan = clanList.includes(b);
+
+    if(!kind && bIsClan){
+      return {
+        ...d,
+        b: CONSORTIUM_NAME,
+        meta: { ...(d.meta || {}), kind: "trade" }
+      };
+    }
+    return d;
+  });
+
+  saveState();
+}
+
+function enqueueArbitrationDispute(clanA, reason, meta = {}){
+  if(!state.arbitration || typeof state.arbitration !== "object"){
+    state.arbitration = { queue: [], lastSpawnTurn: -1, authorityBonusTurns: 0 };
+  }
+  if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
+
+  state.arbitration.queue.push({
+    id: uid(),
+    a: String(clanA || "Unknown"),
+    b: String(meta.b || CONSORTIUM_NAME),
+    reason: String(reason || "A dispute over tariffs, delays, and cargo claims."),
+    createdTurn: state.turn,
+    meta: {
+      kind: String(meta.kind || "trade"),           // "trade" by default
+      routeClan: String(meta.routeClan || clanA || ""),
+      routeId: meta.routeId ? String(meta.routeId) : null,
+      risk: meta.risk ? String(meta.risk) : null
+    }
+  });
+
+  saveState();
 }
 
 function enqueueArbitrationDispute(clanA, reason){
@@ -2348,6 +2401,153 @@ function enqueueArbitrationDispute(clanA, reason){
 
   saveState();
 }
+
+   async function openDisputeQueueModal(){
+  if(!state.arbitration || typeof state.arbitration !== "object"){
+    state.arbitration = { queue: [], lastSpawnTurn: -1, authorityBonusTurns: 0 };
+  }
+  if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
+
+  const q = state.arbitration.queue.slice(); // copy
+  const count = q.length;
+
+  if(!count){
+    await openSIModal({
+      title: "Council Ledger",
+      bodyHtml: `
+        <div class="small muted">No disputes await judgement.</div>
+      `,
+      primaryText: "Close",
+      modalClass: "siModal--arbitration"
+    });
+    return;
+  }
+
+  const listHtml = q.map(d => {
+    const a = escapeHtml(String(d.a || "Unknown"));
+    const b = escapeHtml(String(d.b || CONSORTIUM_NAME));
+    const reason = escapeHtml(String(d.reason || ""));
+    const turn = escapeHtml(String(d.createdTurn ?? "?"));
+
+    return `
+      <div class="siDisputeCard" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+          <div><b>${a}</b> vs <b>${b}</b></div>
+          <div class="small muted">Filed Turn ${turn}</div>
+        </div>
+        <div class="small" style="margin-top:6px">${reason}</div>
+
+        <div class="small muted" style="margin-top:10px">Choose a ruling:</div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <button class="pill"
+            onclick="window.__SI_ARBITRATE('${escapeHtml(String(d.id))}','A')">
+            Rule for ${a}
+          </button>
+
+          <button class="pill"
+            onclick="window.__SI_ARBITRATE('${escapeHtml(String(d.id))}','S')">
+            Split Claims
+          </button>
+
+          <button class="pill"
+            onclick="window.__SI_ARBITRATE('${escapeHtml(String(d.id))}','B')">
+            Rule for ${b}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  await openSIModal({
+    title: `Council Ledger (${count})`,
+    bodyHtml: `
+      <div class="small muted">
+        Sealed petitions are laid before the council. Wax cracks. Quills hover. Your verdict carries weight.
+      </div>
+
+      <div style="margin-top:12px">
+        ${listHtml}
+      </div>
+
+      <div class="small muted" style="margin-top:10px">
+        (Each ruling will prompt a manual Authority roll.)
+      </div>
+    `,
+    primaryText: "Close",
+    modalClass: "siModal--arbitration"
+  });
+}
+
+// Bulletproof click handler for modal buttons
+window.__SI_ARBITRATE = async function(disputeId, choice){
+  if(!state.arbitration || typeof state.arbitration !== "object") return;
+  if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
+
+  const d = state.arbitration.queue.find(x => String(x.id) === String(disputeId));
+  if(!d) return;
+
+  // Ask for manual roll
+  const baseBonus = (state.arbitration.authorityBonusTurns && state.arbitration.authorityBonusTurns > 0) ? 2 : 0;
+  const bonusText = baseBonus ? ` (+${baseBonus} Writ of Authority)` : "";
+
+  const roll = await openManualRollModal({
+    title: "Council Verdict",
+    subtitle: `Authority roll${bonusText}`,
+    die: "d20"
+  });
+
+  if(roll == null) return;
+
+  const total = clampInt(roll, 1, 20) + baseBonus;
+
+  // Basic DC model (we can tune later)
+  // If you want: tie this to market stability, risk, etc.
+  const dc = 13;
+
+  const passed = total >= dc;
+
+  // Apply effect: political capital shifts (small, readable)
+  const clanA = String(d.a || "");
+  const clanB = String(d.b || CONSORTIUM_NAME);
+
+  // Remove the dispute from queue now (it is being judged)
+  state.arbitration.queue = state.arbitration.queue.filter(x => String(x.id) !== String(disputeId));
+
+  // Writ bonus ticks down on EACH arbitration judgement
+  if(state.arbitration.authorityBonusTurns && state.arbitration.authorityBonusTurns > 0){
+    state.arbitration.authorityBonusTurns -= 1;
+  }
+
+  // Restore route if judgement succeeds and dispute is tied to a route
+  if(passed && d.meta && d.meta.routeClan){
+    const rc = String(d.meta.routeClan);
+    if(state.tradeNetwork && Array.isArray(state.tradeNetwork.routes)){
+      const route = state.tradeNetwork.routes.find(r => String(r.clan) === rc);
+      if(route && route.status === "disrupted"){
+        route.status = "active";
+      }
+    }
+  }
+
+  saveState();
+
+  // Narrative logging
+  const verdictWord =
+    choice === "A" ? `ruled for ${clanA}` :
+    choice === "B" ? `ruled for ${clanB}` :
+    `split the claims`;
+
+  const outcomeLine = passed
+    ? `The seal is struck. The council has ${verdictWord}. (Roll ${roll}${baseBonus?`+${baseBonus}`:""} = ${total} vs DC ${dc})`
+    : `Wax cracks under hesitation. The council fails to reach binding consensus. (Roll ${roll}${baseBonus?`+${baseBonus}`:""} = ${total} vs DC ${dc})`;
+
+  log("Arbitration", outcomeLine);
+
+  // Re-render UI after judgement
+  render();
+};
+
    function tryPlaySealSound(){
   try{
     const a = new Audio(withBase("assets/sfx/wax_seal.mp3"));
