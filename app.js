@@ -813,8 +813,8 @@ if(kind === "summit"){
         const perTurn = clampInt(Math.floor(baseIncome * incomeMult), 0);
 
         const title =
-          kind === "arbitration" ? "Arbitration Authority"
-          : kind === "consortium" ? "Trade Consortium"
+          kind === "arbitration" ? "Secure Writ of Authority"
+          : kind === "consortium" ? "Form Trade Consortium"
           : "Trade Agreement";
 
         const rec = {
@@ -1757,7 +1757,17 @@ function ensureDiplomacyPanel(){
   });
 }
 
-function renderDiplomacy(){
+function updateCouncilLedgerButton(){
+  const btn = document.getElementById("btnHearDisputes");
+  if(!btn) return;
+
+  const count = (state.arbitration && Array.isArray(state.arbitration.queue)) ? state.arbitration.queue.length : 0;
+
+  btn.textContent = count > 0 ? `Council Ledger (${count})` : "Council Ledger";
+  btn.classList.toggle("pill--alert", count > 0);
+}
+
+   function renderDiplomacy(){
   const meta = document.getElementById("diplomacyMeta");
   const boxes = document.getElementById("dipBoxes");
   const hallCard = document.getElementById("hallCard");
@@ -1914,6 +1924,7 @@ hallCard.querySelector("#tnInvestYield")?.addEventListener("click", () => {
 hallCard.querySelector("#tnToggleHighRisk")?.addEventListener("click", () => {
   issueTradeNetworkUpgrade("toggle_high_risk");
 });
+      updateCouncilLedgerButton();
 }
 
 function renderIronbowTradeNetworkSection(){
@@ -2184,7 +2195,18 @@ async function resolveTradeRoutesModal(){
       state.tradeNetwork.stability = clampInt((state.tradeNetwork.stability ?? 75) - drop, 0, 100);
 
       narrativeLines.push(`${r.clan} suffers a catastrophic loss at sea. Status: Disrupted. Market Stability falls by ${drop}%.`);
-      enqueueArbitrationDispute(r.clan, "Cargo claims and retaliatory tariffs after a route collapse.");
+      enqueueArbitrationDispute(
+  r.clan,
+  "Cargo claims and retaliatory tariffs after a route collapse.",
+  {
+    kind: "trade",
+    routeClan: r.clan,
+    commodity: r.commodity || "goods",
+    risk: r.risk || "low",
+    disruptedTurn: state.turn,
+    stabilityAtFiling: state.tradeNetwork?.stability ?? 75
+  }
+);
     }
   }
 
@@ -2415,6 +2437,10 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
     const b = escapeHtml(String(d.b || CONSORTIUM_NAME));
     const reason = escapeHtml(String(d.reason || ""));
     const turn = escapeHtml(String(d.createdTurn ?? "?"));
+    const rc = d.meta && d.meta.routeClan ? String(d.meta.routeClan) : "";
+    const commodity = d.meta && d.meta.commodity ? String(d.meta.commodity) : "";
+    const disruptedTurn = d.meta && d.meta.disruptedTurn != null ? String(d.meta.disruptedTurn) : "?";
+    const stabAtFiling = d.meta && d.meta.stabilityAtFiling != null ? String(d.meta.stabilityAtFiling) : "?";
 
     return `
       <div class="siDisputeCard" style="margin-bottom:12px">
@@ -2503,7 +2529,13 @@ const total = roll.total; // already includes the mod
   const clanB = String(d.b || CONSORTIUM_NAME);
 
   // Remove the dispute from queue now (it is being judged)
-  state.arbitration.queue = state.arbitration.queue.filter(x => String(x.id) !== String(disputeId));
+    // Remove the dispute only if a binding verdict is reached
+  if(passed){
+    state.arbitration.queue = state.arbitration.queue.filter(x => String(x.id) !== String(disputeId));
+  }
+     if(!passed){
+    d.reason = String(d.reason || "") + " (Returned to docket after council deadlock.)";
+  }
 
   // Writ bonus ticks down on EACH arbitration judgement
   if(state.arbitration.authorityBonusTurns && state.arbitration.authorityBonusTurns > 0){
@@ -3148,11 +3180,11 @@ function bindFacilitySlotTooltips(){
     ];
   }
 
-  if(kind === "arbitration"){
+    if(kind === "arbitration"){
     return [
-      "Establish Arbitration Authority income and unlock dispute flow.",
-      "Disputes enter the Council Ledger from disrupted trade routes.",
-      "Use ‘Hear Disputes’ to judge them (manual Authority roll + consequences)."
+      "Secures a Writ of Authority from the capital.",
+      "Effect: +2 to Council Verdict rolls for the next 3 rulings.",
+      "Use Council Ledger to judge disputes created by disrupted routes."
     ];
   }
 
