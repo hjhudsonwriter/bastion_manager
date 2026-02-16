@@ -2530,6 +2530,33 @@ const total = roll.total; // already includes the mod
     : `Wax cracks under hesitation. The council fails to reach binding consensus. (Roll ${roll}${baseBonus?`+${baseBonus}`:""} = ${total} vs DC ${dc})`;
 
   log("Arbitration", outcomeLine);
+     // Show an explicit verdict popup so the user sees what the roll did
+  await openSIModal({
+    title: passed ? "Council Verdict" : "Council Deadlock",
+    bodyHtml: `
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px">
+        <img src="assets/ui/wax_stamp.png"
+             style="width:140px; border-radius:14px; border:1px solid rgba(214,178,94,.25)" />
+        <div>
+          <div class="small muted">
+            Roll: <b>${escapeHtml(String(roll.d20))}</b>
+            ${baseBonus ? ` + <b>${escapeHtml(String(baseBonus))}</b>` : ``}
+            = <b>${escapeHtml(String(total))}</b>
+            vs DC <b>${escapeHtml(String(dc))}</b>
+          </div>
+          <div style="margin-top:8px">${escapeHtml(outcomeLine)}</div>
+        </div>
+      </div>
+
+      ${passed && d.meta && d.meta.routeClan ? `
+        <div class="tnStat">
+          A sealed writ is dispatched. <b>${escapeHtml(String(d.meta.routeClan))}</b> lanes may reopen under decree.
+        </div>
+      ` : ``}
+    `,
+    primaryText: "Continue",
+    modalClass: "siModal--arbitration"
+  });
 
   // Re-render UI after judgement
   render();
