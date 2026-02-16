@@ -2385,22 +2385,8 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
   saveState();
 }
 
-function enqueueArbitrationDispute(clanA, reason){
-  if(!state.arbitration || typeof state.arbitration !== "object"){
-    state.arbitration = { queue: [], lastSpawnTurn: -1 };
-  }
-  if(!Array.isArray(state.arbitration.queue)) state.arbitration.queue = [];
-
-  state.arbitration.queue.push({
-    id: uid(),
-    a: String(clanA || "Unknown"),
-    b: pickRandomOtherClan(clanA),
-    reason: String(reason || "A dispute over tariffs and cargo claims."),
-    createdTurn: state.turn
-  });
-
-  saveState();
-}
+// NOTE: Removed legacy duplicate enqueueArbitrationDispute() that overwrote the newer version.
+// (It referenced pickRandomOtherClan(), which does not exist, and prevented disputes from queuing.)
 
    async function openDisputeQueueModal(){
   if(!state.arbitration || typeof state.arbitration !== "object"){
@@ -2890,6 +2876,10 @@ if(fac.id === "hall_of_emissaries" && fn.special?.type === "emissary_action"){
 
   const id = uid();
   const label = `${fac.name}: ${fn.label}${optionLabel ? ` (${optionLabel})` : ""}`;
+        // Notes (used by Turn Log + order display). Defaults to empty for special actions.
+  const orderNotes = (meta && typeof meta === "object" && meta.notes)
+    ? String(meta.notes)
+    : "";
 
   state.pendingOrders.push({
     id,
