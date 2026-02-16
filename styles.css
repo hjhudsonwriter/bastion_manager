@@ -800,7 +800,7 @@ select option{
 
 .compendiumWrap{
   display: grid;
-  grid-template-columns: 360px 1fr; /* fixed left list, right gets everything else */
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
   gap: 14px;
   align-items: start;
 }
@@ -810,6 +810,7 @@ select option{
   border-radius: 14px;
   padding: 12px;
   background: rgba(0,0,0,.25);
+    min-width: 0;
 }
 
 .compendiumRight{
@@ -817,7 +818,7 @@ select option{
   border-radius: 14px;
   padding: 12px;
   background: rgba(0,0,0,.18);
-
+    min-width: 0;
   max-height: 520px;      /* prevents the image from forcing the modal taller */
   overflow: auto;         /* scroll inside detail pane */
 }
@@ -1865,4 +1866,24 @@ select option{
 
 .siResSummary b{
   color: rgba(214,178,94,.95);
+}
+
+/* =========================
+   Compendium card image
+   ========================= */
+.compendiumCard{
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(214,178,94,.25);
+  background: rgba(0,0,0,.18);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.compendiumCard img{
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
