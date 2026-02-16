@@ -1965,3 +1965,10 @@ select option{
 .tooltip li{
   margin: 2px 0;
 }
+
+.pill--alert{
+  box-shadow:
+    0 0 10px rgba(214,178,94,0.55),
+    0 0 26px rgba(214,178,94,0.25);
+  border-color: rgba(214,178,94,0.7) !important;
+}
