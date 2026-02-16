@@ -287,9 +287,16 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
        
          tickDiplomacyOnAdvanceTurn(); // ✅ add this line
        // Auto-resolve Ironbow Trade Network routes once per Bastion Turn
-if(state.tradeNetwork?.active && state.tradeNetwork.lastResolvedTurn !== state.turn){
+// Only do this if at least one route is actually active/disrupted (not expired/removed).
+const _tnRoutes = (state.tradeNetwork?.routes || [])
+  .filter(r => r && r.status !== "removed")
+  .filter(r => String(r.status || "").toLowerCase() !== "expired")
+  .filter(r => !(r.expiresTurn != null && state.turn > r.expiresTurn));
+
+if(state.tradeNetwork?.active && _tnRoutes.length > 0 && state.tradeNetwork.lastResolvedTurn !== state.turn){
   await resolveTradeRoutesModal();
 }
+
        ui.treasuryInput.value = String(state.treasuryGP);
 
        tickConstruction();
