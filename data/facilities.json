@@ -792,7 +792,7 @@
       },
       {
         "id": "arbitration_authority",
-        "label": "Arbitration Authority",
+        "label": "Secure Writ of Authority",
         "costGP": 600,
         "requiredFacilityLevel": 3,
         "special": {
