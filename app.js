@@ -2444,11 +2444,16 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
     reason: String(reason || "A dispute over tariffs, delays, and cargo claims."),
     createdTurn: state.turn,
     meta: {
-      kind: String(meta.kind || "trade"),           // "trade" by default
-      routeClan: String(meta.routeClan || clanA || ""),
-      routeId: meta.routeId ? String(meta.routeId) : null,
-      risk: meta.risk ? String(meta.risk) : null
-    }
+  kind: String(meta.kind || "trade"),           // "trade" by default
+  routeClan: String(meta.routeClan || clanA || ""),
+  routeId: meta.routeId ? String(meta.routeId) : null,
+  risk: meta.risk ? String(meta.risk) : null,
+
+  // NEW: docket details for the Council Ledger
+  commodity: meta.commodity ? String(meta.commodity) : null,
+  disruptedTurn: (meta.disruptedTurn != null) ? clampInt(meta.disruptedTurn, 1) : null,
+  stabilityAtFiling: (meta.stabilityAtFiling != null) ? clampInt(meta.stabilityAtFiling, 0, 100) : null
+}
   });
 
   saveState();
@@ -2485,8 +2490,13 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
     const turn = escapeHtml(String(d.createdTurn ?? "?"));
     const rc = d.meta && d.meta.routeClan ? String(d.meta.routeClan) : "";
     const commodity = d.meta && d.meta.commodity ? String(d.meta.commodity) : "";
-    const disruptedTurn = d.meta && d.meta.disruptedTurn != null ? String(d.meta.disruptedTurn) : "?";
-    const stabAtFiling = d.meta && d.meta.stabilityAtFiling != null ? String(d.meta.stabilityAtFiling) : "?";
+    const disruptedTurn = (d.meta && d.meta.disruptedTurn != null)
+  ? String(d.meta.disruptedTurn)
+  : String(d.createdTurn ?? "?");
+  const stabAtFiling = (d.meta && d.meta.stabilityAtFiling != null)
+  ? String(d.meta.stabilityAtFiling)
+  : String(clampInt(state.tradeNetwork?.stability ?? 75, 0, 100));
+
 
     return `
       <div class="siDisputeCard" style="margin-bottom:12px">
@@ -2527,6 +2537,10 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
   await openSIModal({
     title: `Council Ledger (${count})`,
     bodyHtml: `
+  <div class="siLedgerWrap">
+    <div class="siLedgerBg"></div>
+    <div class="siLedgerContent">
+
       <div class="small muted">
         Sealed petitions are laid before the council. Wax cracks. Quills hover. Your verdict carries weight.
       </div>
@@ -2538,7 +2552,10 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
       <div class="small muted" style="margin-top:10px">
         (Each ruling will prompt a manual Authority roll.)
       </div>
-    `,
+
+    </div>
+  </div>
+`,
     primaryText: "Close",
     modalClass: "siModal--arbitration"
   });
@@ -2696,9 +2713,19 @@ const total = roll.total; // already includes the mod
     modalClass: "siModal--arbitration"
   });
      // Option 2: reopen the ledger refreshed if disputes remain
-  if(state.arbitration && Array.isArray(state.arbitration.queue) && state.arbitration.queue.length > 0){
+  // Option 2: reopen the ledger refreshed ONLY if there are other disputes.
+// If this was the only dispute and the council deadlocked, don't immediately reopen.
+if(state.arbitration && Array.isArray(state.arbitration.queue)){
+  const remaining = state.arbitration.queue.length;
+  const thisStillThere = state.arbitration.queue.some(x => String(x.id) === String(disputeId));
+
+  // Reopen if:
+  // - there are multiple disputes remaining, OR
+  // - this dispute was resolved and there are still some others
+  if(remaining > 0 && (remaining > 1 || !thisStillThere)){
     await openDisputeQueueModal();
   }
+}
 
   // Re-render UI after judgement
   render();
