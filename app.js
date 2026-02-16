@@ -2427,19 +2427,19 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
 
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
           <button class="pill"
-            onclick="window.__SI_ARBITRATE(this,'${escapeHtml(String(d.id))}','A')"
-            Rule for ${a}
-          </button>
+  onclick="window.__SI_ARBITRATE(this, '${String(d.id)}', 'A'); return false;">
+  Rule for ${escapeHtml(String(d.a || "Clan"))}
+</button>
 
-          <button class="pill"
-            onclick="window.__SI_ARBITRATE(this,'${escapeHtml(String(d.id))}','S')"
-            Split Claims
-          </button>
+<button class="pill"
+  onclick="window.__SI_ARBITRATE(this, '${String(d.id)}', 'S'); return false;">
+  Split Claims
+</button>
 
-          <button class="pill"
-            onclick="window.__SI_ARBITRATE(this,'${escapeHtml(String(d.id))}','B')"
-            Rule for ${b}
-          </button>
+<button class="pill"
+  onclick="window.__SI_ARBITRATE(this, '${String(d.id)}', 'B'); return false;">
+  Rule for ${escapeHtml(String(d.b || CONSORTIUM_NAME))}
+</button>
         </div>
       </div>
     `;
