@@ -2477,15 +2477,16 @@ window.__SI_ARBITRATE = async function(disputeId, choice){
   const baseBonus = (state.arbitration.authorityBonusTurns && state.arbitration.authorityBonusTurns > 0) ? 2 : 0;
   const bonusText = baseBonus ? ` (+${baseBonus} Writ of Authority)` : "";
 
-  const roll = await openManualRollModal({
-    title: "Council Verdict",
-    subtitle: `Authority roll${bonusText}`,
-    die: "d20"
-  });
+  const roll = await rollD20Manual({
+  title: "Council Verdict",
+  mod: baseBonus,
+  dc: 13,
+  modalClass: "siModal--arbitration"
+});
 
-  if(roll == null) return;
+if(!roll) return;
 
-  const total = clampInt(roll, 1, 20) + baseBonus;
+const total = roll.total; // already includes the mod
 
   // Basic DC model (we can tune later)
   // If you want: tie this to market stability, risk, etc.
