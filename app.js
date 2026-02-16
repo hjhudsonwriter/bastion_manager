@@ -2449,6 +2449,12 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
           <div class="small muted">Filed Turn ${turn}</div>
         </div>
         <div class="small" style="margin-top:6px">${reason}</div>
+        
+                <div class="small muted" style="margin-top:6px">
+          Route: <b>${escapeHtml(rc || a)}</b>${commodity ? ` • Commodity: <b>${escapeHtml(commodity)}</b>` : ``}
+          <br/>
+          Disrupted on Turn <b>${escapeHtml(disruptedTurn)}</b> • Stability at filing: <b>${escapeHtml(stabAtFiling)}%</b>
+        </div>
 
         <div class="small muted" style="margin-top:10px">Choose a ruling:</div>
 
