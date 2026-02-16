@@ -2485,8 +2485,13 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
     const turn = escapeHtml(String(d.createdTurn ?? "?"));
     const rc = d.meta && d.meta.routeClan ? String(d.meta.routeClan) : "";
     const commodity = d.meta && d.meta.commodity ? String(d.meta.commodity) : "";
-    const disruptedTurn = d.meta && d.meta.disruptedTurn != null ? String(d.meta.disruptedTurn) : "?";
-    const stabAtFiling = d.meta && d.meta.stabilityAtFiling != null ? String(d.meta.stabilityAtFiling) : "?";
+    const disruptedTurn = (d.meta && d.meta.disruptedTurn != null)
+    ? String(d.meta.disruptedTurn)
+    : String(d.createdTurn ?? "?");
+    const stabAtFiling = (d.meta && d.meta.stabilityAtFiling != null)
+    ? String(d.meta.stabilityAtFiling)
+    : String(clampInt(state.tradeNetwork?.stability ?? 75, 0, 100));
+
 
     return `
       <div class="siDisputeCard" style="margin-bottom:12px">
