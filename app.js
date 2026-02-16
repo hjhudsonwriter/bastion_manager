@@ -2594,11 +2594,15 @@ const total = roll.total; // already includes the mod
 
   // Remove the dispute from queue now (it is being judged)
     // Remove the dispute only if a binding verdict is reached
+    // Remove the dispute only if a binding verdict is reached
   if(passed){
     state.arbitration.queue = state.arbitration.queue.filter(x => String(x.id) !== String(disputeId));
-  }
-     if(!passed){
-    d.reason = String(d.reason || "") + " (Returned to docket after council deadlock.)";
+  } else {
+    // Keep it pending, but don't keep appending the same note forever
+    const note = " (Returned to docket after council deadlock.)";
+    if(!String(d.reason || "").includes(note)){
+      d.reason = String(d.reason || "") + note;
+    }
   }
 
   // Writ bonus ticks down on EACH arbitration judgement
@@ -2692,6 +2696,11 @@ const total = roll.total; // already includes the mod
             = <b>${escapeHtml(String(total))}</b> vs DC <b>${escapeHtml(String(dc))}</b>
           </div>
         </div>
+      </div>
+
+            <div style="margin:8px 0 10px; padding:8px 10px; border-radius:12px; border:1px solid rgba(214,178,94,.22); background:rgba(0,0,0,.20)">
+        <span class="small muted">Case status:</span>
+        <b>${passed ? " RESOLVED (removed from docket)" : " UNRESOLVED (returned to docket)"}</b>
       </div>
 
       <div style="margin-bottom:10px">${escapeHtml(verdictText)}</div>
