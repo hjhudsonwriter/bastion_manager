@@ -2485,13 +2485,8 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
     const turn = escapeHtml(String(d.createdTurn ?? "?"));
     const rc = d.meta && d.meta.routeClan ? String(d.meta.routeClan) : "";
     const commodity = d.meta && d.meta.commodity ? String(d.meta.commodity) : "";
-    const disruptedTurn = (d.meta && d.meta.disruptedTurn != null)
-    ? String(d.meta.disruptedTurn)
-    : String(d.createdTurn ?? "?");
-    const stabAtFiling = (d.meta && d.meta.stabilityAtFiling != null)
-    ? String(d.meta.stabilityAtFiling)
-    : String(clampInt(state.tradeNetwork?.stability ?? 75, 0, 100));
-
+    const disruptedTurn = d.meta && d.meta.disruptedTurn != null ? String(d.meta.disruptedTurn) : "?";
+    const stabAtFiling = d.meta && d.meta.stabilityAtFiling != null ? String(d.meta.stabilityAtFiling) : "?";
 
     return `
       <div class="siDisputeCard" style="margin-bottom:12px">
@@ -2531,11 +2526,7 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
 
   await openSIModal({
     title: `Council Ledger (${count})`,
-   bodyHtml: `
-  <div class="siLedgerWrap">
-    <div class="siLedgerBg"></div>
-    <div class="siLedgerContent">
-
+    bodyHtml: `
       <div class="small muted">
         Sealed petitions are laid before the council. Wax cracks. Quills hover. Your verdict carries weight.
       </div>
@@ -2547,10 +2538,7 @@ function enqueueArbitrationDispute(clanA, reason, meta = {}){
       <div class="small muted" style="margin-top:10px">
         (Each ruling will prompt a manual Authority roll.)
       </div>
-
-    </div>
-  </div>
-`,
+    `,
     primaryText: "Close",
     modalClass: "siModal--arbitration"
   });
@@ -2594,15 +2582,11 @@ const total = roll.total; // already includes the mod
 
   // Remove the dispute from queue now (it is being judged)
     // Remove the dispute only if a binding verdict is reached
-    // Remove the dispute only if a binding verdict is reached
   if(passed){
     state.arbitration.queue = state.arbitration.queue.filter(x => String(x.id) !== String(disputeId));
-  } else {
-    // Keep it pending, but don't keep appending the same note forever
-    const note = " (Returned to docket after council deadlock.)";
-    if(!String(d.reason || "").includes(note)){
-      d.reason = String(d.reason || "") + note;
-    }
+  }
+     if(!passed){
+    d.reason = String(d.reason || "") + " (Returned to docket after council deadlock.)";
   }
 
   // Writ bonus ticks down on EACH arbitration judgement
@@ -2696,11 +2680,6 @@ const total = roll.total; // already includes the mod
             = <b>${escapeHtml(String(total))}</b> vs DC <b>${escapeHtml(String(dc))}</b>
           </div>
         </div>
-      </div>
-
-            <div style="margin:8px 0 10px; padding:8px 10px; border-radius:12px; border:1px solid rgba(214,178,94,.22); background:rgba(0,0,0,.20)">
-        <span class="small muted">Case status:</span>
-        <b>${passed ? " RESOLVED (removed from docket)" : " UNRESOLVED (returned to docket)"}</b>
       </div>
 
       <div style="margin-bottom:10px">${escapeHtml(verdictText)}</div>
