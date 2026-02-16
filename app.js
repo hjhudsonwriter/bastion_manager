@@ -678,7 +678,7 @@ if(tier === "bad_failure"){      turnsAdj = -2; incomeMult = 0;    pcDelta = -20
 // Apply political capital to the target clan(s)
 if(kind === "summit"){
   // Summit "pair" might be "Blackstone & Rowthorn" etc.
-  const parts = String(opt).split(/[&\/]/).map(x => x.trim()).filter(Boolean);
+ const parts = String(opt).split(/[&\/+]/).map(x => x.trim()).filter(Boolean);
   for(const p of parts) addPoliticalCapital(p, pcDelta);
   if(parts.length){
     changes.push(`Political Capital: ${pcDelta >= 0 ? "+" : ""}${pcDelta} (${parts.join(" & ")})`);
