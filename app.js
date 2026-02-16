@@ -1881,6 +1881,7 @@ hallUpgradePill.onclick = () => {
   </div>
 `;
 
+bindHallFunctionTooltips(hallCard);
 
   // Wire all hall function buttons rendered by renderFunction()
   hallCard.querySelectorAll("[data-action='runFn']").forEach(btn => {
@@ -3115,6 +3116,100 @@ function bindFacilitySlotTooltips(){
     sel.addEventListener("mousemove", move);
     sel.addEventListener("mouseleave", hide);
     sel.addEventListener("change", show);
+  }
+}
+   
+   function hallTooltipTextForFn(fn){
+  // Prefer special.kind when available
+  const kind = String(fn?.special?.kind || "").trim();
+
+  // Best-effort mapping (short, player-facing)
+  if(kind === "trade_agreement"){
+    return [
+      "Creates a timed Trade Agreement with a clan.",
+      "On resolution: a d20 vs DC determines income/turn, duration tilt, and Political Capital change.",
+      "Income is paid automatically each Bastion Turn while active."
+    ];
+  }
+
+  if(kind === "host_delegation"){
+    return [
+      "Host a clan delegation at the Hall.",
+      "On resolution: two rolls (Diplomacy + Insight).",
+      "Strong outcomes can grant a Favour Token and boost Political Capital."
+    ];
+  }
+
+  if(kind === "summit"){
+    return [
+      "Convene an inter-clan summit to reduce costs on Hall actions.",
+      "On resolution: sets a % discount for future Hall actions for a limited time.",
+      "Also shifts Political Capital for both clans."
+    ];
+  }
+
+  if(kind === "arbitration"){
+    return [
+      "Establish Arbitration Authority income and unlock dispute flow.",
+      "Disputes enter the Council Ledger from disrupted trade routes.",
+      "Use ‘Hear Disputes’ to judge them (manual Authority roll + consequences)."
+    ];
+  }
+
+  if(kind === "consortium"){
+    return [
+      "Creates a Trade Consortium contract and activates the Ironbow Trade Network.",
+      "On resolution: opens a route for the chosen clan (with risk + yield).",
+      "Routes can later be resolved each turn for income, disruption, and disputes."
+    ];
+  }
+
+  // Fallback for any future hall actions you add
+  return [
+    "A diplomatic action issued from the Hall.",
+    "Resolves next Bastion Turn.",
+    "Outcome is determined by your roll and applies Political Capital changes."
+  ];
+}
+
+function bindHallFunctionTooltips(rootEl){
+  const tip = document.getElementById("hallTooltip");
+  if(!tip) return;
+  if(!rootEl) return;
+
+  // We bind to each hall function row
+  const rows = Array.from(rootEl.querySelectorAll(".fnRow"));
+  for(const row of rows){
+    if(row.dataset.hallTtBound === "1") continue;
+    row.dataset.hallTtBound = "1";
+
+    const facId = row.querySelector("[data-fac]")?.getAttribute("data-fac") || "";
+    const fnId  = row.querySelector("[data-fn]")?.getAttribute("data-fn") || "";
+    if(facId !== "hall_of_emissaries" || !fnId) continue;
+
+    const fac = (DATA.facilities || []).find(f => f.id === facId);
+    const fn  = fac ? (fac.functions || []).find(x => x.id === fnId) : null;
+    if(!fn) continue;
+
+    const lines = hallTooltipTextForFn(fn);
+
+    const show = (e) => {
+      tip.innerHTML = `
+        <div class="ttTitle">${escapeHtml(fn.label || "Hall Action")}</div>
+        <ul>
+          ${lines.map(x=>`<li>${escapeHtml(String(x))}</li>`).join("")}
+        </ul>
+      `;
+      tip.hidden = false;
+      positionTooltip(e, tip);
+    };
+
+    const move = (e) => positionTooltip(e, tip);
+    const hide = () => { tip.hidden = true; };
+
+    row.addEventListener("mouseenter", show);
+    row.addEventListener("mousemove", move);
+    row.addEventListener("mouseleave", hide);
   }
 }
    
