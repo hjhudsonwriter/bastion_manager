@@ -798,31 +798,6 @@ select option{
   width: min(1180px, 94vw);
 }
 
-.compendiumWrap{
-  display: grid;
-  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
-  gap: 14px;
-  align-items: start;
-}
-
-.compendiumLeft{
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 14px;
-  padding: 12px;
-  background: rgba(0,0,0,.25);
-    min-width: 0;
-}
-
-.compendiumRight{
-  border: 1px solid rgba(214,178,94,.25);
-  border-radius: 14px;
-  padding: 12px;
-  background: rgba(0,0,0,.18);
-    min-width: 0;
-  max-height: 520px;      /* prevents the image from forcing the modal taller */
-  overflow: auto;         /* scroll inside detail pane */
-}
-
 .compendiumSearch{
   width: 100%;
   margin-bottom: 10px;
@@ -1886,4 +1861,80 @@ select option{
   height: auto;
   display: block;
   object-fit: contain;
+}
+
+/* =========================
+   Compendium layout (FIXED)
+   ========================= */
+
+.siModal--compendium{
+  width: min(1280px, 96vw);
+  max-width: 1280px;
+}
+
+.siModal--compendium .siModalBody{
+  width: 100%;
+}
+
+.compendiumWrap{
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.compendiumLeft{
+  flex: 0 0 460px;          /* fixed left column width */
+  max-width: 460px;
+  min-width: 460px;
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(0,0,0,.25);
+  min-width: 0;
+}
+
+.compendiumRight{
+  flex: 1 1 auto;           /* right column takes the rest */
+  min-width: 520px;         /* prevents tiny/squashed panel */
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(0,0,0,.18);
+  max-height: 560px;
+  overflow: auto;
+  min-width: 0;
+}
+
+/* Card image styling (if missing) */
+.compendiumCard{
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(214,178,94,.25);
+  background: rgba(0,0,0,.18);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.compendiumCard img{
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Small screens: stack */
+@media (max-width: 980px){
+  .compendiumWrap{
+    flex-direction: column;
+  }
+  .compendiumLeft{
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: none;
+  }
+  .compendiumRight{
+    min-width: 0;
+  }
 }
