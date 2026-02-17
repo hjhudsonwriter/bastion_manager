@@ -102,7 +102,10 @@ function makeCardCollapsibleById(cardId, defaultCollapsed = false){
   const card = document.getElementById(cardId);
   if(!card) return;
 
-  const header = card.querySelector(":scope > .cardHeader") || card.querySelector(".cardHeader");
+ const header =
+  card.querySelector(":scope > .cardHeader") || card.querySelector(".cardHeader") ||
+  card.querySelector(":scope > .card__head")  || card.querySelector(".card__head");
+
   if(!header) return;
 
   // If a .cardBody already exists, use it. Otherwise wrap everything except header.
