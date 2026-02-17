@@ -1092,7 +1092,7 @@ select option{
 }
 
 /* Make sure header elements sit above overlay */
-#diplomacyPanel .card__head{
+#diplomacyPanel .cardHeader{
   position: relative;
   z-index: 1;
 }
@@ -1129,7 +1129,7 @@ select option{
   z-index: 0;
 }
 
-#diplomacyPanel .card__head,
+#diplomacyPanel .cardHeader,
 #diplomacyPanel .dipGrid,
 #diplomacyPanel .dipFoot{
   position: relative;
