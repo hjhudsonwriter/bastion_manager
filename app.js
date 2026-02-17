@@ -4649,8 +4649,9 @@ saveState(); render(); return;
       karr: 50
     },
 
-    // War system (NEW)
+       // War system (NEW)
     warLog: []
+  };
 
   if(!raw) return DEFAULT_STATE;
 
