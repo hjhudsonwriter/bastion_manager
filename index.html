@@ -179,7 +179,9 @@
       </section>
     </section>
 
-    <!-- FULL-WIDTH: Party Identity + Clan Influence -->
+   <!-- FULL-WIDTH: Party Identity + Clan Influence -->
+<section class="fullRow">
+  <!-- FULL-WIDTH: Party Identity + Clan Influence -->
 <section class="fullRow">
   <section class="card" id="identityInfluenceCard">
     <div class="cardHeader">
@@ -187,80 +189,61 @@
     </div>
 
     <div class="cardBody">
-      <!-- PASTE THE MOVED PARTY IDENTITY + CLAN INFLUENCE TRACKER BLOCK HERE -->
+
+      <!-- Party Identity -->
+      <div class="row row--stack">
+        <div class="rowTop">
+          <div>
+            <div class="label">Party Identity</div>
+            <div class="small muted" id="orgDesc">
+              You are currently unsworn. Swear a banner when you meet the requirements.
+            </div>
+          </div>
+          <div class="pill" id="orgStatusPill">Unsworn</div>
+        </div>
+
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn--small btn--primary" id="btnFormClan">Form Clan</button>
+          <button class="btn btn--small" id="btnFormMerc">Form Mercenary Brigade</button>
+          <button class="btn btn--small btn--ghost" id="btnResetIdentity" style="display:none">Reset Identity</button>
+        </div>
+
+        <div class="small muted" id="orgReqHint" style="margin-top:10px"></div>
+      </div>
+
+      <!-- Clan Influence Trackers -->
+      <div class="row row--stack">
+        <div class="rowTop">
+          <div>
+            <div class="label">Clan Influence Trackers</div>
+            <div class="small muted">
+              Honour/Respect is DM-editable (-5 to +5). Support is derived from Political Capital + Honour/Respect.
+            </div>
+          </div>
+        </div>
+
+        <div class="warCouncilGrid" id="orgClanGrid"></div>
+
+        <div class="warCouncilSplit">
+          <div class="warCouncilBox" id="clanHonorBox" style="display:none">
+            <div class="label">Clan Honour (0–100)</div>
+            <div class="small muted">Only applies if you’ve formed a Clan.</div>
+            <label class="field" style="margin-top:10px">
+              <input id="clanHonorInput" type="number" min="0" max="100" step="1" />
+            </label>
+          </div>
+
+          <div class="warCouncilBox" id="trustedClientsBox" style="display:none">
+            <div class="label">Trusted Clients (0–100)</div>
+            <div class="small muted">Only applies if you’ve formed a Mercenary Brigade.</div>
+            <div class="warCouncilGrid" id="trustedClientsGrid"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 </section>
-    <div class="row row--stack">
-            <div class="rowTop">
-              <div>
-                <div class="label">Party Identity</div>
-                <div class="small muted" id="orgDesc">
-                  You are currently unsworn. Swear a banner when you meet the requirements.
-                </div>
-              </div>
-              <div class="pill" id="orgStatusPill">Unsworn</div>
-            </div>
-
-            <div class="actions" style="margin-top:10px">
-              <button class="btn btn--small btn--primary" id="btnFormClan">Form Clan</button>
-              <button class="btn btn--small" id="btnFormMerc">Form Mercenary Brigade</button>
-              <!-- Dev-only reset (hidden by default in JS) -->
-              <button class="btn btn--small btn--ghost" id="btnResetIdentity" style="display:none">Reset Identity</button>
-            </div>
-
-            <div class="small muted" id="orgReqHint" style="margin-top:10px"></div>
-          </div>
-
-          <!-- Clan / Merc trackers -->
-          <div class="row row--stack">
-            <div class="rowTop">
-              <div>
-                <div class="label">Clan Influence Trackers</div>
-                <div class="small muted">
-                  Honour/Respect is DM-editable (-5 to +5). Support is derived from Political Capital + Honour/Respect.
-                </div>
-              </div>
-            </div>
-
-            <div class="warCouncilGrid" id="orgClanGrid">
-              <!-- rows injected by JS -->
-            </div>
-
-            <div class="warCouncilSplit">
-              <div class="warCouncilBox" id="clanHonorBox" style="display:none">
-                <div class="label">Clan Honour (0–100)</div>
-                <div class="small muted">Only applies if you’ve formed a Clan.</div>
-                <label class="field" style="margin-top:10px">
-                  <input id="clanHonorInput" type="number" min="0" max="100" step="1" />
-                </label>
-              </div>
-
-              <div class="warCouncilBox" id="trustedClientsBox" style="display:none">
-                <div class="label">Trusted Clients (0–100)</div>
-                <div class="small muted">Only applies if you’ve formed a Mercenary Brigade.</div>
-                <div class="warCouncilGrid" id="trustedClientsGrid">
-                  <!-- rows injected by JS -->
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- War Turn -->
-          <div class="row row--stack">
-            <div class="rowTop">
-              <div>
-                <div class="label">War Turn</div>
-                <div class="small muted">
-                  Queue a war action. It resolves on the next Bastion Turn.
-                </div>
-              </div>
-            </div>
-
-            <div class="warPlanGrid">
-              <label class="field">
-                <span>Target Clan</span>
-                <select id="warTargetSelect"></select>
 
     <!-- FULL-WIDTH: Management (now spans ALL columns) -->
     <section class="fullRow">
@@ -329,65 +312,78 @@
 
    
         <!-- FULL-WIDTH: Banner & War Council -->
-    <section class="fullRow">
-      <section class="card" id="warCouncilCard">
-        <div class="cardHeader">
-          <h2>Banner &amp; War Council</h2>
-        </div>
+<section class="fullRow">
+  <section class="card" id="warCouncilCard">
+    <div class="cardHeader">
+      <h2>Banner &amp; War Council</h2>
+    </div>
 
-        <div class="stack warCouncilWrap">
+    <div class="stack warCouncilWrap">
 
-          <!-- Identity -->
-          
-              </label>
-
-              <label class="field">
-                <span>Objective</span>
-                <select id="warObjectiveSelect">
-                  <option value="raid">Raid</option>
-                  <option value="skirmish">Skirmish</option>
-                  <option value="defend">Defend Bastion</option>
-                  <option value="seize_outpost">Seize Outpost (placeholder)</option>
-                </select>
-              </label>
-
-              <label class="field">
-                <span>Defenders Committed</span>
-                <input id="warDefendersInput" type="number" min="0" step="1" />
-              </label>
-
-              <label class="field">
-                <span>Beasts Committed</span>
-                <input id="warBeastsInput" type="number" min="0" step="1" />
-              </label>
-
-              <label class="field">
-                <span>Lieutenants Committed</span>
-                <input id="warLieutenantsInput" type="number" min="0" step="1" />
-              </label>
-
-              <label class="field">
-                <span>Regiments Committed</span>
-                <input id="warRegimentsInput" type="number" min="0" step="1" />
-              </label>
-            </div>
-
-            <div class="actions" style="margin-top:10px">
-              <button class="btn btn--primary" id="btnQueueWarAction">Queue War Action</button>
-            </div>
-
-            <div class="small muted" id="warClampHint" style="margin-top:10px"></div>
-
-            <div class="warLog" style="margin-top:12px">
-              <div class="label">War Log</div>
-              <div class="small muted">Newest first. Click an entry for details.</div>
-              <div class="list" id="warLogList" style="margin-top:10px"></div>
+      <!-- War Turn -->
+      <div class="row row--stack">
+        <div class="rowTop">
+          <div>
+            <div class="label">War Turn</div>
+            <div class="small muted">
+              Queue a war action. It resolves on the next Bastion Turn.
             </div>
           </div>
-
         </div>
-      </section>
-    </section>
+
+        <div class="warPlanGrid">
+          <label class="field">
+            <span>Target Clan</span>
+            <select id="warTargetSelect"></select>
+          </label>
+
+          <label class="field">
+            <span>Objective</span>
+            <select id="warObjectiveSelect">
+              <option value="raid">Raid</option>
+              <option value="skirmish">Skirmish</option>
+              <option value="defend">Defend Bastion</option>
+              <option value="seize_outpost">Seize Outpost (placeholder)</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Defenders Committed</span>
+            <input id="warDefendersInput" type="number" min="0" step="1" />
+          </label>
+
+          <label class="field">
+            <span>Beasts Committed</span>
+            <input id="warBeastsInput" type="number" min="0" step="1" />
+          </label>
+
+          <label class="field">
+            <span>Lieutenants Committed</span>
+            <input id="warLieutenantsInput" type="number" min="0" step="1" />
+          </label>
+
+          <label class="field">
+            <span>Regiments Committed</span>
+            <input id="warRegimentsInput" type="number" min="0" step="1" />
+          </label>
+        </div>
+
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn--primary" id="btnQueueWarAction">Queue War Action</button>
+        </div>
+
+        <div class="small muted" id="warClampHint" style="margin-top:10px"></div>
+
+        <div class="warLog" style="margin-top:12px">
+          <div class="label">War Log</div>
+          <div class="small muted">Newest first. Click an entry for details.</div>
+          <div class="list" id="warLogList" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</section>
 
     <!-- FULL-WIDTH: Warehouse + Artisan Tools row (moved ABOVE Facilities) -->
     <section class="fullRow">
