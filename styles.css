@@ -1994,3 +1994,89 @@ select option{
   position: relative;
   z-index: 1;
 }
+
+/* =========================
+   Banner & War Council
+   ========================= */
+
+#warCouncilCard .cardHeader h2{
+  letter-spacing: .06em;
+}
+
+.warCouncilWrap{
+  padding-top: 12px;
+}
+
+.warCouncilGrid{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.wcRow{
+  display: grid;
+  grid-template-columns: 140px 120px 1fr 90px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 10px;
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.06));
+}
+
+.wcClan{
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: rgba(214,178,94,.95);
+}
+
+.wcField input{
+  width: 100%;
+}
+
+.wcSupport{
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(245,241,232,.92);
+}
+
+.wcSupport b{
+  color: rgba(214,178,94,.95);
+}
+
+.warCouncilSplit{
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.warCouncilBox{
+  border: 1px solid rgba(214,178,94,.25);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(0,0,0,.16);
+}
+
+.warPlanGrid{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.warPlanGrid .field select,
+.warPlanGrid .field input{
+  width: 100%;
+}
+
+@media (max-width: 1100px){
+  .warPlanGrid{ grid-template-columns: 1fr; }
+  .warCouncilSplit{ grid-template-columns: 1fr; }
+  .wcRow{ grid-template-columns: 1fr; }
+  .wcSupport{ text-align: left; }
+}
