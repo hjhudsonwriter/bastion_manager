@@ -179,6 +179,89 @@
       </section>
     </section>
 
+    <!-- FULL-WIDTH: Party Identity + Clan Influence -->
+<section class="fullRow">
+  <section class="card" id="identityInfluenceCard">
+    <div class="cardHeader">
+      <h2>Party Identity & Clan Influence</h2>
+    </div>
+
+    <div class="cardBody">
+      <!-- PASTE THE MOVED PARTY IDENTITY + CLAN INFLUENCE TRACKER BLOCK HERE -->
+    </div>
+  </section>
+</section>
+    <div class="row row--stack">
+            <div class="rowTop">
+              <div>
+                <div class="label">Party Identity</div>
+                <div class="small muted" id="orgDesc">
+                  You are currently unsworn. Swear a banner when you meet the requirements.
+                </div>
+              </div>
+              <div class="pill" id="orgStatusPill">Unsworn</div>
+            </div>
+
+            <div class="actions" style="margin-top:10px">
+              <button class="btn btn--small btn--primary" id="btnFormClan">Form Clan</button>
+              <button class="btn btn--small" id="btnFormMerc">Form Mercenary Brigade</button>
+              <!-- Dev-only reset (hidden by default in JS) -->
+              <button class="btn btn--small btn--ghost" id="btnResetIdentity" style="display:none">Reset Identity</button>
+            </div>
+
+            <div class="small muted" id="orgReqHint" style="margin-top:10px"></div>
+          </div>
+
+          <!-- Clan / Merc trackers -->
+          <div class="row row--stack">
+            <div class="rowTop">
+              <div>
+                <div class="label">Clan Influence Trackers</div>
+                <div class="small muted">
+                  Honour/Respect is DM-editable (-5 to +5). Support is derived from Political Capital + Honour/Respect.
+                </div>
+              </div>
+            </div>
+
+            <div class="warCouncilGrid" id="orgClanGrid">
+              <!-- rows injected by JS -->
+            </div>
+
+            <div class="warCouncilSplit">
+              <div class="warCouncilBox" id="clanHonorBox" style="display:none">
+                <div class="label">Clan Honour (0–100)</div>
+                <div class="small muted">Only applies if you’ve formed a Clan.</div>
+                <label class="field" style="margin-top:10px">
+                  <input id="clanHonorInput" type="number" min="0" max="100" step="1" />
+                </label>
+              </div>
+
+              <div class="warCouncilBox" id="trustedClientsBox" style="display:none">
+                <div class="label">Trusted Clients (0–100)</div>
+                <div class="small muted">Only applies if you’ve formed a Mercenary Brigade.</div>
+                <div class="warCouncilGrid" id="trustedClientsGrid">
+                  <!-- rows injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- War Turn -->
+          <div class="row row--stack">
+            <div class="rowTop">
+              <div>
+                <div class="label">War Turn</div>
+                <div class="small muted">
+                  Queue a war action. It resolves on the next Bastion Turn.
+                </div>
+              </div>
+            </div>
+
+            <div class="warPlanGrid">
+              <label class="field">
+                <span>Target Clan</span>
+                <select id="warTargetSelect"></select>
+
     <!-- FULL-WIDTH: Management (now spans ALL columns) -->
     <section class="fullRow">
       <section class="card">
@@ -255,76 +338,7 @@
         <div class="stack warCouncilWrap">
 
           <!-- Identity -->
-          <div class="row row--stack">
-            <div class="rowTop">
-              <div>
-                <div class="label">Party Identity</div>
-                <div class="small muted" id="orgDesc">
-                  You are currently unsworn. Swear a banner when you meet the requirements.
-                </div>
-              </div>
-              <div class="pill" id="orgStatusPill">Unsworn</div>
-            </div>
-
-            <div class="actions" style="margin-top:10px">
-              <button class="btn btn--small btn--primary" id="btnFormClan">Form Clan</button>
-              <button class="btn btn--small" id="btnFormMerc">Form Mercenary Brigade</button>
-              <!-- Dev-only reset (hidden by default in JS) -->
-              <button class="btn btn--small btn--ghost" id="btnResetIdentity" style="display:none">Reset Identity</button>
-            </div>
-
-            <div class="small muted" id="orgReqHint" style="margin-top:10px"></div>
-          </div>
-
-          <!-- Clan / Merc trackers -->
-          <div class="row row--stack">
-            <div class="rowTop">
-              <div>
-                <div class="label">Clan Influence Trackers</div>
-                <div class="small muted">
-                  Honour/Respect is DM-editable (-5 to +5). Support is derived from Political Capital + Honour/Respect.
-                </div>
-              </div>
-            </div>
-
-            <div class="warCouncilGrid" id="orgClanGrid">
-              <!-- rows injected by JS -->
-            </div>
-
-            <div class="warCouncilSplit">
-              <div class="warCouncilBox" id="clanHonorBox" style="display:none">
-                <div class="label">Clan Honour (0–100)</div>
-                <div class="small muted">Only applies if you’ve formed a Clan.</div>
-                <label class="field" style="margin-top:10px">
-                  <input id="clanHonorInput" type="number" min="0" max="100" step="1" />
-                </label>
-              </div>
-
-              <div class="warCouncilBox" id="trustedClientsBox" style="display:none">
-                <div class="label">Trusted Clients (0–100)</div>
-                <div class="small muted">Only applies if you’ve formed a Mercenary Brigade.</div>
-                <div class="warCouncilGrid" id="trustedClientsGrid">
-                  <!-- rows injected by JS -->
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- War Turn -->
-          <div class="row row--stack">
-            <div class="rowTop">
-              <div>
-                <div class="label">War Turn</div>
-                <div class="small muted">
-                  Queue a war action. It resolves on the next Bastion Turn.
-                </div>
-              </div>
-            </div>
-
-            <div class="warPlanGrid">
-              <label class="field">
-                <span>Target Clan</span>
-                <select id="warTargetSelect"></select>
+          
               </label>
 
               <label class="field">
@@ -432,36 +446,56 @@
     </section>
 
     <!-- FULL-WIDTH: Facilities (now spans ALL columns) -->
-    <section class="fullRow">
-      <section class="card">
-        <div class="cardHeader">
-          <h2>Facilities</h2>
-          <div class="small muted">
-            Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
-          </div>
-        </div>
+<section class="fullRow">
+  <section class="card" id="facilitiesCard">
+    <div class="cardHeader">
+      <h2>Facilities</h2>
+    </div>
 
-        <div class="facBuild">
-          <div class="facBuildTop">
-            <div>
-              <div class="label">Construction Slots</div>
-              <div class="small muted" id="slotMeta">—</div>
+    <div class="cardBody">
+
+      <div class="facBuild">
+        <div class="facBuildTop facBuildTop--split">
+          <div class="facBuildLeft">
+            <div class="label">Construction Slots</div>
+            <div class="small muted" id="slotMeta">—</div>
+          </div>
+
+          <div class="facBuildRight">
+            <div class="small muted">
+              Facilities unlock at levels 5 / 9 / 13 / 17. Locked facilities stay visible but disabled.
             </div>
             <div class="actions">
               <button class="btn btn--small" id="clearBuildBtn">Clear extra builds</button>
             </div>
           </div>
-
-          <div id="slotList" class="slotList"></div>
         </div>
 
-        <div class="pendingWrap">
-          <div class="label">Pending Orders</div>
-          <div class="small muted">Orders complete when you click <b>Take Bastion Turn</b>.</div>
-          <div class="list" id="pendingList"></div>
-        </div>
+        <div class="facBuildGrid">
+          <div>
+            <div id="slotList" class="slotList"></div>
+          </div>
 
-        <div class="facilities" id="facilitiesGrid"></div>
+          <div class="pendingWrap pendingWrap--inline">
+            <div class="label">Pending Orders</div>
+            <div class="small muted">Orders complete when you click <b>Take Bastion Turn</b>.</div>
+            <div class="list" id="pendingList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="facCarouselWrap">
+        <button class="carouselNav carouselNav--left" id="facPrevBtn" type="button" aria-label="Previous facilities">‹</button>
+
+        <div class="facCarousel" id="facilitiesGrid" tabindex="0" aria-label="Facilities"></div>
+
+        <button class="carouselNav carouselNav--right" id="facNextBtn" type="button" aria-label="Next facilities">›</button>
+      </div>
+
+    </div>
+  </section>
+</section>
+
       </section>
     </section>
 
