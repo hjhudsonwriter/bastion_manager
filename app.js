@@ -21,7 +21,13 @@
  
 
 
-  const STORAGE_KEY = "ironbow_bastion_state_v1";
+    // ---------------- Storage Key (Failsafe) ----------------
+  // Toggle this while we build the new system so your real saves cannot be corrupted.
+  const USE_TEST_STORAGE = true;
+
+  const STORAGE_KEY_PROD = "ironbow_bastion_state_v1";
+  const STORAGE_KEY_TEST = "ironbow_bastion_state_v1_TEST";
+  const STORAGE_KEY = USE_TEST_STORAGE ? STORAGE_KEY_TEST : STORAGE_KEY_PROD;
 
   const state = loadState();
 
@@ -61,6 +67,30 @@
     artisanToolGrid: $("artisanToolGrid"),
     saveArtisanToolsBtn: $("saveArtisanToolsBtn"),
     clearArtisanToolsBtn: $("clearArtisanToolsBtn"),
+
+        // Banner & War Council (NEW)
+    orgDesc: $("orgDesc"),
+    orgStatusPill: $("orgStatusPill"),
+    orgReqHint: $("orgReqHint"),
+    btnFormClan: $("btnFormClan"),
+    btnFormMerc: $("btnFormMerc"),
+    btnResetIdentity: $("btnResetIdentity"),
+
+    orgClanGrid: $("orgClanGrid"),
+    clanHonorBox: $("clanHonorBox"),
+    clanHonorInput: $("clanHonorInput"),
+    trustedClientsBox: $("trustedClientsBox"),
+    trustedClientsGrid: $("trustedClientsGrid"),
+
+    warTargetSelect: $("warTargetSelect"),
+    warObjectiveSelect: $("warObjectiveSelect"),
+    warDefendersInput: $("warDefendersInput"),
+    warBeastsInput: $("warBeastsInput"),
+    warLieutenantsInput: $("warLieutenantsInput"),
+    warRegimentsInput: $("warRegimentsInput"),
+    btnQueueWarAction: $("btnQueueWarAction"),
+    warClampHint: $("warClampHint"),
+    warLogList: $("warLogList"), 
  
   };
 
@@ -230,6 +260,122 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
   render();
 });
 
+        // Banner & War Council (NEW)
+    ui.btnFormClan?.addEventListener("click", async () => {
+      if(state.organization.type !== "unsworn") return;
+
+      const check = canFormClan();
+      if(!check.ok){
+        alert("Not eligible to form a Clan yet. See the requirements hint in the panel.");
+        return;
+      }
+
+      const res = await openSIModalChoice({
+        title: "Form Clan",
+        bodyHtml: `
+          <div class="field"><span>Clan Name</span><input id="siClanName" type="text" placeholder="e.g. Clan Ironbow" /></div>
+          <div class="field" style="margin-top:10px"><span>Clan Chief</span><input id="siClanChief" type="text" placeholder="Elected Chief name" /></div>
+          <div class="field" style="margin-top:10px"><span>Motto (optional)</span><input id="siClanMotto" type="text" placeholder="e.g. Root and Steel" /></div>
+          <div class="small muted" style="margin-top:10px">This is persistent. Save is in TEST mode right now.</div>
+        `,
+        primaryText: "Confirm Founding",
+        secondaryText: "Cancel",
+        modalClass: "siModal--hall",
+        collectIds: ["siClanName","siClanChief","siClanMotto"]
+      });
+
+      if(res.action !== "ok") return;
+
+      const name = String(res.values.siClanName || "").trim();
+      const chief = String(res.values.siClanChief || "").trim();
+      const motto = String(res.values.siClanMotto || "").trim();
+
+      if(!name){
+        alert("Clan Name is required.");
+        return;
+      }
+
+      state.organization = { type:"clan", name, chief, motto, foundedAtTurn: state.turn ?? 1 };
+      state.clanHonor = clampInt(state.clanHonor ?? 40, 0, 100);
+
+      saveState();
+      log("Identity", `Founded Clan: ${name}${chief ? ` (Chief: ${chief})` : ""}.`);
+      render();
+    });
+
+    ui.btnFormMerc?.addEventListener("click", async () => {
+      if(state.organization.type !== "unsworn") return;
+
+      const check = canFormMerc();
+      if(!check.ok){
+        alert("Not eligible to form a Mercenary Brigade yet. See the requirements hint in the panel.");
+        return;
+      }
+
+      const res = await openSIModalChoice({
+        title: "Form Mercenary Brigade",
+        bodyHtml: `
+          <div class="field"><span>Brigade Name</span><input id="siMercName" type="text" placeholder="e.g. The Ironbow Freeblades" /></div>
+          <div class="small muted" style="margin-top:10px">This is persistent. Save is in TEST mode right now.</div>
+        `,
+        primaryText: "Confirm Formation",
+        secondaryText: "Cancel",
+        modalClass: "siModal--hall",
+        collectIds: ["siMercName"]
+      });
+
+      if(res.action !== "ok") return;
+
+      const name = String(res.values.siMercName || "").trim();
+      if(!name){
+        alert("Brigade Name is required.");
+        return;
+      }
+
+      state.organization = { type:"merc", name, chief:"", motto:"", foundedAtTurn: state.turn ?? 1 };
+
+      saveState();
+      log("Identity", `Formed Mercenary Brigade: ${name}.`);
+      render();
+    });
+
+    ui.btnQueueWarAction?.addEventListener("click", () => {
+      ensureIdentityDefaults();
+
+      const targetKey = String(ui.warTargetSelect?.value || "blackstone");
+      const targetName = CLANS.find(c=>c.key===targetKey)?.name || "Unknown";
+      const objective = String(ui.warObjectiveSelect?.value || "raid");
+
+      const defendersAvail = clampInt(state.defenders?.count ?? 0, 0);
+      const beastsAvail = Array.isArray(state.defenderBeasts) ? state.defenderBeasts.length : 0;
+      const militaryAvail = Array.isArray(state.military) ? state.military.length : 0;
+
+      const unsworn = (state.organization?.type ?? "unsworn") === "unsworn";
+      const fullWar = !unsworn;
+
+      const commitDefenders = clampInt(ui.warDefendersInput?.value ?? 0, 0, defendersAvail);
+      const commitBeasts = clampInt(ui.warBeastsInput?.value ?? 0, 0, beastsAvail);
+      const commitLieutenants = fullWar ? clampInt(ui.warLieutenantsInput?.value ?? 0, 0, militaryAvail) : 0;
+      const commitRegiments = fullWar ? clampInt(ui.warRegimentsInput?.value ?? 0, 0, militaryAvail) : 0;
+
+      if(commitDefenders + commitBeasts + commitLieutenants + commitRegiments <= 0){
+        alert("Commit at least something (defenders/beasts, and if sworn, lieutenants/regiments).");
+        return;
+      }
+
+      queueWarAction({
+        objective,
+        targetKey,
+        targetName,
+        commitDefenders,
+        commitBeasts,
+        commitLieutenants,
+        commitRegiments
+      });
+
+      render();
+    });
+     
      ui.addDefBtn.addEventListener("click", () => {
       state.defenders.count += 1;
       saveState();
@@ -608,7 +754,13 @@ async function completeTradeNetworkOrder(o){
   return;
 }
 
-  // Hall of Emissaries (Dice + Consequences)
+    // War Council (NEW)
+  if(o?.meta?.kind === "war_action" || (fac && fac.id === "war_council")){
+    await resolveWarOrderAsync(o);
+    return;
+  }
+
+      // Hall of Emissaries (Dice + Consequences)
   if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
     ensureDiplomacyState();
 
@@ -983,6 +1135,7 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
     renderEventBox();
     renderFacilities();
     renderLog();
+    renderIdentityPanel();
     renderFavour();
     renderPoliticalCapital();
     renderDiplomaticAssets(); 
@@ -4457,11 +4610,47 @@ saveState(); render(); return;
     lastSpawnTurn: -1
   },
 
-    // turns + events + log
+       // turns + events + log
     turn: 1,
     lastEvent: null,
     log: [],
-  };
+
+    // ---------------- Party Identity (NEW) ----------------
+    organization: {
+      type: "unsworn",          // "unsworn" | "clan" | "merc"
+      name: "",
+      chief: "",
+      motto: "",
+      foundedAtTurn: null
+    },
+
+    // Clan-only (NEW)
+    clanHonor: 40,              // 0..100
+
+    // DM-editable per clan (NEW)
+    honourRespectByClan: {
+      blackstone: 0,
+      bacca: 0,
+      farmer: 0,
+      slade: 0,
+      molten: 0,
+      rowthorn: 0,
+      karr: 0
+    },
+
+    // Merc-only (NEW)
+    trustedClientsByClan: {
+      blackstone: 50,
+      bacca: 50,
+      farmer: 50,
+      slade: 50,
+      molten: 50,
+      rowthorn: 50,
+      karr: 50
+    },
+
+    // War system (NEW)
+    warLog: []
 
   if(!raw) return DEFAULT_STATE;
 
@@ -4561,6 +4750,455 @@ saveState(); render(); return;
         <div class="logEntry__body">${escapeHtml(e.body || "")}</div>
       </div>
     `).join("");
+  }
+
+     // ---------------- Party Identity + War (NEW) ----------------
+
+  const CLANS = [
+    { key:"blackstone", name:"Blackstone" },
+    { key:"bacca",      name:"Bacca" },
+    { key:"farmer",     name:"Farmer" },
+    { key:"slade",      name:"Slade" },
+    { key:"molten",     name:"Molten" },
+    { key:"rowthorn",   name:"Rowthorn" },
+    { key:"karr",       name:"Karr" },
+  ];
+
+  const IDENTITY_RULES = {
+    clanMinLevel: 9,
+    mercMinLevel: 7,
+    clanSupportTotalMin: 360,
+    clanSupportPerClanMin: 55,
+    clanSupportClanCountMin: 3,
+    mercMinDefenders: 3
+  };
+
+  function ensureIdentityDefaults(){
+    if(!state.organization || typeof state.organization !== "object"){
+      state.organization = { type:"unsworn", name:"", chief:"", motto:"", foundedAtTurn:null };
+    }
+    if(state.clanHonor == null) state.clanHonor = 40;
+
+    if(!state.honourRespectByClan || typeof state.honourRespectByClan !== "object"){
+      state.honourRespectByClan = {};
+    }
+    for(const c of CLANS){
+      if(state.honourRespectByClan[c.key] == null) state.honourRespectByClan[c.key] = 0;
+      state.honourRespectByClan[c.key] = clampInt(state.honourRespectByClan[c.key], -5, 5);
+    }
+
+    if(!state.trustedClientsByClan || typeof state.trustedClientsByClan !== "object"){
+      state.trustedClientsByClan = {};
+    }
+    for(const c of CLANS){
+      if(state.trustedClientsByClan[c.key] == null) state.trustedClientsByClan[c.key] = 50;
+      state.trustedClientsByClan[c.key] = clampInt(state.trustedClientsByClan[c.key], 0, 100);
+    }
+
+    if(!Array.isArray(state.warLog)) state.warLog = [];
+  }
+
+  function supportForClanKey(clanKey){
+    const pc = clampInt(state.politicalCapital?.[clanKey] ?? 0, -100, 100);
+    const hr = clampInt(state.honourRespectByClan?.[clanKey] ?? 0, -5, 5);
+
+    // Support model (simple, explainable, adjustable):
+    // - PC maps from [-100..100] -> [0..100] by adding 100 and halving.
+    // - Honour/Respect adds a small modifier: (-5..+5) -> (-20..+20) via *4.
+    const base = (pc + 100) / 2;           // 0..100
+    const mod  = hr * 4;                  // -20..+20
+    return clampInt(Math.round(base + mod), 0, 100);
+  }
+
+  function totalSupportAllClans(){
+    return CLANS.reduce((sum,c)=>sum + supportForClanKey(c.key), 0);
+  }
+
+  function countClansAboveSupport(threshold){
+    return CLANS.filter(c => supportForClanKey(c.key) >= threshold).length;
+  }
+
+  function canFormClan(){
+    const lvlOk = (state.partyLevel ?? 1) >= IDENTITY_RULES.clanMinLevel;
+    const totalOk = totalSupportAllClans() >= IDENTITY_RULES.clanSupportTotalMin;
+    const countOk = countClansAboveSupport(IDENTITY_RULES.clanSupportPerClanMin) >= IDENTITY_RULES.clanSupportClanCountMin;
+    return { ok: lvlOk && totalOk && countOk, lvlOk, totalOk, countOk };
+  }
+
+  function canFormMerc(){
+    const lvlOk = (state.partyLevel ?? 1) >= IDENTITY_RULES.mercMinLevel;
+    const defOk = (state.defenders?.count ?? 0) >= IDENTITY_RULES.mercMinDefenders;
+    return { ok: lvlOk && defOk, lvlOk, defOk };
+  }
+
+  function orgLabel(){
+    const o = state.organization || { type:"unsworn" };
+    if(o.type === "clan") return `Clan: ${o.name || "Unnamed"}`;
+    if(o.type === "merc") return `Brigade: ${o.name || "Unnamed"}`;
+    return "Unsworn";
+  }
+
+  function setOrgDesc(){
+    if(!ui.orgDesc) return;
+    const o = state.organization;
+    if(o.type === "clan"){
+      ui.orgDesc.textContent = "You are a political entity. Clan Honour unlocks future war and territory systems.";
+    } else if(o.type === "merc"){
+      ui.orgDesc.textContent = "You are contract-driven. Trusted Clients affects future contract access and payment tiers.";
+    } else {
+      ui.orgDesc.textContent = "Unsworn. You may found a Clan (support-based) or form a Mercenary Brigade (defenders + level).";
+    }
+  }
+
+  function renderClanTrackers(){
+    if(!ui.orgClanGrid) return;
+    ui.orgClanGrid.innerHTML = CLANS.map(c => {
+      const hr = clampInt(state.honourRespectByClan?.[c.key] ?? 0, -5, 5);
+      const sup = supportForClanKey(c.key);
+      const pc  = clampInt(state.politicalCapital?.[c.key] ?? 0, -100, 100);
+      return `
+        <div class="wcRow" data-clan="${c.key}">
+          <div class="wcClan">${escapeHtml(c.name)}</div>
+          <div class="small muted">PC: <b>${pc >= 0 ? "+" : ""}${pc}</b></div>
+          <div class="wcField">
+            <label class="field" style="margin:0">
+              <span>Honour/Respect (-5..+5)</span>
+              <input type="number" class="wcHrInput" min="-5" max="5" step="1" value="${hr}">
+            </label>
+          </div>
+          <div class="wcSupport"><b>${sup}</b>/100</div>
+        </div>
+      `;
+    }).join("");
+
+    ui.orgClanGrid.querySelectorAll(".wcRow").forEach(row => {
+      const key = row.getAttribute("data-clan");
+      const input = row.querySelector(".wcHrInput");
+      input?.addEventListener("change", ()=>{
+        const v = clampInt(input.value, -5, 5);
+        state.honourRespectByClan[key] = v;
+        saveState();
+        renderIdentityPanel(); // refresh support + requirements
+      });
+    });
+  }
+
+  function renderTrustedClients(){
+    if(!ui.trustedClientsGrid) return;
+    ui.trustedClientsGrid.innerHTML = CLANS.map(c => {
+      const tc = clampInt(state.trustedClientsByClan?.[c.key] ?? 50, 0, 100);
+      return `
+        <div class="wcRow" data-clan="${c.key}">
+          <div class="wcClan">${escapeHtml(c.name)}</div>
+          <div class="small muted">Client Trust</div>
+          <div class="wcField">
+            <label class="field" style="margin:0">
+              <span>Trusted (0..100)</span>
+              <input type="number" class="wcTcInput" min="0" max="100" step="1" value="${tc}">
+            </label>
+          </div>
+          <div class="wcSupport"><b>${tc}</b>/100</div>
+        </div>
+      `;
+    }).join("");
+
+    ui.trustedClientsGrid.querySelectorAll(".wcRow").forEach(row => {
+      const key = row.getAttribute("data-clan");
+      const input = row.querySelector(".wcTcInput");
+      input?.addEventListener("change", ()=>{
+        const v = clampInt(input.value, 0, 100);
+        state.trustedClientsByClan[key] = v;
+        saveState();
+        renderIdentityPanel();
+      });
+    });
+  }
+
+  function renderWarLog(){
+    if(!ui.warLogList) return;
+    const items = Array.isArray(state.warLog) ? state.warLog : [];
+    if(!items.length){
+      ui.warLogList.innerHTML = `<div class="small muted">No war actions recorded yet.</div>`;
+      return;
+    }
+    ui.warLogList.innerHTML = items.slice(0, 20).map(w => `
+      <div class="item" data-warid="${escapeHtml(String(w.id))}">
+        <div>
+          <div class="item__name">${escapeHtml(w.title)}</div>
+          <div class="item__meta">${escapeHtml(formatTime(w.at))}</div>
+        </div>
+        <button class="item__btn" type="button">View</button>
+      </div>
+    `).join("");
+
+    ui.warLogList.querySelectorAll(".item").forEach(el => {
+      el.addEventListener("click", ()=>{
+        const id = el.getAttribute("data-warid");
+        const rec = state.warLog.find(x => String(x.id) === String(id));
+        if(!rec) return;
+
+        const bodyHtml = `
+          <div class="siResTop">
+            <div class="siResAction">${escapeHtml(rec.title)}</div>
+            <div class="siResTarget small muted">${escapeHtml(rec.subtitle || "")}</div>
+          </div>
+          <div class="siResRoll">${escapeHtml(rec.details || "")}</div>
+        `;
+        openSIModal({
+          title: "War Report",
+          bodyHtml,
+          primaryText: "Close",
+          modalClass: "siModal--hall"
+        });
+      });
+    });
+  }
+
+  function renderIdentityPanel(){
+    if(!ui.orgStatusPill) return;
+
+    ensureIdentityDefaults();
+
+    ui.orgStatusPill.textContent = orgLabel();
+    setOrgDesc();
+
+    // Eligibility hints
+    const c = canFormClan();
+    const m = canFormMerc();
+
+    if(ui.orgReqHint){
+      const clanHint =
+        `Clan requirements: Level ${IDENTITY_RULES.clanMinLevel}+ (${c.lvlOk ? "OK" : "NO"}), `
+        + `Total Support ${IDENTITY_RULES.clanSupportTotalMin}+ (${c.totalOk ? "OK" : "NO"}), `
+        + `${IDENTITY_RULES.clanSupportClanCountMin} clans at ${IDENTITY_RULES.clanSupportPerClanMin}+ (${c.countOk ? "OK" : "NO"}).`;
+
+      const mercHint =
+        `Merc requirements: Level ${IDENTITY_RULES.mercMinLevel}+ (${m.lvlOk ? "OK" : "NO"}), `
+        + `${IDENTITY_RULES.mercMinDefenders}+ defenders (${m.defOk ? "OK" : "NO"}).`;
+
+      ui.orgReqHint.textContent = `${clanHint}  ${mercHint}`;
+    }
+
+    // Buttons enabled/disabled
+    if(ui.btnFormClan) ui.btnFormClan.disabled = !(state.organization.type === "unsworn" && c.ok);
+    if(ui.btnFormMerc) ui.btnFormMerc.disabled = !(state.organization.type === "unsworn" && m.ok);
+
+    // Show/hide clan/merc boxes
+    if(ui.clanHonorBox) ui.clanHonorBox.style.display = (state.organization.type === "clan") ? "" : "none";
+    if(ui.trustedClientsBox) ui.trustedClientsBox.style.display = (state.organization.type === "merc") ? "" : "none";
+
+    if(ui.clanHonorInput){
+      ui.clanHonorInput.value = String(clampInt(state.clanHonor ?? 40, 0, 100));
+      ui.clanHonorInput.onchange = () => {
+        state.clanHonor = clampInt(ui.clanHonorInput.value, 0, 100);
+        saveState();
+        renderIdentityPanel();
+      };
+    }
+
+    renderClanTrackers();
+    if(state.organization.type === "merc") renderTrustedClients();
+    renderWarControls();
+    renderWarLog();
+  }
+
+  function renderWarControls(){
+    if(!ui.warTargetSelect) return;
+
+    // Populate target clans (defend is special case)
+    ui.warTargetSelect.innerHTML = CLANS.map(c => `<option value="${c.key}">${c.name}</option>`).join("");
+
+    // Clamp inputs to available amounts (live hint)
+    const defendersAvail = clampInt(state.defenders?.count ?? 0, 0);
+    const beastsAvail = Array.isArray(state.defenderBeasts) ? state.defenderBeasts.length : 0;
+    const militaryAvail = Array.isArray(state.military) ? state.military.length : 0;
+
+    // Unsworn limitation: only defenders/beasts
+    const unsworn = (state.organization?.type ?? "unsworn") === "unsworn";
+    const fullWar = !unsworn;
+
+    if(ui.warLieutenantsInput) ui.warLieutenantsInput.disabled = !fullWar;
+    if(ui.warRegimentsInput) ui.warRegimentsInput.disabled = !fullWar;
+
+    // Set sensible defaults if empty
+    const setIfBlank = (el, v) => {
+      if(!el) return;
+      if(el.value === "" || el.value == null) el.value = String(v);
+    };
+
+    setIfBlank(ui.warDefendersInput, Math.min(2, defendersAvail));
+    setIfBlank(ui.warBeastsInput, Math.min(1, beastsAvail));
+    setIfBlank(ui.warLieutenantsInput, 0);
+    setIfBlank(ui.warRegimentsInput, 0);
+
+    const clampAndHint = () => {
+      const dC = clampInt(ui.warDefendersInput?.value ?? 0, 0, defendersAvail);
+      const bC = clampInt(ui.warBeastsInput?.value ?? 0, 0, beastsAvail);
+      const lC = fullWar ? clampInt(ui.warLieutenantsInput?.value ?? 0, 0, militaryAvail) : 0;
+      const rC = fullWar ? clampInt(ui.warRegimentsInput?.value ?? 0, 0, militaryAvail) : 0;
+
+      if(ui.warDefendersInput) ui.warDefendersInput.value = String(dC);
+      if(ui.warBeastsInput) ui.warBeastsInput.value = String(bC);
+      if(ui.warLieutenantsInput) ui.warLieutenantsInput.value = String(lC);
+      if(ui.warRegimentsInput) ui.warRegimentsInput.value = String(rC);
+
+      if(ui.warClampHint){
+        ui.warClampHint.textContent =
+          `Available: ${defendersAvail} defenders, ${beastsAvail} beasts, ${militaryAvail} military units. `
+          + (unsworn ? "Unsworn war is limited to defenders and beasts." : "Full commitments enabled.");
+      }
+    };
+
+    ui.warDefendersInput?.addEventListener("input", clampAndHint);
+    ui.warBeastsInput?.addEventListener("input", clampAndHint);
+    ui.warLieutenantsInput?.addEventListener("input", clampAndHint);
+    ui.warRegimentsInput?.addEventListener("input", clampAndHint);
+
+    clampAndHint();
+  }
+
+  function queueWarAction(meta){
+    const order = {
+      id: uid(),
+      facId: "war_council",
+      fnId: "war_action",
+      optionIdx: 0,
+      label: "War Action",
+      completeTurn: (state.turn ?? 1) + 1,
+      meta: { ...(meta || {}), kind: "war_action" }
+    };
+    state.pendingOrders.push(order);
+    saveState();
+    log("War Action Queued", `${meta.objective.toUpperCase()} vs ${meta.targetName} (resolves next Bastion Turn).`);
+  }
+
+  async function resolveWarOrderAsync(order){
+    const meta = order?.meta || {};
+    const objective = String(meta.objective || "raid");
+    const targetKey = String(meta.targetKey || "blackstone");
+
+    const targetName = CLANS.find(c=>c.key===targetKey)?.name || "Unknown";
+
+    // Simple DCs by objective
+    const DC_BY_OBJ = {
+      raid: 14,
+      skirmish: 13,
+      defend: 12,
+      seize_outpost: 15
+    };
+    const dc = DC_BY_OBJ[objective] ?? 13;
+
+    // Commitment adds a light mod (kept small to avoid rebalancing your whole economy)
+    const defenders = clampInt(meta.commitDefenders ?? 0, 0);
+    const beasts = clampInt(meta.commitBeasts ?? 0, 0);
+    const lieutenants = clampInt(meta.commitLieutenants ?? 0, 0);
+    const regiments = clampInt(meta.commitRegiments ?? 0, 0);
+
+    const mod =
+      Math.min(4, Math.floor(defenders / 2))
+      + Math.min(2, beasts)
+      + Math.min(3, Math.floor((lieutenants + regiments) / 2));
+
+    const roll = await rollD20Manual({
+      title: `War Turn: ${objective.toUpperCase()} vs ${targetName}`,
+      mod,
+      dc,
+      modalClass: "siModal--hall"
+    });
+
+    if(!roll){
+      log("War Turn", "War resolution cancelled at roll step.");
+      return;
+    }
+
+    const success = roll.total >= dc;
+
+    // Outcome payloads (small but real)
+    let gpDelta = 0;
+    let pcDelta = 0;
+    let clanHonorDelta = 0;
+
+    // Merc: target client trust down if attacked; others drift slightly on success/fail
+    const isClan = state.organization?.type === "clan";
+    const isMerc = state.organization?.type === "merc";
+
+    if(objective === "defend"){
+      gpDelta = success ? +0 : -25;
+      pcDelta = success ? +6 : -8; // defend improves standing broadly
+    } else if(objective === "raid"){
+      gpDelta = success ? +75 : -50;
+      pcDelta = success ? -10 : +8;
+    } else if(objective === "skirmish"){
+      gpDelta = success ? +40 : -30;
+      pcDelta = success ? -6 : +6;
+    } else if(objective === "seize_outpost"){
+      gpDelta = success ? +60 : -60;
+      pcDelta = success ? -12 : +10;
+    }
+
+    // Apply treasury
+    state.treasuryGP = clampInt((state.treasuryGP ?? 0) + gpDelta, 0);
+
+    // Apply political capital (target clan)
+    // Success hurts target PC, failure helps them (as per your spec)
+    const targetPcDelta = pcDelta;
+    if(typeof addPoliticalCapital === "function"){
+      addPoliticalCapital(targetName, targetPcDelta);
+    } else {
+      // Fallback: direct key write if helper not in scope for some reason
+      state.politicalCapital[targetKey] = clampInt((state.politicalCapital?.[targetKey] ?? 0) + targetPcDelta, -100, 100);
+    }
+
+    // Casualties on failure (small, real)
+    if(!success){
+      const defLoss = Math.min(defenders, Math.max(1, Math.floor(defenders / 3)));
+      state.defenders.count = Math.max(0, (state.defenders.count ?? 0) - defLoss);
+
+      const beastLoss = Math.min(beasts, (beasts > 0 ? 1 : 0));
+      if(beastLoss > 0 && Array.isArray(state.defenderBeasts)){
+        // Remove from end (minimal change, avoids naming logic)
+        state.defenderBeasts.splice(-beastLoss, beastLoss);
+      }
+    }
+
+    // Clan honour / Merc trusted clients
+    if(isClan){
+      clanHonorDelta = success ? +6 : -8;
+      state.clanHonor = clampInt((state.clanHonor ?? 40) + clanHonorDelta, 0, 100);
+    }
+
+    if(isMerc){
+      // Target clan trust changes
+      const tcDelta = success ? -8 : -4;
+      state.trustedClientsByClan[targetKey] = clampInt((state.trustedClientsByClan?.[targetKey] ?? 50) + tcDelta, 0, 100);
+
+      // Others drift slightly based on reputation
+      for(const c of CLANS){
+        if(c.key === targetKey) continue;
+        const drift = success ? +1 : -1;
+        state.trustedClientsByClan[c.key] = clampInt((state.trustedClientsByClan?.[c.key] ?? 50) + drift, 0, 100);
+      }
+    }
+
+    const title = `${success ? "Success" : "Failure"}: ${objective.toUpperCase()} vs ${targetName}`;
+    const details =
+      `Roll: d20 ${roll.d20} + mod ${mod} = ${roll.total} vs DC ${dc}\n`
+      + `Treasury: ${gpDelta >= 0 ? "+" : ""}${gpDelta} gp\n`
+      + `Political Capital (${targetName}): ${targetPcDelta >= 0 ? "+" : ""}${targetPcDelta}\n`
+      + (isClan ? `Clan Honour: ${clanHonorDelta >= 0 ? "+" : ""}${clanHonorDelta}\n` : "")
+      + (!success ? `Casualties: defenders ${Math.min(defenders, Math.max(1, Math.floor(defenders / 3)))}; beasts ${(beasts>0)?1:0}\n` : "");
+
+    state.warLog.unshift({
+      id: uid(),
+      at: Date.now(),
+      title,
+      subtitle: `Committed: ${defenders} defenders, ${beasts} beasts, ${lieutenants} lieutenants, ${regiments} regiments`,
+      details
+    });
+
+    log("War Turn Resolved", title);
+    saveState();
+    render();
   }
 
   function addToList(list, name, meta={}){
