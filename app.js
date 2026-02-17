@@ -55,6 +55,8 @@
 
     eventBox: $("eventBox"),
     facilitiesGrid: $("facilitiesGrid"),
+    facPrevBtn: $("facPrevBtn"),
+    facNextBtn: $("facNextBtn"),
 
     logList: $("logList"),
     clearLogBtn: $("clearLogBtn"),
@@ -93,6 +95,114 @@
     warLogList: $("warLogList"), 
  
   };
+   // ================================
+// Collapsible Cards (generic)
+// ================================
+function makeCardCollapsibleById(cardId, defaultCollapsed = false){
+  const card = document.getElementById(cardId);
+  if(!card) return;
+
+  const header = card.querySelector(":scope > .cardHeader") || card.querySelector(".cardHeader");
+  if(!header) return;
+
+  // If a .cardBody already exists, use it. Otherwise wrap everything except header.
+  let body = card.querySelector(":scope > .cardBody");
+  if(!body){
+    body = document.createElement("div");
+    body.className = "cardBody";
+
+    const move = [];
+    for(const child of Array.from(card.children)){
+      if(child === header) continue;
+      move.push(child);
+    }
+    move.forEach(n => body.appendChild(n));
+    card.appendChild(body);
+  }
+
+  let btn = header.querySelector(".collapseBtn");
+  if(!btn){
+    btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "collapseBtn";
+    btn.setAttribute("aria-label", "Collapse/expand panel");
+    header.appendChild(btn);
+  }
+
+  const key = `si_collapse_${cardId}`;
+  const saved = localStorage.getItem(key);
+  const startCollapsed = saved === null ? defaultCollapsed : (saved === "1");
+
+  function apply(collapsed){
+    card.classList.toggle("is-collapsed", collapsed);
+    btn.textContent = collapsed ? "▸" : "▾";
+    btn.setAttribute("aria-expanded", String(!collapsed));
+    localStorage.setItem(key, collapsed ? "1" : "0");
+  }
+
+  btn.addEventListener("click", () => {
+    apply(!card.classList.contains("is-collapsed"));
+  });
+
+  apply(startCollapsed);
+}
+
+function setupCollapsibles(){
+  makeCardCollapsibleById("warCouncilCard", false);
+  makeCardCollapsibleById("diplomacyPanel", false);
+  makeCardCollapsibleById("facilitiesCard", false);
+  makeCardCollapsibleById("identityInfluenceCard", false);
+}
+
+// ================================
+// Facilities Carousel nav wiring
+// ================================
+function wireFacilitiesCarouselNav(){
+  const viewport = ui.facilitiesGrid;
+  const prev = ui.facPrevBtn;
+  const next = ui.facNextBtn;
+  if(!viewport || !prev || !next) return;
+
+  // Avoid double-binding across renders
+  if(prev.dataset.wired === "1") {
+    // still update disabled state after re-render
+    requestAnimationFrame(updateNav);
+    return;
+  }
+  prev.dataset.wired = "1";
+  next.dataset.wired = "1";
+
+  function getStep(){
+    const first = viewport.querySelector(".facCard");
+    const w = first ? first.getBoundingClientRect().width : 440;
+    return w + 16; // card width + CSS gap
+  }
+
+  function scrollByCards(dir){
+    viewport.scrollBy({ left: dir * getStep(), behavior: "smooth" });
+  }
+
+  prev.addEventListener("click", () => scrollByCards(-1));
+  next.addEventListener("click", () => scrollByCards(1));
+
+  viewport.addEventListener("keydown", (e) => {
+    if(e.key === "ArrowLeft"){ e.preventDefault(); scrollByCards(-1); }
+    if(e.key === "ArrowRight"){ e.preventDefault(); scrollByCards(1); }
+  });
+
+  viewport.addEventListener("scroll", () => {
+    requestAnimationFrame(updateNav);
+  }, { passive: true });
+
+  function updateNav(){
+    const max = viewport.scrollWidth - viewport.clientWidth;
+    const x = viewport.scrollLeft;
+    prev.disabled = x <= 2;
+    next.disabled = x >= (max - 2);
+  }
+
+  updateNav();
+}
 
   let DATA = { facilities: [], tools: {}, events: null };
 
@@ -219,6 +329,7 @@ DATA.compendium = (compendiumRaw && compendiumRaw.items) ? compendiumRaw.items :
 
 ensureDiplomacyState();
 ensureDiplomacyPanel();
+setupCollapsibles();     
 document.getElementById("btnHearDisputes")?.addEventListener("click", openDisputeQueueModal);
 normalizeArbitrationQueue();     
 
@@ -4284,46 +4395,59 @@ function autoCompendiumDetail(itemName){
   // --- Pending Orders list ---
   renderPendingOrders();
 
-  // --- Facilities grid: ONLY built facilities ---
-  const builtIds = builtFacilityIds();
-  const builtFacilities = DATA.facilities.filter(f => builtIds.includes(f.id) && f.id !== "hall_of_emissaries");
+  // --- Facilities carousel: ONLY built facilities ---
+const builtIds = builtFacilityIds();
+const builtFacilities = DATA.facilities
+  .filter(f => builtIds.includes(f.id) && f.id !== "hall_of_emissaries");
 
-  ui.facilitiesGrid.innerHTML = builtFacilities.map(fac => {
-    const fns = (fac.functions || []).map(fn => {
+ui.facilitiesGrid.innerHTML = builtFacilities.map(fac => {
   const facLvl = getFacilityLevel(fac.id);
-  const req = clampInt(fn.requiredFacilityLevel ?? 1, 1, 3);
-  const locked = facLvl < req;
-  return renderFunction(fac, fn, locked);
+
+  const imgFile = FACILITY_IMG[fac.id];
+  const imgHtml = imgFile
+    ? `<img class="facHeroImg" src="${withBase(`assets/facilities/${imgFile}`)}" alt="${escapeHtml(fac.name)}" />`
+    : `<div class="facHeroImg facHeroImg--empty"><span class="small muted">No image</span></div>`;
+
+  const fnsArr = (fac.functions || []).map(fn => {
+    const req = clampInt(fn.requiredFacilityLevel ?? 1, 1, 3);
+    const locked = facLvl < req;
+    return renderFunction(fac, fn, locked);
+  });
+
+  const gridClass = (fnsArr.length <= 1) ? "one" : "two";
+  const fnsHtml = fnsArr.length
+    ? `<div class="facFnGrid ${gridClass}">${fnsArr.join("")}</div>`
+    : `<div class="small muted">No functions listed.</div>`;
+
+  return `
+    <div class="facCard" data-fac-card="${escapeHtml(fac.id)}">
+      <div class="facHero">
+        ${imgHtml}
+        <div class="facHeroOverlay">
+          <div class="facHeroTitle">${escapeHtml(fac.name)}</div>
+          <div class="small muted">Built • Functions take 1 Bastion Turn</div>
+        </div>
+        <div class="facHeroPill"><span class="tag tag--ok">Active</span></div>
+      </div>
+
+      <div class="facCardBody">
+        ${fnsHtml}
+      </div>
+    </div>
+  `;
 }).join("");
 
-    const imgFile = FACILITY_IMG[fac.id];
-    const imgHtml = imgFile
-      ? `<div class="facImgWrap"><img class="facImg" src="${withBase(`assets/facilities/${imgFile}`)}" alt="${escapeHtml(fac.name)}" /></div>`
-      : "";
-
-    return `
-      <div class="fac">
-        ${imgHtml}
-        <div class="facTop">
-          <div>
-            <div class="facName">${escapeHtml(fac.name)}</div>
-            <div class="small muted">Built • Functions take 1 Bastion Turn</div>
-          </div>
-          <div class="facMeta"><span class="tag tag--ok">Active</span></div>
-        </div>
-        <div class="facFns">${fns || `<div class="small muted">No functions listed.</div>`}</div>
-      </div>
-    `;
-  }).join("");
-
-  // attach events to function buttons
-  ui.facilitiesGrid.querySelectorAll("[data-action='runFn']").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const facId = btn.getAttribute("data-fac");
-      const fnId = btn.getAttribute("data-fn");
-      issueOrder(facId, fnId);
-    });
+// attach events to function buttons (unchanged behavior)
+ui.facilitiesGrid.querySelectorAll("[data-action='runFn']").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const facId = btn.getAttribute("data-fac");
+    const fnId = btn.getAttribute("data-fn");
+    issueOrder(facId, fnId);
   });
+});
+
+// ensure arrow buttons work and disabled state updates
+wireFacilitiesCarouselNav();
 }
 
 
