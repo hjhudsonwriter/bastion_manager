@@ -2040,6 +2040,9 @@ function ensureDiplomacyPanel(){
     log("Diplomacy", "Cleared diplomacy records.");
     render();
   });
+
+     makeCardCollapsibleById("diplomacyPanel", false);  // <-- ADD THIS LINE
+
 }
 
 function updateCouncilLedgerButton(){
