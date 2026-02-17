@@ -123,13 +123,24 @@ function makeCardCollapsibleById(cardId, defaultCollapsed = false){
     card.appendChild(body);
   }
 
-  let btn = header.querySelector(".collapseBtn");
+    let btn = header.querySelector(".collapseBtn");
   if(!btn){
     btn = document.createElement("button");
     btn.type = "button";
     btn.className = "collapseBtn";
     btn.setAttribute("aria-label", "Collapse/expand panel");
-    header.appendChild(btn);
+
+    // Diplomacy header is complex; place the toggle at top-right so it can't get hidden.
+    if(cardId === "diplomacyPanel"){
+      header.style.position = header.style.position || "relative";
+      btn.style.position = "absolute";
+      btn.style.top = "10px";
+      btn.style.right = "10px";
+      btn.style.zIndex = "20";
+      header.appendChild(btn);
+    } else {
+      header.appendChild(btn);
+    }
   }
 
   const key = `si_collapse_${cardId}`;
