@@ -2269,8 +2269,11 @@ select option{
   gap: 12px;
 }
 
-.facFnGrid.two{
-  grid-template-columns: 1fr 1fr;
+.facFnGrid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: stretch; /* key */
 }
 
 /* Responsive */
@@ -2286,6 +2289,34 @@ select option{
     flex-basis: 86vw;
   }
   .facFnGrid.two{
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch; /* key: makes both columns same height */
+}
+}
+
+/* ================================
+   Facility function boxes: equal size + neat layout
+================================ */
+
+/* The wrapper that contains an Issue Order button becomes a flex column panel */
+.facFnGrid > *:has([data-action="runFn"]){
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* pushes the button area down consistently */
+  min-height: 220px;              /* gives both functions the same visual "presence" */
+}
+
+/* Make dropdowns/inputs stop looking like random squares */
+.facFnGrid > *:has([data-action="runFn"]) select,
+.facFnGrid > *:has([data-action="runFn"]) input{
+  width: 100%;
+  min-height: 40px;
+}
+
+/* If a function has a big text note, keep it tidy instead of stretching the whole panel */
+.facFnGrid > *:has([data-action="runFn"]) .small.muted{
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;          /* clamp long notes */
+  -webkit-box-orient: vertical;
 }
