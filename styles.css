@@ -2080,3 +2080,211 @@ select option{
   .wcRow{ grid-template-columns: 1fr; }
   .wcSupport{ text-align: left; }
 }
+
+/* ================================
+   Collapsible panels
+================================ */
+.card.is-collapsed > .cardBody { display: none; }
+
+.collapseBtn{
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(214,178,94,.45);
+  background: rgba(0,0,0,.25);
+  color: rgba(214,178,94,.95);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.collapseBtn:hover{ background: rgba(0,0,0,.38); }
+.collapseBtn:disabled{ opacity:.4; cursor: default; }
+
+/* ================================
+   Facilities panel: slot + pending split
+================================ */
+#facilitiesCard .cardBody{
+  padding: 14px 16px 16px;
+}
+
+.facBuild{
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(255,255,255,.02);
+  margin-bottom: 14px;
+}
+
+.facBuildTop--split{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.facBuildRight{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.facBuildGrid{
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.pendingWrap--inline{
+  padding: 10px;
+  border: 1px dashed rgba(255,255,255,.14);
+  border-radius: 14px;
+  background: rgba(0,0,0,.18);
+}
+
+/* ================================
+   Facilities carousel row (big cards)
+================================ */
+.facCarouselWrap{
+  position: relative;
+}
+
+.facCarousel{
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 14px 52px 14px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.facCarousel::-webkit-scrollbar{ height: 10px; }
+.facCarousel::-webkit-scrollbar-thumb{
+  background: rgba(214,178,94,.25);
+  border-radius: 999px;
+}
+.facCarousel:focus{
+  outline: 2px solid rgba(214,178,94,.35);
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+.carouselNav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 78px;
+  border-radius: 16px;
+  border: 1px solid rgba(214,178,94,.45);
+  background: rgba(0,0,0,.35);
+  color: rgba(214,178,94,.95);
+  cursor: pointer;
+  font-size: 34px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+.carouselNav:hover{ background: rgba(0,0,0,.48); }
+.carouselNav:disabled{ opacity: .35; cursor: default; }
+
+.carouselNav--left{ left: 8px; }
+.carouselNav--right{ right: 8px; }
+
+.facCard{
+  flex: 0 0 440px;
+  height: 560px;
+  border: 1px solid rgba(214,178,94,.35);
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.07));
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+}
+
+.facHero{
+  position: relative;
+  flex: 0 0 52%;
+  border-bottom: 1px solid rgba(214,178,94,.25);
+}
+
+.facHeroImg{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.06) contrast(1.06);
+}
+
+.facHeroImg--empty{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.25);
+}
+
+.facHeroOverlay{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.78));
+}
+
+.facHeroTitle{
+  font-family: var(--ui);
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.facHeroPill{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.facCardBody{
+  flex: 1;
+  padding: 12px;
+  overflow: auto;
+}
+
+.facFnGrid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.facFnGrid.two{
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Responsive */
+@media (max-width: 1100px){
+  .facBuildTop--split,
+  .facBuildGrid{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px){
+  .facCard{
+    flex-basis: 86vw;
+  }
+  .facFnGrid.two{
+    grid-template-columns: 1fr;
+  }
+}
