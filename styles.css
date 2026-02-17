@@ -2201,7 +2201,8 @@ select option{
 
 .facCard{
   flex: 0 0 440px;
-  height: 560px;
+  min-height: 560px;          /* keeps cards big */
+  height: auto;               /* lets card grow if a facility has more UI */
   border: 1px solid rgba(214,178,94,.35);
   border-radius: 22px;
   overflow: hidden;
@@ -2213,7 +2214,7 @@ select option{
 
 .facHero{
   position: relative;
-  flex: 0 0 52%;
+  flex: 0 0 280px;            /* fixed hero height so it cannot steal the whole card */
   border-bottom: 1px solid rgba(214,178,94,.25);
 }
 
@@ -2259,7 +2260,7 @@ select option{
 .facCardBody{
   flex: 1;
   padding: 12px;
-  overflow: auto;
+  overflow: hidden;           /* removes the vertical scrollbar inside the card */
 }
 
 .facFnGrid{
