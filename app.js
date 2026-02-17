@@ -346,17 +346,20 @@ ui.clearArtisanToolsBtn?.addEventListener("click", ()=>{
       const targetName = CLANS.find(c=>c.key===targetKey)?.name || "Unknown";
       const objective = String(ui.warObjectiveSelect?.value || "raid");
 
-      const defendersAvail = clampInt(state.defenders?.count ?? 0, 0);
+            const defendersAvail = clampInt(state.defenders?.count ?? 0, 0);
       const beastsAvail = Array.isArray(state.defenderBeasts) ? state.defenderBeasts.length : 0;
-      const militaryAvail = Array.isArray(state.military) ? state.military.length : 0;
+
+      // Your military list merges duplicates by name and stores qty, so we must sum qty not .length
+      const lieutenantsAvail = militaryQtyByMatch(/lieutenant/i);
+      const regimentsAvail   = militaryQtyByMatch(/regiment/i);
 
       const unsworn = (state.organization?.type ?? "unsworn") === "unsworn";
       const fullWar = !unsworn;
 
       const commitDefenders = clampInt(ui.warDefendersInput?.value ?? 0, 0, defendersAvail);
       const commitBeasts = clampInt(ui.warBeastsInput?.value ?? 0, 0, beastsAvail);
-      const commitLieutenants = fullWar ? clampInt(ui.warLieutenantsInput?.value ?? 0, 0, militaryAvail) : 0;
-      const commitRegiments = fullWar ? clampInt(ui.warRegimentsInput?.value ?? 0, 0, militaryAvail) : 0;
+      const commitLieutenants = fullWar ? clampInt(ui.warLieutenantsInput?.value ?? 0, 0, lieutenantsAvail) : 0;
+      const commitRegiments  = fullWar ? clampInt(ui.warRegimentsInput?.value ?? 0, 0, regimentsAvail) : 0;
 
       if(commitDefenders + commitBeasts + commitLieutenants + commitRegiments <= 0){
         alert("Commit at least something (defenders/beasts, and if sworn, lieutenants/regiments).");
@@ -542,33 +545,40 @@ ui.importFileInput?.addEventListener("change", async () => {
     renderPoliticalCapital();
   }
 
-   async function completeOrderAsync(o){
+      async function completeOrderAsync(o){
   // Custom completion branch: Ironbow Trade Network upgrades
   if(o && o.facId === "trade_network"){
     await completeTradeNetworkOrder(o);
     return;
   }
 
+  // ✅ Custom completion branch: War Council queued actions
+  // War Council isn't a facilities.json facility, so it must be handled here.
+  if(o && (o.facId === "war_council" || o?.meta?.kind === "war_action")){
+    await resolveWarOrderAsync(o);
+    return;
+  }
+
   const fac = DATA.facilities.find(f => f.id === o.facId);
   if(!fac){
-    completeOrder(o);
+    await completeOrder(o);
     return;
   }
 
   const fn = (fac.functions || []).find(x => x.id === o.fnId);
   if(!fn){
-    completeOrder(o);
+    await completeOrder(o);
     return;
   }
 
   // Only Hall emissary actions need async (dice + modal)
   if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "emissary_action"){
-    await completeOrder(o); // completeOrder now contains awaits for this branch
+    await completeOrder(o);
     return;
   }
 
-  // Everything else stays synchronous and untouched
-  completeOrder(o);
+  // Everything else (completeOrder is async-safe)
+  await completeOrder(o);
 }
 
    function issueTradeNetworkUpgrade(kind){
@@ -4799,7 +4809,21 @@ saveState(); render(); return;
     if(!Array.isArray(state.warLog)) state.warLog = [];
   }
 
-  function supportForClanKey(clanKey){
+    // Sum qty for military entries whose name matches a regex
+  // (Your military list merges duplicates by name and stores qty.)
+  function militaryQtyByMatch(rx){
+    const list = Array.isArray(state.military) ? state.military : [];
+    let sum = 0;
+    for(const it of list){
+      const name = String(it?.name || "");
+      if(rx.test(name)){
+        sum += clampInt(it?.qty ?? 1, 0);
+      }
+    }
+    return sum;
+  }
+
+   function supportForClanKey(clanKey){
     const pc = clampInt(state.politicalCapital?.[clanKey] ?? 0, -100, 100);
     const hr = clampInt(state.honourRespectByClan?.[clanKey] ?? 0, -5, 5);
 
@@ -5003,16 +5027,23 @@ saveState(); render(); return;
     renderWarLog();
   }
 
-  function renderWarControls(){
+    function renderWarControls(){
     if(!ui.warTargetSelect) return;
 
-    // Populate target clans (defend is special case)
+    // Preserve selection between renders
+    const prevTarget = ui.warTargetSelect.value;
+
+    // Populate target clans
     ui.warTargetSelect.innerHTML = CLANS.map(c => `<option value="${c.key}">${c.name}</option>`).join("");
+    if(prevTarget) ui.warTargetSelect.value = prevTarget;
 
     // Clamp inputs to available amounts (live hint)
     const defendersAvail = clampInt(state.defenders?.count ?? 0, 0);
     const beastsAvail = Array.isArray(state.defenderBeasts) ? state.defenderBeasts.length : 0;
-    const militaryAvail = Array.isArray(state.military) ? state.military.length : 0;
+
+    // Your military list merges duplicates by name and stores qty, so we must sum qty not .length
+    const lieutenantsAvail = militaryQtyByMatch(/lieutenant/i);
+    const regimentsAvail   = militaryQtyByMatch(/regiment/i);
 
     // Unsworn limitation: only defenders/beasts
     const unsworn = (state.organization?.type ?? "unsworn") === "unsworn";
@@ -5035,8 +5066,8 @@ saveState(); render(); return;
     const clampAndHint = () => {
       const dC = clampInt(ui.warDefendersInput?.value ?? 0, 0, defendersAvail);
       const bC = clampInt(ui.warBeastsInput?.value ?? 0, 0, beastsAvail);
-      const lC = fullWar ? clampInt(ui.warLieutenantsInput?.value ?? 0, 0, militaryAvail) : 0;
-      const rC = fullWar ? clampInt(ui.warRegimentsInput?.value ?? 0, 0, militaryAvail) : 0;
+      const lC = fullWar ? clampInt(ui.warLieutenantsInput?.value ?? 0, 0, lieutenantsAvail) : 0;
+      const rC = fullWar ? clampInt(ui.warRegimentsInput?.value ?? 0, 0, regimentsAvail) : 0;
 
       if(ui.warDefendersInput) ui.warDefendersInput.value = String(dC);
       if(ui.warBeastsInput) ui.warBeastsInput.value = String(bC);
@@ -5045,15 +5076,16 @@ saveState(); render(); return;
 
       if(ui.warClampHint){
         ui.warClampHint.textContent =
-          `Available: ${defendersAvail} defenders, ${beastsAvail} beasts, ${militaryAvail} military units. `
+          `Available: ${defendersAvail} defenders, ${beastsAvail} beasts, ${lieutenantsAvail} lieutenants, ${regimentsAvail} regiments. `
           + (unsworn ? "Unsworn war is limited to defenders and beasts." : "Full commitments enabled.");
       }
     };
 
-    ui.warDefendersInput?.addEventListener("input", clampAndHint);
-    ui.warBeastsInput?.addEventListener("input", clampAndHint);
-    ui.warLieutenantsInput?.addEventListener("input", clampAndHint);
-    ui.warRegimentsInput?.addEventListener("input", clampAndHint);
+    // Avoid stacking listeners on every render
+    if(ui.warDefendersInput) ui.warDefendersInput.oninput = clampAndHint;
+    if(ui.warBeastsInput) ui.warBeastsInput.oninput = clampAndHint;
+    if(ui.warLieutenantsInput) ui.warLieutenantsInput.oninput = clampAndHint;
+    if(ui.warRegimentsInput) ui.warRegimentsInput.oninput = clampAndHint;
 
     clampAndHint();
   }
