@@ -131,16 +131,7 @@ function makeCardCollapsibleById(cardId, defaultCollapsed = false){
     btn.setAttribute("aria-label", "Collapse/expand panel");
 
     // Diplomacy header is complex; place the toggle at top-right so it can't get hidden.
-    if(cardId === "diplomacyPanel"){
-      header.style.position = header.style.position || "relative";
-      btn.style.position = "absolute";
-      btn.style.top = "10px";
-      btn.style.right = "10px";
-      btn.style.zIndex = "20";
-      header.appendChild(btn);
-    } else {
-      header.appendChild(btn);
-    }
+   header.appendChild(btn);
   }
 
   const key = `si_collapse_${cardId}`;
@@ -2011,9 +2002,10 @@ function ensureDiplomacyPanel(){
         </div>
         <div class="small muted" id="hallHeadSub">Diplomatic actions take 1 Bastion Turn.</div>
       </div>
-    </div>
+        </div>
 
-    <div class="dipGrid">
+    <div class="cardBody">
+      <div class="dipGrid">
 
       <!-- LEFT: diplomacy records -->
       <div class="dipLeft">
@@ -2026,8 +2018,9 @@ function ensureDiplomacyPanel(){
       </div>
     </div>
 
-    <div class="dipFoot">
-      <button class="btn ghost" id="clearDiplomacyBtn">Clear Diplomacy Records</button>
+         <div class="dipFoot">
+        <button class="btn ghost" id="clearDiplomacyBtn">Clear Diplomacy Records</button>
+      </div>
     </div>
   `;
 
