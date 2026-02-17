@@ -2266,13 +2266,7 @@ select option{
 .facFnGrid{
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.facFnGrid{
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 8px;              /* was 12px */
   align-items: stretch; /* key */
 }
 
