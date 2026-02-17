@@ -1981,7 +1981,7 @@ function ensureDiplomacyPanel(){
   panel.id = "diplomacyPanel";
 
   panel.innerHTML = `
-    <div class="card__head dipHead">
+    <div class="cardHeader dipHead">
       <!-- LEFT header -->
       <div class="dipHeadLeft">
         <h2>Diplomacy & Trade</h2>
