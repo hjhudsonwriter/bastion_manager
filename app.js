@@ -57,6 +57,7 @@
     facilitiesGrid: $("facilitiesGrid"),
     facPrevBtn: $("facPrevBtn"),
     facNextBtn: $("facNextBtn"),
+    bastionMapOverlays: $("bastionMapOverlays"),
 
     logList: $("logList"),
     clearLogBtn: $("clearLogBtn"),
