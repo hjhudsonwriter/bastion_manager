@@ -2302,3 +2302,32 @@ select option{
   padding: 7px 12px;
   border-radius: 10px;
 }
+
+/* === Bastion Map Overlays (built facilities) === */
+.bastionMapWrap{
+  position: relative;
+  display: block;
+}
+
+.bastionMapWrap > .mapImg{
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px; /* match your existing rounded look */
+}
+
+.bastionMapOverlays{
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* clicks pass through to the UI normally */
+  border-radius: 12px; /* match map rounding */
+  overflow: hidden;    /* prevents overlay edges poking out */
+}
+
+.bastionMapOverlays img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* keeps overlay aligned without cropping */
+}
