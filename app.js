@@ -309,6 +309,15 @@ function tickConstruction(){
   hall_of_emissaries: "hall_of_emissaries.png",
 };
 
+   // Where your overlay PNGs live.
+// If your overlays are NOT in assets/facilities/, change this ONE line only.
+const FACILITY_OVERLAY_DIR = "assets/";
+
+// If your overlay filenames follow: <facilityId>_overlay.png
+function overlayFileForFacility(facilityId){
+  return `${facilityId}_overlay.png`;
+}
+
   init().catch(err => {
   console.error(err);
   alert("App error during init. Open DevTools Console (F12) and check the error details.");
@@ -1243,6 +1252,26 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
   log("Order Completed", `${label} → Completed.`);
 }
 
+   function renderBastionMapOverlays(){
+  if(!ui.bastionMapOverlays) return;
+
+  // builtFacilityIds() should already exist in your codebase
+  const built = (typeof builtFacilityIds === "function") ? builtFacilityIds() : [];
+
+  // Create overlay <img> tags for built facilities.
+  // If an overlay file doesn't exist, the image will hide itself on error.
+  ui.bastionMapOverlays.innerHTML = built.map(facId => {
+    const file = overlayFileForFacility(facId);
+    const src = withBase(`${FACILITY_OVERLAY_DIR}${file}`);
+    return `<img class="bastionOverlay" data-fac="${escapeHtml(facId)}" src="${src}" alt="" />`;
+  }).join("");
+
+  // Hide missing overlays cleanly (no console noise, no broken icons)
+  ui.bastionMapOverlays.querySelectorAll("img").forEach(img => {
+    img.addEventListener("error", () => { img.style.display = "none"; }, { once:true });
+  });
+}
+
   // ---------- Render ----------
   function render(){
     ui.turnPill.textContent = `Turn ${state.turn}`;
@@ -1260,6 +1289,7 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
 
     renderEventBox();
     renderFacilities();
+    renderBastionMapOverlays();
     renderLog();
     renderIdentityPanel();
     renderFavour();
@@ -1268,6 +1298,7 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
 
     // update treasury input (in case actions changed it)
     ui.treasuryInput.value = String(state.treasuryGP);
+     renderBastionMapOverlays();
   }
 
   function renderList(el, arr, emptyText){
