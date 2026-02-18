@@ -1254,35 +1254,26 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
 }
 
    function renderBastionMapOverlays(){
-  if(!ui.bastionMapOverlays) return;
+  const layer = document.getElementById("bastionMapOverlays");
+  if(!layer) return;
 
-  // builtFacilityIds() should already exist in your codebase
+  // Get list of built facilities (completed construction)
   const built = (typeof builtFacilityIds === "function") ? builtFacilityIds() : [];
+  if(!Array.isArray(built) || built.length === 0){
+    layer.innerHTML = "";
+    return;
+  }
 
-  // Create overlay <img> tags for built facilities.
-  // If an overlay file doesn't exist, the image will hide itself on error.
+  // Overlays are stored in /assets/ and named: <facilityId>_overlay.png
   layer.innerHTML = built.map(facId => {
-  // Primary location (recommended): assets/overlays/
-  const primary = withBase(`assets/overlays/${facId}_overlay.png`);
+    const src = withBase(`assets/${facId}_overlay.png`);
+    return `<img class="mapOverlay" data-fac="${escapeHtml(facId)}" src="${src}" alt="">`;
+  }).join("");
 
-  // Fallback location: assets/facilities/
-  const fallback = withBase(`assets/facilities/${facId}_overlay.png`);
-
-  // Final fallback: assets/ (if you put overlays directly in assets/)
-  const fallback2 = withBase(`assets/${facId}_overlay.png`);
-
-  return `<img class="mapOverlay" data-fac="${escapeHtml(facId)}" src="${primary}" alt=""
-    onerror="this.onerror=null; this.src='${fallback}'; this.onerror=()=>{this.style.display='none'};">`;
-}).join("");
-
-
-  // Hide missing overlays cleanly (no console noise, no broken icons)
+  // If an overlay file is missing, hide that image instead of showing a broken icon
   layer.querySelectorAll("img").forEach(img => {
-  img.addEventListener("error", () => {
-    const facId = img.getAttribute("data-fac");
-    img.src = withBase(`assets/${facId}_overlay.png`);
-  }, { once: true });
-});
+    img.addEventListener("error", () => { img.style.display = "none"; }, { once:true });
+  });
 }
 
   // ---------- Render ----------
