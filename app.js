@@ -1261,16 +1261,28 @@ if(fac.id === "hall_of_emissaries" && fn.special && fn.special.type === "upgrade
 
   // Create overlay <img> tags for built facilities.
   // If an overlay file doesn't exist, the image will hide itself on error.
-  ui.bastionMapOverlays.innerHTML = built.map(facId => {
-    const file = overlayFileForFacility(facId);
-    const src = withBase(`${FACILITY_OVERLAY_DIR}${file}`);
-    return `<img class="bastionOverlay" data-fac="${escapeHtml(facId)}" src="${src}" alt="" />`;
-  }).join("");
+  layer.innerHTML = built.map(facId => {
+  // Primary location (recommended): assets/overlays/
+  const primary = withBase(`assets/overlays/${facId}_overlay.png`);
+
+  // Fallback location: assets/facilities/
+  const fallback = withBase(`assets/facilities/${facId}_overlay.png`);
+
+  // Final fallback: assets/ (if you put overlays directly in assets/)
+  const fallback2 = withBase(`assets/${facId}_overlay.png`);
+
+  return `<img class="mapOverlay" data-fac="${escapeHtml(facId)}" src="${primary}" alt=""
+    onerror="this.onerror=null; this.src='${fallback}'; this.onerror=()=>{this.style.display='none'};">`;
+}).join("");
+
 
   // Hide missing overlays cleanly (no console noise, no broken icons)
-  ui.bastionMapOverlays.querySelectorAll("img").forEach(img => {
-    img.addEventListener("error", () => { img.style.display = "none"; }, { once:true });
-  });
+  layer.querySelectorAll("img").forEach(img => {
+  img.addEventListener("error", () => {
+    const facId = img.getAttribute("data-fac");
+    img.src = withBase(`assets/${facId}_overlay.png`);
+  }, { once: true });
+});
 }
 
   // ---------- Render ----------
